@@ -57,7 +57,7 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
 	/* #ifndef APP-PLUS-NVUE */
 	/* uni.css - 通用组件、模板样式库，可以当作一套ui库应用 */
 	@import './common/uni.css';
@@ -132,4 +132,54 @@
 	}
 
 	/* #endif*/
+
+  view {
+    line-height: 1;
+  }
+
+  .status_bar {
+      height: var(--status-bar-height);
+      width: 100%;
+  }
+
+  /* 每个页面公共css */
+  @import "./common/uni.css";
+
+  /* 自定义图标库 */
+  @import "./common/icon.css";
+
+  /* 动画库 */
+  @import url("./common/animate.css");
+
+  /* 自定义样式库 */
+  @import url("./common/free.css");
+
+  /* 全局样式 */
+  @import url("./common/common.css");
+
+  /* 去掉弹出层默认白色背景, 页面样式中设置无效 */
+  .uni-transition .uni-popup__wrapper-box {
+      background: none !important;
+  }
+
+  /* 防止小程序右上角按钮遮住导航右侧按钮 */
+  .uni-navbar {
+      margin-top: 52rpx !important;
+  }
+  /deep/.uni-scroll-view ::-webkit-scrollbar {
+      /* 隐藏滚动条，但依旧具备可以滚动的功能 */
+      display: none;
+      width: 0;
+      height: 0;
+      color: transparent;
+      background: transparent;
+  }
+
+  /deep/::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+      color: transparent;
+      background: transparent;
+  }
 </style>

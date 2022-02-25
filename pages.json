@@ -14,6 +14,24 @@
 	"pages": [
 		// pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "钢琴童话"
+			}
+		},
+		{
+			"path": "pages/login/index",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
 			"path": "pages/tabBar/component/component",
 			"style": {
 				"navigationBarTitleText": "内置组件",
@@ -78,6 +96,7 @@
 				}
 			}
 		},
+		// #ifdef MP-ALIPAY || MP-TOUTIAO || VUE3
 		{
 			"path": "pages/component/view/view",
 			"style": {
@@ -96,7 +115,6 @@
 				"navigationBarTitleText": "swiper"
 			}
 		},
-		// #ifndef MP-TOUTIAO
 		{
 			"path": "pages/component/cover-view/cover-view",
 			"style": {
@@ -109,7 +127,6 @@
 				"navigationBarTitleText": "movable-view"
 			}
 		},
-		// #endif
 		{
 			"path": "pages/component/text/text",
 			"style": {
@@ -197,7 +214,6 @@
 				"navigationBarTitleText": "textarea"
 			}
 		},
-		// #ifdef APP-PLUS || MP-WEIXIN || H5
 		{
 			"path": "pages/component/editor/editor",
 			"style": {
@@ -207,7 +223,6 @@
 				}
 			}
 		},
-		// #endif
 		{
 			"path": "pages/component/navigator/navigator",
 			"style": {
@@ -238,22 +253,12 @@
 				"navigationBarTitleText": "video"
 			}
 		},
-		// #ifndef MP-ALIPAY || MP-TOUTIAO || VUE3
-		// {
-		// 	"path": "pages/component/audio/audio",
-		// 	"style": {
-		// 		"navigationBarTitleText": "audio"
-		// 	}
-		// },
-		// #endif
-		// #ifndef MP-TOUTIAO
 		{
 			"path": "pages/component/map/map",
 			"style": {
 				"navigationBarTitleText": "map"
 			}
 		},
-		// #endif
 		{
 			"path": "pages/component/canvas/canvas",
 			"style": {
@@ -266,20 +271,6 @@
 				"navigationBarTitleText": "web-view"
 			}
 		},
-		// #ifdef APP-VUE || APP-NVUE
-		{
-			"path": "pages/component/ad/ad",
-			"style": {
-				"navigationBarTitleText": "AD"
-			}
-		},
-		// #endif
-		// #ifdef APP-PLUS || H5
-		{
-			"path": "pages/component/web-view-local/web-view-local",
-			"style": {}
-		},
-		// #endif
 		{
 			"path": "platforms/app-plus/speech/speech",
 			"style": {
@@ -310,13 +301,6 @@
 				"navigationBarTitleText": "摇一摇"
 			}
 		},
-		// #ifdef H5 || APP-PLUS
-		{
-			"path": "pages/about/about",
-			"style": {
-				"navigationBarTitleText": "关于"
-			}
-		},
 		// #endif
 		{
 			"path": "platforms/app-plus/feedback/feedback",
@@ -324,61 +308,50 @@
 				"navigationBarTitleText": "问题反馈"
 			}
 		}
-		// #ifdef H5
-		, {
-			"path": "pages/error/404",
-			"style": {
-				"navigationBarTitleText": "Not Found"
-			}
-		}
-		// #endif
 	],
-	"subPackages": [{
+	"subPackages": [
+		{
+			"root": "pages/audition",
+			"pages": [
+				{
+					"path": "index/index",
+					"style": {
+						"navigationBarTitleText": "",
+						"titleNView": false
+					}
+				},
+				{
+					"path": "contract/index",
+					"style": {
+						"navigationBarTitleText": "钢琴童话教育培训协议",
+						"titleNView": false
+					}
+				},
+				{
+					"path": "success/index",
+					"style": {
+						"navigationBarTitleText": "",
+						"titleNView": false
+					}
+				},
+				{
+					"path": "record/index",
+					"style": {
+						"navigationBarTitleText": "开通记录",
+						"titleNView": false
+					}
+				}
+			]
+		},
+		{
 			"root": "pages/API",
-			"pages": [{
+			"pages": [
+				{
 					"path": "login/login",
 					"style": {
 						"navigationBarTitleText": "授权登录"
 					}
 				},
-				// #ifdef APP-PLUS
-				{
-					"path": "subnvue/subnvue",
-					"style": {
-						"navigationBarTitleText": "原生子窗体",
-						"app-plus": {
-							"subNVues": [{
-								"id": "drawer",
-								"path": "subnvue/subnvue/drawer",
-								"type": "popup",
-								"style": {
-									"width": "50%"
-								}
-							}, {
-								"id": "popup",
-								"path": "subnvue/subnvue/popup",
-								"type": "popup",
-								"style": {
-									"margin": "auto",
-									"width": "80%",
-									"height": "600rpx"
-								}
-							}, {
-								"id": "video_mask",
-								"path": "subnvue/subnvue/video-mask",
-								"style": {
-									"position": "absolute",
-									"bottom": "30px",
-									"left": "0",
-									"width": "230px",
-									"height": "110px",
-									"background": "transparent"
-								}
-							}]
-						}
-					}
-				},
-				// #endif
 				{
 					"path": "get-user-info/get-user-info",
 					"style": {
@@ -427,20 +400,6 @@
 						"navigationBarTitleText": "新VUE页面2"
 					}
 				},
-				// #ifndef VUE3
-				{
-					"path": "navigator/new-page/new-nvue-page-1",
-					"style": {
-						"navigationBarTitleText": "新NVUE页面1"
-					}
-				},
-				{
-					"path": "navigator/new-page/new-nvue-page-2",
-					"style": {
-						"navigationBarTitleText": "新NVUE页面2"
-					}
-				},
-				// #endif
 				{
 					"path": "pull-down-refresh/pull-down-refresh",
 					"style": {
@@ -592,22 +551,12 @@
 						"navigationBarTitleText": "文件"
 					}
 				},
-				// #ifndef MP-QQ || MP-TOUTIAO
 				{
 					"path": "map/map",
 					"style": {
 						"navigationBarTitleText": "map"
 					}
 				},
-				// #endif
-				// #ifdef APP-PLUS
-				{
-					"path": "map-search/map-search",
-					"style": {
-						"navigationBarTitleText": "map search"
-					}
-				},
-				// #endif
 				{
 					"path": "get-location/get-location",
 					"style": {
@@ -620,14 +569,12 @@
 						"navigationBarTitleText": "查看位置"
 					}
 				},
-				// #ifndef MP-TOUTIAO
 				{
 					"path": "choose-location/choose-location",
 					"style": {
 						"navigationBarTitleText": "使用地图选择位置"
 					}
 				},
-				// #endif
 				{
 					"path": "storage/storage",
 					"style": {
@@ -640,39 +587,24 @@
 						"navigationBarTitleText": "SQLite"
 					}
 				},
-				// #ifdef APP-PLUS || MP-WEIXIN
 				{
 					"path": "rewarded-video-ad/rewarded-video-ad",
 					"style": {
 						"navigationBarTitleText": "激励视频广告"
 					}
 				},
-				// #endif
-				// #ifdef APP-PLUS
-				{
-					"path": "full-screen-video-ad/full-screen-video-ad",
-					"style": {
-						"navigationBarTitleText": "全屏视频广告"
-					}
-				},
-				// #endif
-				// #ifndef H5
 				{
 					"path": "brightness/brightness",
 					"style": {
 						"navigationBarTitleText": "屏幕亮度"
 					}
 				},
-				// #endif
-				// #ifndef H5 || MP-ALIPAY
 				{
 					"path": "save-media/save-media",
 					"style": {
 						"navigationBarTitleText": "保存媒体到本地"
 					}
 				},
-				// #endif
-				// #ifdef APP-PLUS || MP-WEIXIN || MP-QQ || MP-JD
 				{
 					"path": "bluetooth/bluetooth",
 					"style": {
@@ -685,29 +617,24 @@
 						"navigationBarTitleText": "生物认证"
 					}
 				},
-				// #endif
-				// #ifdef APP-PLUS || MP-WEIXIN
 				{
 					"path": "ibeacon/ibeacon",
 					"style": {
 						"navigationBarTitleText": "iBeacon"
 					}
 				},
-				// #endif
 				{
 					"path": "vibrate/vibrate",
 					"style": {
 						"navigationBarTitleText": "震动"
 					}
 				},
-				// #ifndef MP-ALIPAY
 				{
 					"path": "websocket-socketTask/websocket-socketTask",
 					"style": {
 						"navigationBarTitleText": "websocket-socketTask"
 					}
 				},
-				// #endif
 				{
 					"path": "websocket-global/websocket-global",
 					"style": {
@@ -1290,28 +1217,59 @@
 	],
 	"globalStyle": {
 		"pageOrientation": "portrait",
-		"navigationBarTitleText": "Hello uniapp",
-		"navigationBarTextStyle": "white",
-		"navigationBarBackgroundColor": "#007AFF",
+		"navigationBarTitleText": "钢琴童话",
+		"navigationBarTextStyle": "black",
+		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8",
 		"backgroundColorTop": "#F4F5F6",
-		"backgroundColorBottom": "#F4F5F6",
-		"mp-360": {
-			"navigationStyle": "custom"
-		},
-		"h5": {
-			"maxWidth": 1190,
-			"navigationBarTextStyle": "black",
-			"navigationBarBackgroundColor": "#F1F1F1"
-		}
-
+		"backgroundColorBottom": "#F4F5F6"
+	},
+	"condition": {
+		"current": 3,
+		"list": [
+			{
+				"name": "login",
+				"path": "pages/login/index",
+				"query": "no=FYSH001932095&cityId=2"
+			},
+			{
+				"name": "phoneLogin",
+				"path": "pages/login/login",
+				"query": "no=FYSH001932095&cityId=2"
+			},
+			{
+				"name": "ShiTing",
+				"path": "pages/audition/index/index",
+				"query": "no=FYSH001932095&cityId=2"
+			},
+			{
+				"name": "Contract",
+				"path": "pages/audition/contract/index",
+				"query": "no=FYSH001932095&cityId=2"
+			},
+			{
+				"name": "Success",
+				"path": "pages/audition/success/index",
+				"query": "no=FYSH001932095&cityId=2"
+			},
+			{
+				"name": "record",
+				"path": "pages/audition/record/index",
+				"query": "no=FYSH001932095&cityId=2"
+			},
+			{
+				"name": "uniapp",
+				"path": "pages/tabBar/component/component"
+			}
+		]
 	},
 	"tabBar": {
 		"color": "#7A7E83",
 		"selectedColor": "#007AFF",
 		"borderStyle": "black",
 		"backgroundColor": "#F8F8F8",
-		"list": [{
+		"list": [
+			{
 				"pagePath": "pages/tabBar/component/component",
 				"iconPath": "static/component.png",
 				"selectedIconPath": "static/componentHL.png",
@@ -1322,12 +1280,14 @@
 				"iconPath": "static/api.png",
 				"selectedIconPath": "static/apiHL.png",
 				"text": "接口"
-			}, {
+			},
+			{
 				"pagePath": "pages/tabBar/extUI/extUI",
 				"iconPath": "static/extui.png",
 				"selectedIconPath": "static/extuiHL.png",
 				"text": "扩展组件"
-			}, {
+			},
+			{
 				"pagePath": "pages/tabBar/template/template",
 				"iconPath": "static/template.png",
 				"selectedIconPath": "static/templateHL.png",

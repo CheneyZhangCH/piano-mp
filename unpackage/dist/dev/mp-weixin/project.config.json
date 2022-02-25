@@ -9,7 +9,7 @@
   },
   "compileType": "miniprogram",
   "libVersion": "",
-  "appid": "touristappid",
+  "appid": "wx12d8eb12fd74822b",
   "projectname": "piano",
   "condition": {
     "search": {
@@ -25,8 +25,50 @@
       "list": []
     },
     "miniprogram": {
-      "current": -1,
-      "list": []
+      "current": 3,
+      "list": [
+        {
+          "name": "login",
+          "query": "no=FYSH001932095&cityId=2",
+          "id": 0,
+          "pathName": "pages/login/index"
+        },
+        {
+          "name": "phoneLogin",
+          "query": "no=FYSH001932095&cityId=2",
+          "id": 1,
+          "pathName": "pages/login/login"
+        },
+        {
+          "name": "ShiTing",
+          "query": "no=FYSH001932095&cityId=2",
+          "id": 2,
+          "pathName": "pages/audition/index/index"
+        },
+        {
+          "name": "Contract",
+          "query": "no=FYSH001932095&cityId=2",
+          "id": 3,
+          "pathName": "pages/audition/contract/index"
+        },
+        {
+          "name": "Success",
+          "query": "no=FYSH001932095&cityId=2",
+          "id": 4,
+          "pathName": "pages/audition/success/index"
+        },
+        {
+          "name": "record",
+          "query": "no=FYSH001932095&cityId=2",
+          "id": 5,
+          "pathName": "pages/audition/record/index"
+        },
+        {
+          "name": "uniapp",
+          "id": 6,
+          "pathName": "pages/tabBar/component/component"
+        }
+      ]
     }
   }
 }

@@ -1,39 +1,23 @@
 {
   "pages": [
+    "pages/index/index",
+    "pages/login/index",
+    "pages/login/login",
     "pages/tabBar/component/component",
     "pages/tabBar/API/API",
     "pages/tabBar/template/template",
-    "pages/tabBar/extUI/extUI",
-    "pages/component/view/view",
-    "pages/component/scroll-view/scroll-view",
-    "pages/component/swiper/swiper",
-    "pages/component/cover-view/cover-view",
-    "pages/component/movable-view/movable-view",
-    "pages/component/text/text",
-    "pages/component/rich-text/rich-text",
-    "pages/component/progress/progress",
-    "pages/component/button/button",
-    "pages/component/checkbox/checkbox",
-    "pages/component/form/form",
-    "pages/component/input/input",
-    "pages/component/label/label",
-    "pages/component/picker/picker",
-    "pages/component/picker-view/picker-view",
-    "pages/component/radio/radio",
-    "pages/component/slider/slider",
-    "pages/component/switch/switch",
-    "pages/component/textarea/textarea",
-    "pages/component/editor/editor",
-    "pages/component/navigator/navigator",
-    "pages/component/navigator/navigate/navigate",
-    "pages/component/navigator/redirect/redirect",
-    "pages/component/image/image",
-    "pages/component/video/video",
-    "pages/component/map/map",
-    "pages/component/canvas/canvas",
-    "pages/component/web-view/web-view"
+    "pages/tabBar/extUI/extUI"
   ],
   "subPackages": [
+    {
+      "root": "pages/audition",
+      "pages": [
+        "index/index",
+        "contract/index",
+        "success/index",
+        "record/index"
+      ]
+    },
     {
       "root": "pages/API",
       "pages": [
@@ -46,8 +30,6 @@
         "navigator/navigator",
         "navigator/new-page/new-vue-page-1",
         "navigator/new-page/new-vue-page-2",
-        "navigator/new-page/new-nvue-page-1",
-        "navigator/new-page/new-nvue-page-2",
         "pull-down-refresh/pull-down-refresh",
         "animation/animation",
         "get-node-info/get-node-info",
@@ -162,9 +144,9 @@
   ],
   "window": {
     "pageOrientation": "portrait",
-    "navigationBarTitleText": "Hello uniapp",
-    "navigationBarTextStyle": "white",
-    "navigationBarBackgroundColor": "#007AFF",
+    "navigationBarTitleText": "钢琴童话",
+    "navigationBarTextStyle": "black",
+    "navigationBarBackgroundColor": "#F8F8F8",
     "backgroundColor": "#F8F8F8",
     "backgroundColorTop": "#F4F5F6",
     "backgroundColorBottom": "#F4F5F6"
@@ -201,10 +183,17 @@
       }
     ]
   },
+  "plugins": {
+    "player": {
+      "version": "2.0.0",
+      "provider": "wxa75efa648b60994b"
+    }
+  },
   "permission": {
     "scope.userLocation": {
       "desc": "演示定位能力"
     }
   },
-  "usingComponents": {}
+  "usingComponents": {},
+  "sitemapLocation": "sitemap.json"
 }

@@ -1,0 +1,372 @@
+/* 内外边距 */
+
+.p-2 {
+    padding: 20 rpx;
+}
+
+.pt-1 {
+    padding-top: 10 rpx;
+}
+
+.pb-3 {
+    padding-bottom: 30 rpx;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+/* flex布局 */
+.flex {
+    display: flex;
+    /* flex-direction: row; */
+}
+/* flex布局 */
+.inline-flex {
+    display: inline-flex;
+    /* flex-direction: row; */
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.align-center {
+    align-items: center;
+}
+
+.justify-end {
+    justify-content: flex-end;
+}
+
+
+.align-start {
+    align-items: flex-start;
+}
+
+.align-stretch {
+    align-items: stretch;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+/* 圆角 */
+.rounded-circle {
+    border-radius: 100%;
+}
+
+.rounded {
+    border-radius: 8rpx;
+}
+
+
+.flex-1 {
+    flex: 1;
+}
+
+.mb-2 {
+    margin-bottom: 20rpx;
+}
+
+/* 左边距 */
+.ml-2 {
+    margin-left: 20rpx;
+}
+
+/* 左边距 */
+.ml-16 {
+    margin-left: 16rpx;
+}
+
+/* 左边距 */
+.ml-32 {
+    margin-left: 32rpx;
+}
+
+/* 左边距 */
+.ml-60 {
+    margin-left: 60rpx;
+}
+
+/* 右边距 */
+.mr-1 {
+    margin-right: 10rpx;
+}
+
+.mr-2 {
+    margin-right: 20rpx;
+}
+
+.mr-3 {
+    margin-right: 30rpx;
+}
+
+.mr-4 {
+    margin-right: 40rpx;
+}
+
+.mr-40 {
+    margin-right: 40rpx;
+}
+
+.mr-20 {
+    margin-right: 20rpx;
+}
+
+.mt-0 {
+    margin-top: 0 !important;
+}
+
+.mt-6 {
+    margin-top: 6rpx;
+}
+
+.mt-12 {
+    margin-top: 12rpx;
+}
+
+.mt-20 {
+    margin-top: 20rpx;
+}
+
+.mt-40 {
+    margin-top: 40rpx;
+}
+
+.mr-5 {
+    margin-right: 50rpx;
+}
+
+.mb-80 {
+    margin-bottom: 80rpx;
+}
+
+.mb-48 {
+    margin-bottom: 48rpx;
+}
+
+.pb-32 {
+    padding-bottom: 32rpx;
+}
+
+.pr-60 {
+    padding-right: 60rpx;
+}
+
+.pr-40 {
+    padding-right: 40rpx;
+}
+
+.py-32 {
+    padding: 32rpx 0;
+}
+
+.my-0 {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.mx-2 {
+    margin-left: 20rpx;
+    margin-right: 20rpx;
+}
+
+.mx-1 {
+    margin-left: 10rpx;
+    margin-right: 10rpx;
+}
+
+.mx-5 {
+    margin-left: 50rpx;
+    margin-right: 50rpx;
+}
+
+.my-1 {
+    margin: 10rpx 0;
+}
+
+.p-3 {
+    padding: 30rpx;
+}
+
+.pl-3 {
+    padding-left: 30rpx;
+}
+
+.px-2 {
+    padding: 0 20rpx;
+}
+
+.px-8 {
+    padding-left: 8rpx;
+    padding-right: 8rpx;
+}
+
+.px-5 {
+    padding: 0 50rpx;
+}
+
+.py-3 {
+    padding: 30rpx 0;
+}
+
+.h-36 {
+    height: 36rpx;
+}
+
+.h-40 {
+    height: 40rpx;
+}
+
+
+/* 字体 */
+.font {
+    font-size: 30rpx;
+}
+
+.font-sm {
+    font-size: 25rpx;
+}
+
+.font-md {
+    font-size: 30rpx;
+}
+
+.font-lg {
+    font-size: 35rpx;
+}
+
+.font-weight-bold {
+    font: bold;
+}
+
+
+/* 文字颜色 */
+.text-white {
+    color: #FFFFFF;
+}
+
+/* 浅灰色 */
+.text-light-muted {
+    color: #A9A5A0;
+}
+
+/* 浅灰色 */
+.text-underline {
+    text-decoration: underline;
+}
+
+/* #ifndef APP-PLUS-NVUE */
+/*scroll-view */
+.scroll-row {
+    height: 100rpx;
+    width: 100%;
+    white-space: nowrap;
+}
+
+.scroll-row-item {
+
+    display: inline-block !important;
+}
+
+/* #endif */
+
+
+.border {
+    border: 2rpx solid #F5F7FA;
+}
+
+.border-top {
+    border-top: 2rpx solid #F5F7FA;
+}
+
+.border-bottom {
+    border-bottom: 2rpx solid #F5F7FA;
+}
+
+.border-radius-8 {
+    border-radius: 8rpx;
+}
+
+.border-lignt-secondary {
+    border-color: #B2B2B2;
+}
+
+.bg-light {
+    background-color: #f8f9fa;
+}
+
+.bg-white {
+    background-color: #FFFFFF;
+}
+
+.bg-dark {
+    background-color: #000000;
+}
+
+.bg-primary {
+    background-color: #007AFF;
+}
+
+.bg-success {
+    background-color: #1AAD19;
+}
+
+.bg-red {
+    background-color: #FF3333;
+}
+
+/* 定位 */
+
+.fixed-bottom {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1030;
+}
+
+.position-relative {
+    position: relative;
+}
+
+.position-absolute {
+    position: absolute;
+}
+
+.top-0 {
+    position: absolute;
+    top: 0;
+}
+
+.right-0 {
+    position: absolute;
+    right: 0;
+}
+
+
+.text-right {
+    text-align: right;
+}
+
+.place-holder {
+    color: #99A0AD;
+}
+
+.float-right {
+    float: right;
+}

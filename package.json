@@ -1,18 +1,15 @@
 {
-	"id": "hello-uniapp",
-	"name": "hello-uniapp",
-	"displayName": "hello-uniapp 示例工程",
-	"version": "3.3.2",
-	"description": "uni-app 框架示例，一套代码，同时发行到iOS、Android、H5、小程序等多个平台，请使用手机扫码快速体验 uni-app 的强大功能",
+	"id": "piano-tale",
+	"name": "piano-tale",
+	"displayName": "钢琴童话",
+	"version": "0.0.1",
+	"description": "钢琴童话教学一体",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
-	"repository": "https://github.com/dcloudio/hello-uniapp.git",
+	"repository": "",
 	"keywords": [
-        "hello-uniapp",
-        "uni-app",
-        "uni-ui",
-        "示例工程"
+        "钢琴教学"
     ],
 	"author": "",
 	"license": "MIT",
@@ -20,7 +17,9 @@
 		"url": "https://github.com/dcloudio/hello-uniapp/issues"
 	},
 	"homepage": "https://github.com/dcloudio/hello-uniapp#readme",
-	"dependencies": {},
+	"dependencies": {
+		"dayjs": "^1.10.7"
+	},
 	"dcloudext": {
 		"category": [
 			"前端页面模板",

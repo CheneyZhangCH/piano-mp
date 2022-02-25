@@ -100,9 +100,15 @@
         "versionCode": 100
     },
     "mp-weixin": {
-        "appid": "",
+        "appid": "wx12d8eb12fd74822b",
         "setting": {
             "urlCheck": false
+        },
+        "plugins": {
+            "player": {
+                "version": "2.0.0",
+                "provider": "wxa75efa648b60994b"
+            }
         },
         "usingComponents": true,
         "permission": {
