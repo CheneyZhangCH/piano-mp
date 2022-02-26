@@ -33,7 +33,7 @@
           :class="{'show-code': sendCodeEnabled}"
           @click="getSmsCode"
         >
-          {{ duration !== undefined ? `已发送（${duration}s）` : '获取验证码' }}
+          {{ duration !== undefined ? `已发送（${ duration }s）` : '获取验证码' }}
         </view>
       </view>
     </view>
@@ -105,20 +105,28 @@ export default {
       // canshowcode: false
     }
   },
-  onReady: function() {
+  onReady: function () {
   },
   onLoad(option) {
-    if (option.page !== '') { this.jumpPage = option.page }
+    if (option.page !== '') {
+      this.jumpPage = option.page
+    }
 
-    if (option.keyword !== '') { this.keyword = option.keyword }
+    if (option.keyword !== '') {
+      this.keyword = option.keyword
+    }
 
     // const { statusBarHeight } = uni.getSystemInfoSync()
     // this.statusBarHeight = statusBarHeight
   },
   computed: {
     // enabled: function() { return !(this.username.length === 11 && this.password.length > 5) },
-    loginEnabled: function() { return this.phone.length === 11 && this.verifyCode.length === 6 },
-    sendCodeEnabled: function() { return this.phone.length === 11 && this.duration === undefined },
+    loginEnabled: function () {
+      return this.phone.length === 11 && this.verifyCode.length === 6
+    },
+    sendCodeEnabled: function () {
+      return this.phone.length === 11 && this.duration === undefined
+    },
   },
   methods: {
     handlePhoneInput(e) {
@@ -128,7 +136,7 @@ export default {
       console.log('handleCodeInput', e.detail.value)
     },
     back() {
-      uni.navigateBack({	delta: 1	})
+      uni.navigateBack({ delta: 1 })
     },
     // 获取验证码
     async getSmsCode() {
@@ -138,7 +146,9 @@ export default {
       try {
         const checkPhoneExistRes = await this.$http.post('/login/checkPhoneExist', { data: this.phone })
         console.log(checkPhoneExistRes)
-        if (!checkPhoneExistRes.ok || !checkPhoneExistRes.data) { return this.$refs.popup.open() }
+        if (!checkPhoneExistRes.ok || !checkPhoneExistRes.data) {
+          return this.$refs.popup.open()
+        }
 
         const res = await this.$http.post('/login/sendVerifySmsMsg', { data: this.phone })
         console.log('res', res)
@@ -181,153 +191,187 @@ export default {
     async submit() {
       if (!this.loginEnabled || this.loading) return
       this.loading = true
-      try {
-        const res = await this.$http.post('/login/phoneLoginMini', { data: {
-          phone: this.phone,
-          verifyCode: this.verifyCode,
-        }})
-        console.log('handle login', res)
-        const { accountType, token, phone, id } = res.data
-        uni.setStorageSync('accountType', accountType)
-        uni.setStorageSync('token', token)
-        uni.setStorageSync('phone', phone)
-        uni.setStorageSync('userId', id)
+      const vm = this
+      wx.login({
+        success(res) {
+          console.log('wx.login', res);
+          if (res.code) {
+            vm.$http.post('/login/phoneLoginMini', {
+              data: {
+                code: res.code,
+                phone: vm.phone,
+                verifyCode: vm.verifyCode,
+              }
+            }).then(res => {
+              console.log('handle login', res)
+              const { accountType, token, phone, id } = res.data
+              uni.setStorageSync('accountType', accountType)
+              uni.setStorageSync('token', token)
+              uni.setStorageSync('phone', phone)
+              uni.setStorageSync('userId', id)
 
-        uni.navigateBack({	delta: 2	})
-      } finally {
-        this.loading = false
-      }
+              uni.navigateBack({ delta: 2 })
+            }).finally(() => {
+              vm.loading = false
+            })
+          } else {
+            this.loading = false
+            console.log('登录失败！' + res.errMsg)
+          }
+        }
+      })
+
+
+      // try {
+      //   const res = await this.$http.post('/login/phoneLoginMini', {
+      //     data: {
+      //       phone: this.phone,
+      //       verifyCode: this.verifyCode,
+      //     }
+      //   })
+      //   console.log('handle login', res)
+      //   const { accountType, token, phone, id } = res.data
+      //   uni.setStorageSync('accountType', accountType)
+      //   uni.setStorageSync('token', token)
+      //   uni.setStorageSync('phone', phone)
+      //   uni.setStorageSync('userId', id)
+      //
+      //   uni.navigateBack({ delta: 2 })
+      // } finally {
+      //   this.loading = false
+      // }
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-	.login-all-wrap {
-    padding: 0 50rpx;
-    background-color: #FFF;
-    height: 100vh;
+.login-all-wrap {
+  padding: 0 50rpx;
+  background-color: #FFF;
+  height: 100vh;
+}
+
+.back-image {
+  width: 36rpx;
+  height: 36rpx;
+  margin-top: 60rpx;
+}
+
+.title {
+  height: 80rpx;
+  font-size: 56rpx;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 500;
+  color: #141F33;
+  line-height: 80rpx;
+  margin-top: 80rpx;
+}
+
+.top-wrap button {
+  display: inline-block;
+  background-color: #FFFFFF;
+  overflow: inherit;
+
+}
+
+button::after {
+  border: none;
+}
+
+.captcha-login-btn,
+.pass-login-btn {
+  /* #ifndef H5 */
+  margin-top: 80rpx;
+  /* #endif */
+  font-size: 30rpx;
+  color: #646464;
+}
+
+.currentLogin {
+  font-weight: bold;
+  font-size: 44rpx;
+}
+
+/* 输入框部分 */
+.login-input-wrap input {
+  color: #000000;
+  height: 44rpx;
+  font-size: 32rpx;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  line-height: 44rpx;
+}
+
+.verify-code-wrap .send-code {
+  position: relative;
+  top: 4rpx;
+  width: 176rpx;
+  height: 60rpx;
+  border-radius: 30rpx;
+  border: 1rpx solid #F5F7FA;
+  font-size: 24rpx;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #99A0AD;
+
+  &.show-code {
+    color: #62BAEC;;
+    border-color: #62BAEC;
   }
+}
 
-	.back-image {
-		width: 36rpx;
-		height: 36rpx;
-		margin-top: 60rpx;
-	}
+/*登录按钮部分*/
+.login-btn-wrap {
+  margin-top: 60rpx;
+  height: 90rpx;
+}
 
-  .title {
-    height: 80rpx;
-    font-size: 56rpx;
-    font-family: PingFangSC-Medium, PingFang SC;
-    font-weight: 500;
-    color: #141F33;
-    line-height: 80rpx;
-    margin-top: 80rpx;
-  }
+.login-btn-wrap button {
+  font-size: 30rpx;
+  height: 100%;
+  line-height: 90rpx;
+}
 
-	.top-wrap button {
-		display: inline-block;
-		background-color: #FFFFFF;
-		overflow: inherit;
+/* 登录按钮 输入内容时,去掉灰色效果 */
+.login-btn {
+  background: linear-gradient(to right, #7BD68E, #65CCB9);
+}
 
-	}
+.opatity {
+  opacity: 0.5;
+}
 
-	button::after {
-		border: none;
-	}
+/* 登录图标 */
+.login-icon-all-wrap {
+  margin-top: 320rpx;
+}
 
-	.captcha-login-btn,
-	.pass-login-btn {
-		/* #ifndef H5 */
-		margin-top: 80rpx;
-		/* #endif */
-		font-size: 30rpx;
-		color: #646464;
-	}
+.login-icon {
+  color: #60E28B;
+  display: inline-block;
+  width: 88rpx;
+  height: 88rpx;
+  text-align: center;
+  line-height: 88rpx;
+  font-size: 80rpx;
+}
 
-	.currentLogin {
-		font-weight: bold;
-		font-size: 44rpx;
-	}
+.qq-login-icon {
+  color: #63C6EF;
+}
 
-	/* 输入框部分 */
-	.login-input-wrap input {
-		color: #000000;
-    height: 44rpx;
-    font-size: 32rpx;
-    font-family: PingFangSC-Regular, PingFang SC;
-    font-weight: 400;
-    line-height: 44rpx;
-	}
+.uni-tag-text--primary {
+  margin: 0 60rpx;
+}
 
-	.verify-code-wrap .send-code {
-    position: relative;
-    top: 4rpx;
-    width: 176rpx;
-    height: 60rpx;
-    border-radius: 30rpx;
-    border: 1rpx solid #F5F7FA;
-    font-size: 24rpx;
-    font-family: PingFangSC-Regular, PingFang SC;
-    font-weight: 400;
-    color: #99A0AD;
-    &.show-code {
-      color: #62BAEC;;
-      border-color: #62BAEC;
-    }
-	}
+.uni-tag-text--primary text {
+  display: block;
+}
 
-	/*登录按钮部分*/
-	.login-btn-wrap {
-		margin-top: 60rpx;
-		height: 90rpx;
-	}
-
-	.login-btn-wrap button {
-		font-size: 30rpx;
-		height: 100%;
-		line-height: 90rpx;
-	}
-
-	/* 登录按钮 输入内容时,去掉灰色效果 */
-	.login-btn {
-		background: linear-gradient(to right, #7BD68E, #65CCB9);
-	}
-
-	.opatity {
-		opacity: 0.5;
-	}
-
-	/* 登录图标 */
-	.login-icon-all-wrap {
-		margin-top: 320rpx;
-	}
-
-	.login-icon {
-		color: #60E28B;
-		display: inline-block;
-		width: 88rpx;
-		height: 88rpx;
-		text-align: center;
-		line-height: 88rpx;
-		font-size: 80rpx;
-	}
-
-	.qq-login-icon {
-		color: #63C6EF;
-	}
-
-	.uni-tag-text--primary {
-		margin: 0 60rpx;
-	}
-
-	.uni-tag-text--primary text {
-		display: block;
-	}
-
-	.login-icon-text {
-		color: #646464 !important;
-	}
+.login-icon-text {
+  color: #646464 !important;
+}
 
 </style>
 
@@ -338,6 +382,7 @@ export default {
   background-color: #FFF;
   border-radius: 32rpx;
   padding: 48rpx 32rpx;
+
   .popup-content {
     width: 100%;
     font-size: 28rpx;
@@ -346,6 +391,7 @@ export default {
     color: #99A0AD;
     line-height: 42rpx;
   }
+
   .popup-footer {
     margin-top: 40rpx;
     //width: 323px;

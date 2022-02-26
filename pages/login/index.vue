@@ -37,24 +37,6 @@ export default {
     if (option.keyword !== '') {
       this.keyword = option.keyword
     }
-
-    wx.login({
-      success (res) {
-        console.log('wx.login', res);
-        if (res.code) {
-          //发起网络请求
-          // wx.request({
-          //   url: 'https://example.com/onLogin',
-          //   data: {
-          //     code: res.code
-          //   }
-          // })
-        } else {
-          console.log('登录失败！' + res.errMsg)
-        }
-      }
-    })
-
   },
   methods: {
     navToLogin() {
@@ -63,21 +45,30 @@ export default {
     async getUserPhoneNumber(e) {
       console.log('getUserPhoneNumber', e)
       console.log(e.detail.code)
+      if (this.loading) return
       this.loading = true
-      try {
-        const res = await this.$http.post('/login/wechatPhoneLoginMini', { data: e.detail.code} )
-        console.log('handle login', res)
-        const { accountType, token, phone, id } = res.data
-        uni.setStorageSync('accountType', accountType)
-        uni.setStorageSync('token', token)
-        uni.setStorageSync('phone', phone)
-        uni.setStorageSync('userId', id)
+      const vm = this
 
-        uni.navigateBack({	delta: 2	})
-      } finally {
-        this.loading = false
-      }
+      wx.login({
+        success(res) {
+          console.log('wx.login', res);
+          if (res.code) {
+            vm.$http.post('/login/wechatPhoneLoginMini', { data: { code: res.code, phoneCode: e.detail.code } }).then(res => {
+              console.log('handle login', res)
+              const { accountType, token, phone, id } = res.data
+              uni.setStorageSync('accountType', accountType)
+              uni.setStorageSync('token', token)
+              uni.setStorageSync('phone', phone)
+              uni.setStorageSync('userId', id)
 
+              uni.navigateBack({ delta: 1 })
+            }).finally(() => { vm.loading = false })
+          } else {
+              this.loading = false
+            console.log('登录失败！' + res.errMsg)
+          }
+        }
+      })
     },
     back() {
       uni.navigateBack({ delta: 1 })
