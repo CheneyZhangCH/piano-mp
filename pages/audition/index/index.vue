@@ -296,31 +296,31 @@
       ref="timetablePopup"
       type="bottom"
     >
-      <view class="timetable-popup flex flex-column">
+      <view class="bottom-popup flex flex-column">
 
-        <view class="timetable-popup-title flex align-center">
+        <view class="bottom-popup-title flex align-center">
           <text class="text">正在选择：</text>
           <text class="tag inline-flex align-center">{{ timetableCourse.courseName }}</text>
           <text class="tag inline-flex align-center">{{ timetableCourse.teacherName }}</text>
         </view>
-        <view class="timetable-popup-content flex">
-          <view class="timetable-popup-content-left inline-flex flex-column">
+        <view class="bottom-popup-content flex">
+          <view class="bottom-popup-content-left inline-flex flex-column">
             <view
               v-for="dayOfWeek in dayOfWeekArr"
               :key="dayOfWeek.value"
               :class="{'active': dayOfWeek.value === timetableForm.dayOfWeek }"
-              class="timetable-popup-content-left-item inline-flex align-center justify-center"
+              class="bottom-popup-content-left-item inline-flex align-center justify-center"
               @click="toggleDayOfWeek(dayOfWeek.value)"
             >
               {{ dayOfWeek.label }}
             </view>
           </view>
 
-          <view class="timetable-popup-content-right flex-1">
+          <view class="bottom-popup-content-right flex-1">
             <view
               v-for="period in timetablePeriods"
               :key="period.timetablePeriodId"
-              class="timetable-popup-content-right-item flex align-center justify-between"
+              class="bottom-popup-content-right-item flex align-center justify-between"
               @click="selectPeriod(period)"
             >
               <text>{{ period.periodName }}</text>
@@ -333,7 +333,7 @@
   </view>
 </template>
 
-<script lang="js">
+<script>
 import dayjs from 'dayjs'
 
 export default {
@@ -341,19 +341,19 @@ export default {
     return {
       tabBars: [
         {
-          pagePath: 'pagesAudition/index/index',
+          pagePath: '/pages/audition/group/index',
           text: '老师课表',
           iconPath: '/static/images/tabBar/kebiao.png',
           selectedIconPath: '/static/images/tabBar/kebiao_selected.png'
         },
         {
-          pagePath: 'pagesAudition/index/index',
+          pagePath: '/pages/audition/index/index',
           text: '账号开通',
           iconPath: '/static/images/tabBar/kaitong.png',
           selectedIconPath: '/static/images/tabBar/kaitong_selected.png'
         },
         {
-          pagePath: 'pagesAudition/index/index',
+          pagePath: '/pages/audition/index/index',
           text: '学员续费',
           iconPath: '/static/images/tabBar/xufei.png',
           selectedIconPath: '/static/images/tabBar/xufei_selected.png'
@@ -476,8 +476,8 @@ export default {
       console.log('this.basicForm', this.basicForm)
     },
     handleNav(tab) {
-      this.currentTab = tab
-      uni.setNavigationBarTitle({ title: tab.text })
+      console.log('handleNav', tab)
+      uni.navigateTo({ url: tab.pagePath })
     },
     navToRecord() {
       uni.navigateTo({ url: `/pages/audition/record/index` })
@@ -519,9 +519,9 @@ export default {
       this.basicForm.courses[courseIndex].teacherName = teacher.teacherName
       this.basicForm.courses[courseIndex].teacherId = teacher.accountId
 
-      this.basicForm.courses[this.timetableCourseIndex].timetableId = ''
-      this.basicForm.courses[this.timetableCourseIndex].timetablePeriodId = ''
-      this.basicForm.courses[this.timetableCourseIndex].timetablePeriodName = ''
+      this.basicForm.courses[courseIndex].timetableId = ''
+      this.basicForm.courses[courseIndex].timetablePeriodId = ''
+      this.basicForm.courses[courseIndex].timetablePeriodName = ''
       this.studentUsableTimetablePeriod = undefined
       console.log('this.basicForm.courses', this.basicForm.courses)
     },
@@ -601,7 +601,7 @@ export default {
       }
       console.log('this.studentUsableTimetablePeriod ---------', this.studentUsableTimetablePeriod);
       this.timetablePickerVisible = true
-      this.timetablePeriods = (this.studentUsableTimetablePeriod.find(item => item.dayOfWeek === dayOfWeek) || {}).periods
+      this.timetablePeriods = (this.studentUsableTimetablePeriod.find(item => item.dayOfWeek === dayOfWeek) || {}).periods || []
       console.log('this.timetablePeriods', this.timetablePeriods);
       this.$nextTick(() => {
         this.$refs.timetablePopup.open()
@@ -611,7 +611,8 @@ export default {
       this.timetableForm.dayOfWeek = dayOfWeek
       // const teacherId = this.timetableCourse.teacherId
       // const timetableRes = await this.$http.post('/mini/courseTimetable/getTeacherDayTimetable', { data: { dayOfWeek, teacherId } })
-      this.timetablePeriods = this.studentUsableTimetablePeriod.find(item => item.dayOfWeek === dayOfWeek)
+      this.timetablePeriods = (this.studentUsableTimetablePeriod.find(item => item.dayOfWeek === dayOfWeek)|| {}).periods || []
+      console.log('this.timetablePeriods', this.timetablePeriods);
     },
     selectPeriod(period) {
       this.basicForm.courses[this.timetableCourseIndex].timetableId = period.timetableId
@@ -920,7 +921,7 @@ export default {
 </style>
 
 <style lang="scss">
-.timetable-popup {
+.bottom-popup {
   //height: calc(728rpx + var(--window-bottom));
   height: inherit;
   background-color: #fff;
@@ -930,7 +931,7 @@ export default {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-.timetable-popup-title {
+.bottom-popup-title {
   height: 128rpx;
   padding: 0 52rpx;
 }
@@ -957,12 +958,12 @@ export default {
   width: 20rpx;
 }
 
-.timetable-popup-content {
+.bottom-popup-content {
   height: 600rpx;
 }
 
-.timetable-popup-content-left {
-  .timetable-popup-content-left-item {
+.bottom-popup-content-left {
+  .bottom-popup-content-left-item {
     width: 200rpx;
     height: 100rpx;
 
@@ -985,11 +986,11 @@ export default {
   }
 }
 
-.timetable-popup-content-right {
+.bottom-popup-content-right {
   height: 600px;
   background: #F5F7FA;
 
-  .timetable-popup-content-right-item {
+  .bottom-popup-content-right-item {
     height: 100rpx;
     padding: 0 120rpx 0 52rpx;
     font-size: 28rpx;

@@ -314,6 +314,20 @@
 			"root": "pages/audition",
 			"pages": [
 				{
+					"path": "group/index",
+					"style": {
+						"navigationBarTitleText": "",
+						"titleNView": false
+					}
+				},
+				{
+					"path": "teacher/index",
+					"style": {
+						"navigationBarTitleText": "",
+						"titleNView": false
+					}
+				},
+				{
 					"path": "index/index",
 					"style": {
 						"navigationBarTitleText": "",
@@ -1219,7 +1233,7 @@
 		"pageOrientation": "portrait",
 		"navigationBarTitleText": "钢琴童话",
 		"navigationBarTextStyle": "black",
-		"navigationBarBackgroundColor": "#F8F8F8",
+		"navigationBarBackgroundColor": "#FFF",
 		"backgroundColor": "#F8F8F8",
 		"backgroundColorTop": "#F4F5F6",
 		"backgroundColorBottom": "#F4F5F6"
@@ -1228,32 +1242,42 @@
 		"current": 3,
 		"list": [
 			{
-				"name": "login",
+				"name": "登录",
 				"path": "pages/login/index",
 				"query": "no=FYSH001932095&cityId=2"
 			},
 			{
-				"name": "phoneLogin",
+				"name": "其他电话登录",
 				"path": "pages/login/login",
 				"query": "no=FYSH001932095&cityId=2"
 			},
 			{
-				"name": "ShiTing",
+				"name": "老师课表",
+				"path": "pages/audition/group/index",
+				"query": "no=FYSH001932095&cityId=2"
+			},
+			{
+				"name": "老师详情",
+				"path": "pages/audition/teacher/index",
+				"query": "id=16&name=张老师"
+			},
+			{
+				"name": "账号开通",
 				"path": "pages/audition/index/index",
 				"query": "no=FYSH001932095&cityId=2"
 			},
 			{
-				"name": "Contract",
+				"name": "合同",
 				"path": "pages/audition/contract/index",
 				"query": "no=FYSH001932095&cityId=2"
 			},
 			{
-				"name": "Success",
+				"name": "开通成功",
 				"path": "pages/audition/success/index",
 				"query": "no=FYSH001932095&cityId=2"
 			},
 			{
-				"name": "record",
+				"name": "开通记录",
 				"path": "pages/audition/record/index",
 				"query": "no=FYSH001932095&cityId=2"
 			},

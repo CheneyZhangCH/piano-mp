@@ -12,6 +12,8 @@
     {
       "root": "pages/audition",
       "pages": [
+        "group/index",
+        "teacher/index",
         "index/index",
         "contract/index",
         "success/index",
@@ -146,7 +148,7 @@
     "pageOrientation": "portrait",
     "navigationBarTitleText": "钢琴童话",
     "navigationBarTextStyle": "black",
-    "navigationBarBackgroundColor": "#F8F8F8",
+    "navigationBarBackgroundColor": "#FFF",
     "backgroundColor": "#F8F8F8",
     "backgroundColorTop": "#F4F5F6",
     "backgroundColorBottom": "#F4F5F6"

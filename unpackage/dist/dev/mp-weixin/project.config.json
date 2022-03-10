@@ -57,44 +57,56 @@
     "miniprogram": {
       "list": [
         {
-          "name": "login",
+          "name": "登录",
           "query": "no=FYSH001932095&cityId=2",
           "id": 0,
           "pathName": "pages/login/index"
         },
         {
-          "name": "phoneLogin",
+          "name": "其他电话登录",
           "query": "no=FYSH001932095&cityId=2",
           "id": 1,
           "pathName": "pages/login/login"
         },
         {
-          "name": "ShiTing",
+          "name": "老师课表",
           "query": "no=FYSH001932095&cityId=2",
           "id": 2,
+          "pathName": "pages/audition/group/index"
+        },
+        {
+          "name": "老师详情",
+          "query": "id=16&name=张老师",
+          "id": 3,
+          "pathName": "pages/audition/teacher/index"
+        },
+        {
+          "name": "账号开通",
+          "query": "no=FYSH001932095&cityId=2",
+          "id": 4,
           "pathName": "pages/audition/index/index"
         },
         {
-          "name": "Contract",
+          "name": "合同",
           "query": "no=FYSH001932095&cityId=2",
-          "id": 3,
+          "id": 5,
           "pathName": "pages/audition/contract/index"
         },
         {
-          "name": "Success",
+          "name": "开通成功",
           "query": "no=FYSH001932095&cityId=2",
-          "id": 4,
+          "id": 6,
           "pathName": "pages/audition/success/index"
         },
         {
-          "name": "record",
+          "name": "开通记录",
           "query": "no=FYSH001932095&cityId=2",
-          "id": 5,
+          "id": 7,
           "pathName": "pages/audition/record/index"
         },
         {
           "name": "uniapp",
-          "id": 6,
+          "id": 8,
           "pathName": "pages/tabBar/component/component"
         }
       ]
