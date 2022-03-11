@@ -5,72 +5,40 @@
   },
   "setting": {
     "urlCheck": false,
-    "es6": true,
-    "enhance": false,
-    "postcss": true,
-    "preloadBackgroundData": false,
-    "minified": true,
-    "newFeature": false,
-    "coverView": true,
-    "nodeModules": false,
-    "autoAudits": false,
-    "showShadowRootInWxmlPanel": true,
-    "scopeDataCheck": false,
-    "uglifyFileName": false,
-    "checkInvalidKey": true,
-    "checkSiteMap": true,
-    "uploadWithSourceMap": true,
-    "compileHotReLoad": false,
-    "useMultiFrameRuntime": true,
-    "useApiHook": true,
-    "useApiHostProcess": true,
-    "babelSetting": {
-      "ignore": [],
-      "disablePlugins": [],
-      "outputPath": ""
-    },
-    "useIsolateContext": true,
-    "userConfirmedBundleSwitch": false,
-    "packNpmManually": false,
-    "packNpmRelationList": [],
-    "minifyWXSS": true,
-    "disableUseStrict": false,
-    "showES6CompileOption": false,
-    "useCompilerPlugins": false,
-    "ignoreUploadUnusedFiles": true,
-    "minifyWXML": true
+    "es6": true
   },
   "compileType": "miniprogram",
   "libVersion": "",
   "appid": "wx12d8eb12fd74822b",
-  "projectname": "piano",
+  "projectname": "piano-mp-v2",
   "condition": {
     "search": {
+      "current": -1,
       "list": []
     },
     "conversation": {
+      "current": -1,
       "list": []
     },
     "game": {
+      "current": -1,
       "list": []
     },
     "miniprogram": {
+      "current": 3,
       "list": [
         {
           "name": "登录",
-          "query": "no=FYSH001932095&cityId=2",
           "id": 0,
           "pathName": "pages/login/index"
         },
         {
           "name": "其他电话登录",
-          "query": "no=FYSH001932095&cityId=2",
           "id": 1,
           "pathName": "pages/login/login"
         },
         {
           "name": "老师课表",
-          "query": "no=FYSH001932095&cityId=2",
           "id": 2,
           "pathName": "pages/audition/group/index"
         },
@@ -82,32 +50,23 @@
         },
         {
           "name": "账号开通",
-          "query": "no=FYSH001932095&cityId=2",
           "id": 4,
           "pathName": "pages/audition/index/index"
         },
         {
           "name": "合同",
-          "query": "no=FYSH001932095&cityId=2",
           "id": 5,
           "pathName": "pages/audition/contract/index"
         },
         {
           "name": "开通成功",
-          "query": "no=FYSH001932095&cityId=2",
           "id": 6,
           "pathName": "pages/audition/success/index"
         },
         {
           "name": "开通记录",
-          "query": "no=FYSH001932095&cityId=2",
           "id": 7,
           "pathName": "pages/audition/record/index"
-        },
-        {
-          "name": "uniapp",
-          "id": 8,
-          "pathName": "pages/tabBar/component/component"
         }
       ]
     }
