@@ -153,7 +153,7 @@
         <Course ref="course" />
 
         <!-- 消课 - 一对一 -->
-        <FinishLessonOne ref="finishLessonOne" />
+        <FinishLessonOne ref="finishLessonOne" :detail="finishLessonDetail" />
         <!-- 消课 - 一对多 -->
         <FinishLessonMore ref="finishLessonMore" :detail="finishLessonDetail" />
     </view>
