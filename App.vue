@@ -1,3 +1,8 @@
+<template>
+    <view>
+        123
+    </view>
+</template>
 <script>
 	export default {
 		onLaunch: function() {
@@ -12,7 +17,7 @@
 	}
 </script>
 
-<style> 
+<style>
 	/* 每个页面公共css */
 	@import "./common/uni.css";
 
@@ -27,14 +32,17 @@
 
 	/* 全局样式 */
 	@import "./common/common.css";
-	
+
+	/* 页面样式 */
+	@import "./common/page.scss";
+
 	page {
 		background-color: #efeff4;
 		height: 100%;
 		font-size: 28rpx;
 		/* line-height: 1.8; */
 	}
-	
+
 	view {
 		line-height: 1;
 	}

@@ -60,8 +60,81 @@
 					}
 				}
 			]
-		}
+		},
+        {
+            "root": "pages/student",
+            "pages": [
+                {
+                    "path": "contract/index",
+                    "style": {
+                        "navigationBarTitleText": "钢琴童话教育培训协议"
+                    }
+                },
+                {
+                    "path": "videos/index",
+                    "style": {
+                        "navigationBarTitleText": "配套视频"
+                    }
+                },
+                {
+                    "path": "videos/courses",
+                    "style": {
+                        "navigationBarTitleText": "", // 教材名称
+                        "navigationStyle": "custom"
+                    }
+                },
+                {
+                    "path": "videos/chapter",
+                    "style": {
+                        "navigationBarTitleText": "" // 曲目名称
+                    }
+                },
+                {
+                    "path": "homework/index",
+                    "style": {
+                        "navigationBarTitleText": "课后作业"
+                    }
+                },
+                {
+                    "path": "center/index",
+                    "style": {
+                        "navigationBarTitleText": "学员中心",
+                        "navigationStyle": "custom"
+                    }
+                }
+            ]
+        },
+        {
+            "root": "pages/teacher",
+            "pages": [
+                {
+                    "path": "schedule/index",
+                    "style": {
+                        "navigationBarTitleText": "我的课表"
+                    }
+                },
+                {
+                    "path": "datacenter/index",
+                    "style": {
+                        "navigationBarTitleText": "数据中心"
+                    }
+                }
+            ]
+        }
 	],
+    // "tabBar":{
+    //     "list": [
+    //         {
+    //             "pagePath": "pages/student/videos/index"
+    //         },
+    //         {
+    //             "pagePath": "pages/student/homework/index"
+    //         },
+    //         {
+    //             "pagePath": "pages/student/center/index"
+    //         }
+    //     ]
+    // },
 	"globalStyle": {
 		"pageOrientation": "portrait",
 		"navigationBarTitleText": "钢琴童话",
@@ -71,7 +144,7 @@
 		"backgroundColorTop": "#F4F5F6",
 		"backgroundColorBottom": "#F4F5F6",
 
-		"usingComponents": { //这里为方便，全局引入了所有组件，也可以在某个page下单独引用某个组件 
+		"usingComponents": { //这里为方便，全局引入了所有组件，也可以在某个page下单独引用某个组件
 			"van-action-sheet": "/wxcomponents/vant/action-sheet/index",
 			"van-area": "/wxcomponents/vant/area/index",
 			"van-button": "/wxcomponents/vant/button/index",

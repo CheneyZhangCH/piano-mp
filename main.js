@@ -1,11 +1,10 @@
 import App from './App'
-// import store from './store'
+import store from './store'
 
 // #ifndef VUE3
 import Vue from 'vue'
 Vue.config.productionTip = false
-// Vue.prototype.$store = store
-Vue.prototype.$adpid = "1111111111"
+Vue.prototype.$store = store
 Vue.prototype.$backgroundAudioData = {
 	playing: false,
 	playTime: 0,
@@ -14,6 +13,9 @@ Vue.prototype.$backgroundAudioData = {
 // 引入请求库
 import hRequire from './common/require.js'
 Vue.prototype.$http = hRequire
+
+import customTabbar from './components/custom-tabbar'
+Vue.component('customTabbar', customTabbar)
 
 // 权限验证操作
 Vue.prototype.checkAuth = (callback) => {
@@ -33,7 +35,7 @@ Vue.prototype.checkAuth = (callback) => {
 
 App.mpType = 'app'
 const app = new Vue({
-	// store,
+	store,
     ...App
 })
 app.$mount()

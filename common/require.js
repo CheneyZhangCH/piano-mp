@@ -18,7 +18,7 @@ export default {
       console.log(e)
     }
     // 验证权限token
-    console.log(options.url)
+    // console.log(options.url)
     // 大坑,真机调试时,手机必须联网,否则连不上也不报错!!!!
     return uni.request(options)
   },
@@ -34,7 +34,7 @@ export default {
     }
     return new Promise(async (resolve, reject) => {
       const responses = await this.request(options)
-      console.log('res ------------', responses);
+    //   console.log('res ------------', responses);
       if (responses[0]) {
         uni.showToast({ title: '网络超时', icon: 'none' })
         reject({ message: "网络超时" });
@@ -70,13 +70,13 @@ export default {
     }
     return new Promise(async (resolve, reject) => {
       const responses = await this.request(options)
-      console.log('res ------------', responses);
+    //   console.log('res ------------', responses);
       if (responses[0]) {
         uni.showToast({ title: '网络超时', icon: 'none' })
         reject({ message: "网络超时" });
       } else {
         const response = responses[1].data; // 如果返回的结果是data.data的，嫌麻烦可以用这个，return res,这样只返回一个data
-        console.log('response', response);
+        // console.log('response', response);
         if (response.code === 401 || response.code === 403) {
           uni.setStorageSync('accountType', '')
           uni.setStorageSync('token', '')
