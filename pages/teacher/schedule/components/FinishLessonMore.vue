@@ -14,32 +14,39 @@
                     <view class="form-item">
                         <view class="label">本课内容</view>
                         <view class="value flex">
-                            <view
-                                class="input ellipsis"
+                            <picker
+                                class="picker ellipsis"
                                 :class="{ placeholder: !form.bookId }"
-                                @click="onBook"
+                                :value="bookValue"
+                                range-key="name"
+                                :range="bookList"
+                                @change="onBookChange"
                             >
                                 {{ form.bookName || '请选择教材' }}
                                 <image
                                     class="arrow"
                                     src="/static/images/teacher/arrow-down.png"
-                                ></image>
-                            </view>
-                            <view
-                                class="input ellipsis"
+                                />
+                            </picker>
+                            <picker
+                                class="picker ellipsis"
                                 :class="{ placeholder: !form.chapterId }"
-                                @click="onChapter"
+                                :value="chapterValue"
+                                :disabled="chapterPickerDisabled"
+                                range-key="name"
+                                :range="chapterList"
+                                @change="onChapterChange"
                             >
                                 {{ form.chapterName || '请选择曲目' }}
                                 <image
                                     class="arrow"
                                     src="/static/images/teacher/arrow-down.png"
-                                ></image>
-                            </view>
+                                />
+                            </picker>
                         </view>
                     </view>
                     <view class="form-item">
-                        <view class="label">学院选择</view>
+                        <view class="label">学员选择</view>
                         <view class="value">
                             <van-checkbox-group
                                 v-model="form.studentIds"
@@ -84,13 +91,6 @@
                 </view>
             </view>
         </uni-popup>
-
-        <van-action-sheet
-            :show="actionsShow"
-            :actions="actions"
-            @select="onActionsSelect"
-        />
-        <!-- cancel-text="取消" -->
     </view>
 </template>
 
@@ -107,7 +107,7 @@ export default {
             form: {
                 bookId: '',
                 bookName: '',
-                chapterId: 0, // 曲目id
+                chapterId: '',
                 chapterName: '',
                 studentIds: [],
             },
@@ -122,13 +122,18 @@ export default {
             title: '',
             students: [],
 
-            actionsShow: false,
-            actions: [],
+            bookList: [],
+            bookValue: 0,
+            chapterList: [],
+            chapterValue: 0
         }
     },
     computed: {
         courseId() {
             return this.detail?.moreCourse?.course?.id ?? 0
+        },
+        chapterPickerDisabled() {
+            return this.chapterList.length === 0
         },
         disabled() {
             const { bookId, chapterId, studentIds } = this.form
@@ -137,6 +142,13 @@ export default {
     },
     methods: {
         async open() {
+            this.form = {
+                bookId: '',
+                bookName: '',
+                chapterId: '',
+                chapterName: '',
+                studentIds: [],
+            }
             const res = await this.$http.get(
                 '/mini/teachingBook/listByCourseId?courseId=' + this.courseId
             )
@@ -144,8 +156,10 @@ export default {
                 res.data?.map((item) => ({
                     id: item.id,
                     name: item.bookName,
-                    type: 'book',
                 })) ?? []
+            this.bookValue = 0
+            this.chapterList = []
+            this.chapterValue = 0
 
             this.title = `${this.dayOfWeekOBj[this.detail?.dayOfWeek]} ${
                 this.detail?.periodName
@@ -156,49 +170,45 @@ export default {
             this.$refs.popup.open()
         },
 
-        onBook() {
-            this.actions = this.bookList
-            this.actionsShow = true
+        async onBookChange(e) {
+            if (this.bookValue === e.detail.value) return
+            this.bookValue = e.detail.value
+            const { id, name } = this.bookList[this.bookValue]
+
+            const res = await this.$http.get(
+                '/mini/teachingBook/listChapterByBookAndCourse?courseId=' +
+                    this.courseId +
+                    '&bookId=' +
+                    id
+            )
+            this.chapterList =
+                res?.data?.map((item) => ({
+                    id: item.id,
+                    name: item.chapterName,
+                })) ?? []
+
+            this.$set(this.form, 'bookId', id)
+            this.$set(this.form, 'bookName', name)
+            this.$set(this.form, 'chapterId', '')
+            this.$set(this.form, 'chapterName', '')
+            this.chapterValue = 0
         },
 
-        onChapter() {
-            if (!this.form.bookId) return uni.showToast({  title: '请先选择教材！',icon: 'error' });
-            this.actions = this.chapterList
-            this.actionsShow = true
+        onChapterChange(e) {
+            this.chapterValue = e.detail.value
+            const { id, name } = this.chapterList[this.chapterValue]
+
+            this.$set(this.form, 'chapterId', id)
+            this.$set(this.form, 'chapterName', name)
         },
 
-        async onActionsSelect(e) {
-            const { type, id, name } = e.detail
-            if (type === 'book') {
-                if (this.form.bookId !== id) {
-                    const res = await this.$http.get(
-                        '/mini/teachingBook/listChapterByBookAndCourse?courseId=' +
-                            this.courseId +
-                            '&bookId=' +
-                            id
-                    )
-                    this.chapterList =
-                        res?.data?.map((item) => ({
-                            id: item.id,
-                            name: item.chapterName,
-                            type: 'chapter',
-                        })) ?? []
-
-                    this.$set(this.form, 'bookId', id)
-                    this.$set(this.form, 'bookName', name)
-                    this.$set(this.form, 'chapterId', '')
-                    this.$set(this.form, 'chapterName', '')
-                }
-            } else {
-                this.$set(this.form, 'chapterId', id)
-                this.$set(this.form, 'chapterName', name)
-            }
-            this.actionsShow = false
-        },
-
-        handleConfirm() {
-            const { timetableId, timetablePeriodId } = this.detail
-            const { bookId, bookName, chapterId, chapterName, studentIds } = this.form
+        async handleConfirm() {
+            const {
+                timetableId,
+                timetablePeriodId
+            } = this.detail
+            const { bookId, bookName, chapterId, chapterName, studentIds } =
+                this.form
             const param = {
                 data: {
                     chapters: [
@@ -207,17 +217,27 @@ export default {
                             bookName,
                             chapterId, // 曲目id
                             chapterName,
-                            finishLessonId: 0, // 消课id
-                            id: 0, // 消课曲目id
                         },
                     ],
+                    courseId: this.courseId, // 课程id
                     studentIds, // 学生id
                     timetableId, // 课表id
                     timetablePeriodId, // 课表时间段id
                 },
             }
-            console.log(param)
-        }
+            const res = await this.$http.post(
+                '/mini/finishiLesson/finishLesson',
+                param
+            )
+            if (res.ok) {
+                uni.showToast({
+                    title: '消课成功！',
+                    icon: 'success',
+                })
+                this.$refs.popup.close()
+                this.$emit('success')
+            }
+        },
     },
 }
 </script>
@@ -229,7 +249,7 @@ export default {
     border-radius: 32rpx;
 
     .header {
-        padding: 22rpx 0;
+        padding: 22rpx 32rpx;
         font-size: 32rpx;
         font-weight: 500;
         color: #141f33;
@@ -251,7 +271,7 @@ export default {
             }
             .value {
                 column-gap: 10rpx;
-                .input {
+                .picker {
                     position: relative;
                     width: 202rpx;
                     height: 56rpx;
@@ -261,6 +281,7 @@ export default {
                     padding: 0 52rpx 0 20rpx;
                     font-size: 24rpx;
                     color: #141f33;
+                    box-sizing: border-box;
                     &.placeholder {
                         color: #99a0ad;
                     }
@@ -301,8 +322,8 @@ export default {
             font-weight: 500;
             color: #616b80;
             &.confirm {
-                color: #FFFFFF;
-                background: linear-gradient(90deg, #61BAEC 0%, #84DAEE 100%);
+                color: #ffffff;
+                background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
             }
             &.disabled {
                 background: #e1e1e1;

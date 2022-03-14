@@ -33,13 +33,11 @@
 	/* 全局样式 */
 	@import "./common/common.css";
 
-	/* 页面样式 */
-	@import "./common/page.scss";
-
 	page {
 		background-color: #efeff4;
 		height: 100%;
 		font-size: 28rpx;
+        font-family: PingFangSC-Regular, PingFang SC;
 		/* line-height: 1.8; */
 	}
 

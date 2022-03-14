@@ -15,7 +15,7 @@
             <template v-if="periods.length">
                 <template v-for="period in periods">
                     <view
-                        v-if="['work','rest'].includes(period.periodType)"
+                        v-if="['work', 'rest'].includes(period.periodType)"
                         :key="period.timetablePeriodId"
                         class="period-item"
                     >
@@ -23,7 +23,10 @@
                             <view v-if="period.oneCourse" class="period-main">
                                 <image
                                     class="avatar"
-                                    :src="period.oneCourse.student.coverUrl || '/static/images/course_type_more.png'"
+                                    :src="
+                                        period.oneCourse.student.coverUrl ||
+                                        '/static/images/course_type_more.png'
+                                    "
                                     @click="openStudent(period)"
                                 />
                                 <view
@@ -31,7 +34,9 @@
                                         [
                                             'finish_course_discontinue',
                                             'finish_course_continue',
-                                        ].includes(period.oneCourse.student.status)
+                                        ].includes(
+                                            period.oneCourse.student.status
+                                        )
                                     "
                                     class="period-status"
                                     :class="period.oneCourse.student.status"
@@ -47,7 +52,10 @@
                                         }}</text>
                                         <image
                                             class="gender-icon"
-                                            :src="`/static/images/${period.oneCourse.student.gender || 'male'}_selected.png`"
+                                            :src="`/static/images/${
+                                                period.oneCourse.student
+                                                    .gender || 'male'
+                                            }_selected.png`"
                                         ></image>
                                         <text class="student-age">{{
                                             period.oneCourse.student.age + '岁'
@@ -67,7 +75,8 @@
                                                 .coursePackage.courses"
                                             :key="course.courseId"
                                             :class="{
-                                                warning: course.remainCourseNum < 6,
+                                                warning:
+                                                    course.remainCourseNum < 6,
                                             }"
                                             class="course-item ellipsis"
                                         >
@@ -75,9 +84,13 @@
                                         </view>
                                     </view>
                                 </view>
-                                <view class="finish-lesson" @click="handleFinishLesson(period)">消课</view>
+                                <view
+                                    class="finish-lesson"
+                                    @click="handleFinishLesson(period)"
+                                    >消课</view
+                                >
                             </view>
-                             <view v-if="period.moreCourse" class="period-main">
+                            <view v-if="period.moreCourse" class="period-main">
                                 <image
                                     class="avatar"
                                     src="/static/images/course_type_more.png"
@@ -89,7 +102,8 @@
                                 <view class="period-content">
                                     <view class="period-content-title">
                                         <text class="student-name">{{
-                                            period.moreCourse.course.courseName +
+                                            period.moreCourse.course
+                                                .courseName +
                                             (period.remainStudentNum === 0
                                                 ? '(满班)'
                                                 : '')
@@ -104,17 +118,22 @@
                                         class="student ellipsis"
                                     >
                                         <text
-                                            v-for="student in period.moreCourse.students"
+                                            v-for="student in period.moreCourse
+                                                .students"
                                             :key="student.studentId"
-                                            :class="{ warning: student.warning }"
-                                            class="student-item "
+                                            :class="{
+                                                warning: student.warning,
+                                            }"
+                                            class="student-item"
                                         >
                                             {{ student.studentName }}
                                         </text>
                                     </view>
                                     <view
                                         v-if="
-                                            Array.isArray(period.moreCourse.chapter)
+                                            Array.isArray(
+                                                period.moreCourse.chapter
+                                            )
                                         "
                                         class="chapter"
                                     >
@@ -128,14 +147,21 @@
                                         </text>
                                     </view>
                                 </view>
-                                <view class="finish-lesson" @click="handleFinishLesson(period)">消课</view>
+                                <view
+                                    class="finish-lesson"
+                                    @click="handleFinishLesson(period)"
+                                    >消课</view
+                                >
                             </view>
                         </template>
 
-                        <view class="period-rest" v-if="period.periodType === 'rest'">
+                        <view
+                            class="period-rest"
+                            v-if="period.periodType === 'rest'"
+                        >
                             <view class="period-rest-divider"></view>
                             <view class="period-rest-name">
-                                {{ period.periodName}} 休息
+                                {{ period.periodName }} 休息
                             </view>
                             <view class="period-rest-divider"></view>
                         </view>
@@ -153,9 +179,17 @@
         <Course ref="course" />
 
         <!-- 消课 - 一对一 -->
-        <FinishLessonOne ref="finishLessonOne" :detail="finishLessonDetail" />
+        <FinishLessonOne
+            ref="finishLessonOne"
+            :detail="finishLessonDetail"
+            @success="handleSearch"
+        />
         <!-- 消课 - 一对多 -->
-        <FinishLessonMore ref="finishLessonMore" :detail="finishLessonDetail" />
+        <FinishLessonMore
+            ref="finishLessonMore"
+            :detail="finishLessonDetail"
+            @success="handleSearch"
+        />
     </view>
 </template>
 
@@ -172,7 +206,7 @@ export default {
         Student,
         Course,
         FinishLessonOne,
-        FinishLessonMore
+        FinishLessonMore,
     },
     data() {
         return {
@@ -190,7 +224,7 @@ export default {
             studentDialogVisible: false, // 学生详情弹窗
             studentDetail: {}, // 当前学生
 
-            finishLessonDetail: {} // 消课详情
+            finishLessonDetail: {}, // 消课详情
         }
     },
     onLoad() {
@@ -211,11 +245,18 @@ export default {
         },
 
         async handleSearch() {
-            const userId = 16// uni.getStorageSync('userId')
+            wx.showLoading({ title: '加载中' })
+            const userId = uni.getStorageSync('userId')
             const res = await this.$http.post(
                 `/mini/courseTimetable/getTeacherDayTimetable`,
-                { data: { teacherId: userId, dayOfWeek: this.dayOfWeek } }
+                {
+                    data: {
+                        teacherId: userId === 28 ? 16 : userId,
+                        dayOfWeek: this.dayOfWeek,
+                    },
+                }
             )
+            wx.hideLoading()
             const { periods } = res.data ?? {}
 
             if (periods?.length) {
@@ -236,6 +277,8 @@ export default {
                 })
             }
             this.periods = periods || []
+
+            uni.stopPullDownRefresh()
         },
 
         // 学生详情弹窗
@@ -250,7 +293,7 @@ export default {
         },
 
         // 一对多详情
-        openCourse(period){
+        openCourse(period) {
             console.log(period)
         },
 
@@ -285,16 +328,19 @@ export default {
         // 消课
         handleFinishLesson(item) {
             this.finishLessonDetail = item
-            const refName = ({
-                'one': 'finishLessonOne',
-                'more': 'finishLessonMore',
-            })[item.courseType]
-            if(!refName) return
+            const refName = {
+                one: 'finishLessonOne',
+                more: 'finishLessonMore',
+            }[item.courseType]
+            if (!refName) return
 
             this.$nextTick(() => {
                 this.$refs[refName].open()
             })
-        }
+        },
+    },
+    onPullDownRefresh() {
+        this.handleSearch()
     },
 }
 </script>
@@ -303,7 +349,7 @@ export default {
 .page {
     height: 100vh;
     padding-top: 80rpx;
-    background: #F5F7FA;
+    background: #f5f7fa;
 }
 
 .page-title {
@@ -313,7 +359,7 @@ export default {
     left: 0;
 
     width: 100%;
-    background: #FFFFFF;
+    background: #ffffff;
     padding: 20rpx 30rpx;
 
     display: flex;
@@ -322,7 +368,7 @@ export default {
 
     .day-of-week {
         font-size: 28rpx;
-        color: #99A0AD;
+        color: #99a0ad;
         line-height: 40rpx;
 
         &.active {
@@ -340,7 +386,7 @@ export default {
                 opacity: 0.8;
                 width: 54rpx;
                 height: 22rpx;
-                background: linear-gradient(90deg, #61BAEC 0%, #84DAEE 100%);
+                background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
                 border-radius: 4rpx;
             }
         }
@@ -364,6 +410,7 @@ export default {
         position: absolute;
         width: 76rpx;
         height: 76rpx;
+        border-radius: 50%;
         left: 196rpx;
         top: -16rpx;
         z-index: 1;
@@ -373,8 +420,8 @@ export default {
         display: flex;
         min-height: 176rpx;
         position: relative;
-        background: #FFFFFF;
-        box-shadow: 0px 0px 8px 0px #E3E5E9;
+        background: #ffffff;
+        box-shadow: 0px 0px 8px 0px #e3e5e9;
         border-radius: 16rpx;
 
         .period-status {
@@ -407,7 +454,7 @@ export default {
 
             font-size: 28rpx;
             font-weight: 500;
-            color: #141F33;
+            color: #141f33;
 
             &::after {
                 content: ' ';
@@ -436,7 +483,7 @@ export default {
                 .student-name {
                     font-size: 28rpx;
                     font-weight: 500;
-                    color: #62BBEC;
+                    color: #62bbec;
                     line-height: 20px;
                 }
 
@@ -459,7 +506,7 @@ export default {
                 padding: 0 10rpx 20rpx 20rpx;
 
                 .course-item {
-                    +.course-item {
+                    + .course-item {
                         margin-top: 10rpx;
                     }
                     font-size: 24rpx;
@@ -468,14 +515,14 @@ export default {
 
                     &.warning {
                         font-weight: 500;
-                        color: #F15E5E
+                        color: #f15e5e;
                     }
                 }
             }
             .student {
                 padding: 0 10rpx 20rpx 20rpx;
                 .student-item {
-                    +.student-item {
+                    + .student-item {
                         margin-left: 10rpx;
                     }
 
@@ -493,11 +540,11 @@ export default {
             align-items: center;
             justify-content: center;
 
-            background: linear-gradient(90deg, #61BAEC 0%, #84DAEE 100%);
+            background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
             border-radius: 0px 16rpx 16rpx 0px;
 
             font-size: 28rpx;
-            color: #FFFFFF;
+            color: #ffffff;
         }
     }
 
