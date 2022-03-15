@@ -173,7 +173,7 @@
         <customTabbar :active="0" />
 
         <!-- 学生详情 -->
-        <Student ref="studentDialog" :detail="studentDetail" />
+        <Student ref="studentDialog" :detail="studentDetail" @update="getStudent"/>
 
         <!-- 一对多详情（课程） -->
         <Course ref="course" />
@@ -282,14 +282,17 @@ export default {
         },
 
         // 学生详情弹窗
-        async openStudent(period) {
+        openStudent(period) {
             const studentId = period.oneCourse.student.accountId
+            this.getStudent(studentId)
+            this.$refs.studentDialog.$refs.popup.open()
+        },
+
+        async getStudent(studentId) {
             const res = await this.$http.get(
                 `/mini/student/getStudentDetail?studentId=${studentId}`
             )
-
-            this.studentDetail = res.data
-            this.$refs.studentDialog.$refs.popup.open()
+            this.studentDetail = res.data ?? {}
         },
 
         // 一对多详情

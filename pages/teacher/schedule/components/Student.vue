@@ -3,17 +3,12 @@
         <uni-popup ref="popup" :is-mask-click="false" type="center">
             <view class="center-popup flex flex-column">
                 <view class="center-popup-title flex">
-                    <image
-                        class="avatar"
-                        :src="
+                    <image class="avatar" :src="
                             student.coverUrl ||
                             '/static/images/course_type_more.png'
-                        "
-                    ></image>
+                        "></image>
                     <view class="center-popup-title-content">
-                        <view
-                            class="center-popup-title-main flex align-center justify-between"
-                        >
+                        <view class="center-popup-title-main flex align-center justify-between">
                             <text>
                                 <text class="student-name">{{
                                     student.studentName
@@ -22,21 +17,11 @@
                                     coursePackage.packageName
                                 }}</text>
                             </text>
-                            <text class="set-grade" @click="handleSetGrade"
-                                >设置级别</text
-                            >
+                            <text class="set-grade" @click="handleSetGrade">设置级别</text>
                         </view>
                         <view class="center-popup-title-sub">
-                            <image
-                                v-if="student.gender === 'male'"
-                                class="gender-icon"
-                                src="/static/images/male_selected.png"
-                            ></image>
-                            <image
-                                v-if="student.gender === 'female'"
-                                class="gender-icon"
-                                src="/static/images/female_selected.png"
-                            ></image>
+                            <image v-if="student.gender === 'male'" class="gender-icon" src="/static/images/male_selected.png"></image>
+                            <image v-if="student.gender === 'female'" class="gender-icon" src="/static/images/female_selected.png"></image>
                             <text class="text">{{ student.age + '岁' }}</text>
                             <text class="text">{{
                                 '课程陪练券' + trainTicketNum + '张'
@@ -86,19 +71,9 @@
                         </view>
                     </view>
                     <view class="section-divider"></view>
-                    <view
-                        v-if="Array.isArray(coursePackage.courses)"
-                        class="chapters px-28"
-                    >
-                        <view
-                            v-for="course in coursePackage.courses"
-                            :key="course.courseId"
-                            class="chapter-item"
-                        >
-                            <view
-                                class="chapter-item-title ellipsis"
-                                :class="{ warning: course.remainCourseNum < 6 }"
-                            >
+                    <view v-if="Array.isArray(coursePackage.courses)" class="chapters px-28">
+                        <view v-for="course in coursePackage.courses" :key="course.courseId" class="chapter-item">
+                            <view class="chapter-item-title ellipsis" :class="{ warning: course.remainCourseNum < 6 }">
                                 <text class="text">{{
                                     course.courseName +
                                     '(' +
@@ -115,11 +90,7 @@
                                 }}</text>
                             </view>
                             <template v-if="Array.isArray(course.chapters)">
-                                <view
-                                    v-for="chapter in course.chapters"
-                                    :key="chapter.id"
-                                    class="chapter-item-book ellipsis"
-                                >
+                                <view v-for="chapter in course.chapters" :key="chapter.id" class="chapter-item-book ellipsis">
                                     <text class="chapter-item-book-text">{{
                                         '(' + chapter.bookName + ')'
                                     }}</text>
@@ -132,11 +103,7 @@
                     </view>
                 </view>
                 <view class="center-popup-footer">
-                    <button
-                        class="btn primary"
-                        type="primary"
-                        @click="$refs.popup.close()"
-                    >
+                    <button class="btn primary" type="primary" @click="$refs.popup.close()">
                         我知道了
                     </button>
                 </view>
@@ -147,46 +114,40 @@
             <view class="grade-main">
                 <view class="grade-main-title">
                     <text class="btn" @click="$refs.grade.close()">取消</text>
-                    <text class="btn" :class="{'confirm':!disabled}" @click="handleGradeConfirm"
-                        >确认</text
-                    >
+                    <text class="btn" :class="{ confirm: !disabled }" @click="gradeConfirm">确认</text>
                 </view>
                 <view class="grade-main-form">
                     <view class="form-item">
                         <view class="label">当前级别</view>
                         <view class="value">
-                            <input
-                                v-model.trim="form.grade"
-                                maxlength="2"
-                                placeholder="例“2”"
-                            />
+                            <input v-model.trim="form.grade" maxlength="2" placeholder="例“2”" />
                             <text class="unit">级</text>
                         </view>
                     </view>
                     <view class="form-item">
                         <view class="label">上次考试时间</view>
                         <view class="value">
-                            <input
-                                v-model.trim="form.year"
-                                maxlength="4"
-                                placeholder="输入年份 例“2020”"
-                            />
+                            <input v-model.trim="form.lastExamTime" maxlength="4" placeholder="输入年份 例“2020”" />
                         </view>
                     </view>
                     <view class="form-item">
                         <view class="label">请选择考季</view>
                         <view class="value">
-                            <van-radio-group
-                                v-model="form.season"
-                                @change="(e) => (form.season = e.detail)"
-                                direction="horizontal"
-                            >
-                                <van-radio use-icon-slot name="xiaji">
-                                    <image slot="icon" :src="`/static/images/student/icon-radio${form.season === 'xiaji'?'-active':''}.png`" style="width: 28rpx; height: 28rpx;" />
+                            <van-radio-group v-model="form.examSeason" @change="(e) => (form.examSeason = e.detail)" direction="horizontal">
+                                <van-radio use-icon-slot name="夏季">
+                                    <image slot="icon" :src="`/static/images/student/icon-radio${
+                                            form.examSeason === '夏季'
+                                                ? '-active'
+                                                : ''
+                                        }.png`" style="width: 28rpx; height: 28rpx" />
                                     夏季
                                 </van-radio>
-                                <van-radio use-icon-slot name="dongji">
-                                    <image slot="icon" :src="`/static/images/student/icon-radio${form.season === 'dongji'?'-active':''}.png`" style="width: 28rpx; height: 28rpx;" />
+                                <van-radio use-icon-slot name="冬季">
+                                    <image slot="icon" :src="`/static/images/student/icon-radio${
+                                            form.examSeason === '冬季'
+                                                ? '-active'
+                                                : ''
+                                        }.png`" style="width: 28rpx; height: 28rpx" />
                                     冬季
                                 </van-radio>
                             </van-radio-group>
@@ -209,51 +170,78 @@ export default {
     data() {
         return {
             dayOfWeekOBj: {
-                2: '周二',
-                3: '周三',
-                4: '周四',
-                5: '周五',
-                6: '周六',
-                7: '周日',
+                2: "周二",
+                3: "周三",
+                4: "周四",
+                5: "周五",
+                6: "周六",
+                7: "周日",
             },
 
             form: {
-                grade: '',
-                year: '',
-                season: '',
+                grade: "",
+                lastExamTime: "",
+                examSeason: "",
             },
-        }
+        };
     },
     computed: {
         student() {
-            return this.detail?.student ?? {}
+            return this.detail?.student ?? {};
         },
         coursePackage() {
-            return this.detail?.coursePackage ?? {}
+            return this.detail?.coursePackage ?? {};
         },
         trainTicketNum() {
-            return this.detail?.trainTicketNum ?? 0
+            return this.detail?.trainTicketNum ?? 0;
         },
         disabled() {
-            const {  grade, year, season } = this.form
-            return !grade || !year || !season
-        }
+            const { grade, lastExamTime, examSeason } = this.form;
+            return !(grade && lastExamTime && examSeason);
+        },
     },
     methods: {
         handleSetGrade() {
-            this.$refs.grade.open()
+            this.$refs.grade.open();
+            const {
+                grade = "",
+                lastExamTime = "",
+                examSeason = "",
+            } = this.student;
             this.form = {
-                grade:'',
-                year:'',
-                season:''
-            }
+                grade,
+                lastExamTime,
+                examSeason,
+            };
         },
 
-        handleGradeConfirm() {
-            if(this.disabled) return
+        async gradeConfirm() {
+            if (this.disabled) return;
+
+            const { grade, lastExamTime, examSeason } = this.form;
+            const param = {
+                data: {
+                    grade,
+                    lastExamTime,
+                    examSeason,
+                    studentId: this.student.studentId,
+                },
+            };
+            const res = await this.$http.post(
+                "/mini/student/updateStudentGrade",
+                param
+            );
+            if (res.ok) {
+                uni.showToast({
+                    title: "设置成功！",
+                    icon: "success",
+                });
+                this.$refs.grade.close();
+                this.$emit("update", this.student.studentId);
+            }
         },
     },
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -347,7 +335,7 @@ export default {
             margin-bottom: 36rpx;
 
             &:after {
-                content: '';
+                content: "";
                 display: inline-block;
                 width: 2rpx;
                 height: 20rpx;

@@ -1,280 +1,267 @@
 <template>
     <view>
-        <uni-popup
-            v-if="detail.timetablePeriodId"
-            ref="popup"
-            :is-mask-click="false"
-            type="center"
-        >
+        <uni-popup v-if="detail.timetablePeriodId" ref="popup" :is-mask-click="false" type="center">
             <view class="main">
-                <view class="header">
-                    {{ title }}
-                </view>
-                <view class="content">
-                    <view class="form-item rate">
-                        <view class="label">回课情况</view>
-                        <view
-                            v-for="(item, index) in form.chapterScores"
-                            :key="item.chapterId"
-                            class="rate-item"
-                        >
-                            <text class="name ellipsis"
-                                >《{{ item.chapterName }}》</text
+                <view class="header">{{ title }}</view>
+                <scroll-view scroll-y="true" style="max-height: 75vh;">
+                    <view class="content">
+                        <view class="form-item rate">
+                            <view class="label">回课情况</view>
+                            <view
+                                v-for="(item, index) in form.chapterScores"
+                                :key="item.chapterId"
+                                class="rate-item"
                             >
-                            <view class="rate-wrap">
-                                <van-rate
-                                    v-model="item.chapterScore"
-                                    color="#62BBEC"
-                                    void-color="#D8D8D8"
-                                    gutter="4rpx"
-                                    size="36rpx"
-                                    @change="
-                                        (e) =>
-                                            $set(
-                                                form.chapterScores[index],
-                                                'chapterScore',
-                                                e.detail
-                                            )
-                                    "
-                                />
-                                <text v-if="item.chapterScore > 0" class="score"
-                                    >{{ item.chapterScore }}分</text
-                                >
+                                <text class="name ellipsis">《{{ item.chapterName }}》</text>
+                                <view class="rate-wrap">
+                                    <van-rate
+                                        v-model="item.chapterScore"
+                                        color="#62BBEC"
+                                        void-color="#D8D8D8"
+                                        gutter="4rpx"
+                                        size="36rpx"
+                                        @change="
+                                            (e) =>
+                                                $set(
+                                                    form.chapterScores[index],
+                                                    'chapterScore',
+                                                    e.detail
+                                                )
+                                        "
+                                    />
+                                    <text
+                                        v-if="item.chapterScore > 0"
+                                        class="score"
+                                    >{{ item.chapterScore }}分</text>
+                                </view>
                             </view>
                         </view>
-                    </view>
-                    <view class="form-item chapter">
-                        <view class="label">本课内容</view>
-                        <view
-                            v-for="(item, index) in form.chapters"
-                            :key="index"
-                            class="chapter-item"
-                        >
+                        <view class="form-item chapter">
+                            <view class="label">本课内容</view>
                             <view
-                                class="chapter-item-info flex"
-                                :class="{ custom: item.bookId === 'custom' }"
-                            >
-                                <picker
-                                    class="picker ellipsis"
-                                    :class="{ placeholder: !item.bookId }"
-                                    :value="item.bookValue"
-                                    range-key="name"
-                                    :range="bookList"
-                                    @change="onBookChange($event, index)"
-                                >
-                                    {{
-                                        item.bookId
-                                            ? item.bookId === 'custom'
-                                                ? '自定义'
-                                                : item.bookName
-                                            : '请选择教材'
-                                    }}
-                                    <image
-                                        class="arrow"
-                                        src="/static/images/teacher/arrow-down.png"
-                                    />
-                                </picker>
-                                <template v-if="item.bookId === 'custom'">
-                                    <input
-                                        :value="item.bookName"
-                                        maxlength="10"
-                                        placeholder="教材名称"
-                                        placeholder-style="color: #99A0AD;font-size: 24rpx;"
-                                        class="input book"
-                                        @input="
-                                            (e) =>
-                                                $set(
-                                                    form.chapters[index],
-                                                    'bookName',
-                                                    e.detail.value
-                                                )
-                                        "
-                                    />
-                                    <input
-                                        :value="item.chapterName"
-                                        maxlength="20"
-                                        placeholder="请输入曲目名称"
-                                        placeholder-style="color: #99A0AD;font-size: 24rpx;"
-                                        class="input"
-                                        @input="
-                                            (e) =>
-                                                $set(
-                                                    form.chapters[index],
-                                                    'chapterName',
-                                                    e.detail.value
-                                                )
-                                        "
-                                    />
-                                </template>
-                                <picker
-                                    v-else
-                                    class="picker ellipsis"
-                                    :class="{ placeholder: !item.chapterId }"
-                                    :value="item.chapterValue"
-                                    range-key="name"
-                                    :range="
-                                        item.chapterList.filter(
-                                            (c) =>
-                                                c.id !==
-                                                form.chapters[
-                                                    index === 0 ? 1 : 0
-                                                ].chapterId
-                                        )
-                                    "
-                                    @change="onChapterChange($event, index)"
-                                >
-                                    {{ item.chapterName || '请选择曲目' }}
-                                    <image
-                                        class="arrow"
-                                        src="/static/images/teacher/arrow-down.png"
-                                    />
-                                </picker>
-                            </view>
-                            <view
-                                v-if="item.bookId === 'custom'"
-                                class="chapter-item-wrap"
+                                v-for="(item, index) in form.chapters"
+                                :key="index"
+                                class="chapter-item"
                             >
                                 <view
-                                    v-for="(work, workIndex) in item.workStep"
-                                    :key="workIndex"
-                                    class="chapter-item-wrap-step work"
+                                    class="chapter-item-info flex"
+                                    :class="{ custom: item.bookId === 'custom' }"
                                 >
-                                    <text class="text"
-                                        >步骤{{
-                                            numToChinese[workIndex + 1]
-                                        }}：</text
+                                    <picker
+                                        class="picker ellipsis"
+                                        :class="{ placeholder: !item.bookId }"
+                                        :value="item.bookValue"
+                                        range-key="name"
+                                        :range="bookList"
+                                        @change="onBookChange($event, index)"
                                     >
-                                    <textarea
-                                        :value="work.content"
-                                        maxlength="30"
-                                        placeholder="分步骤布置作业内容及速度要求"
-                                        placeholder-style="color: #99A0AD;font-size: 24rpx;"
-                                        auto-height
-                                        @input="
-                                            (e) =>
-                                                $set(
-                                                    form.chapters[index]
-                                                        .workStep[workIndex],
-                                                    'content',
-                                                    e.detail.value
-                                                )
-                                        "
-                                    />
-                                    <image
-                                        v-if="
-                                            workIndex ===
-                                            item.workStep.length - 1
-                                        "
-                                        src="/static/images/teacher/add.png"
-                                        @click="handleWorkAdd(index)"
-                                    />
-                                    <image
+                                        {{
+                                            item.bookId
+                                                ? item.bookId === 'custom'
+                                                    ? '自定义'
+                                                    : item.bookName
+                                                : '请选择教材'
+                                        }}
+                                        <image
+                                            class="arrow"
+                                            src="/static/images/teacher/arrow-down.png"
+                                        />
+                                    </picker>
+                                    <template v-if="item.bookId === 'custom'">
+                                        <input
+                                            :value="item.bookName"
+                                            maxlength="10"
+                                            placeholder="教材名称"
+                                            placeholder-style="color: #99A0AD;font-size: 24rpx;"
+                                            class="input book"
+                                            @input="
+                                                (e) =>
+                                                    $set(
+                                                        form.chapters[index],
+                                                        'bookName',
+                                                        e.detail.value
+                                                    )
+                                            "
+                                        />
+                                        <input
+                                            :value="item.chapterName"
+                                            maxlength="20"
+                                            placeholder="请输入曲目名称"
+                                            placeholder-style="color: #99A0AD;font-size: 24rpx;"
+                                            class="input"
+                                            @input="
+                                                (e) =>
+                                                    $set(
+                                                        form.chapters[index],
+                                                        'chapterName',
+                                                        e.detail.value
+                                                    )
+                                            "
+                                        />
+                                    </template>
+                                    <picker
                                         v-else
-                                        src="/static/images/teacher/minus.png"
-                                        @click="
-                                            handleWorkMinus(index, workIndex)
-                                        "
-                                    />
-                                </view>
-                            </view>
-                            <view
-                                v-if="
-                                    (item.bookId && item.chapterId) ||
-                                    item.bookId === 'custom'
-                                "
-                                class="chapter-item-wrap"
-                            >
-                                <view
-                                    v-for="(
-                                        suggest, suggestIndex
-                                    ) in item.suggestStep"
-                                    :key="suggestIndex"
-                                    class="chapter-item-wrap-step"
-                                >
-                                    <textarea
-                                        :value="suggest.content"
-                                        maxlength="50"
-                                        placeholder="请填写学员弹奏此曲目时的问题及解决方式"
-                                        placeholder-style="color: #99A0AD;font-size: 24rpx;"
-                                        auto-height
-                                        @input="
-                                            (e) =>
-                                                $set(
-                                                    form.chapters[index]
-                                                        .suggestStep[
-                                                        suggestIndex
-                                                    ],
-                                                    'content',
-                                                    e.detail.value
-                                                )
-                                        "
-                                    />
-                                    <image
-                                        v-if="
-                                            suggestIndex ===
-                                            item.suggestStep.length - 1
-                                        "
-                                        src="/static/images/teacher/add.png"
-                                        @click="handleSuggestAdd(index)"
-                                    />
-                                    <image
-                                        v-else
-                                        src="/static/images/teacher/minus.png"
-                                        @click="
-                                            handleSuggestMinus(
-                                                index,
-                                                suggestIndex
+                                        class="picker ellipsis"
+                                        :class="{ placeholder: !item.chapterId }"
+                                        :value="item.chapterValue"
+                                        range-key="name"
+                                        :range="
+                                            item.chapterList.filter(
+                                                (c) =>
+                                                    c.id !==
+                                                    form.chapters[
+                                                        index === 0 ? 1 : 0
+                                                    ].chapterId
                                             )
                                         "
-                                    />
+                                        @change="onChapterChange($event, index)"
+                                    >
+                                        {{ item.chapterName || '请选择曲目' }}
+                                        <image
+                                            class="arrow"
+                                            src="/static/images/teacher/arrow-down.png"
+                                        />
+                                    </picker>
+                                </view>
+                                <view v-if="item.bookId === 'custom'" class="chapter-item-wrap">
+                                    <view
+                                        v-for="(work, workIndex) in item.workStep"
+                                        :key="workIndex"
+                                        class="chapter-item-wrap-step work"
+                                    >
+                                        <text class="text">
+                                            步骤{{
+                                                numToChinese[workIndex + 1]
+                                            }}：
+                                        </text>
+                                        <textarea
+                                            :value="work.content"
+                                            maxlength="30"
+                                            placeholder="分步骤布置作业内容及速度要求"
+                                            placeholder-style="color: #99A0AD;font-size: 24rpx;"
+                                            auto-height
+                                            @input="
+                                                (e) =>
+                                                    $set(
+                                                        form.chapters[index]
+                                                            .workStep[workIndex],
+                                                        'content',
+                                                        e.detail.value
+                                                    )
+                                            "
+                                        />
+                                        <image
+                                            v-if="
+                                                workIndex ===
+                                                item.workStep.length - 1
+                                            "
+                                            src="/static/images/teacher/add.png"
+                                            @click="handleWorkAdd(index)"
+                                        />
+                                        <image
+                                            v-else
+                                            src="/static/images/teacher/minus.png"
+                                            @click="
+                                                handleWorkMinus(index, workIndex)
+                                            "
+                                        />
+                                    </view>
+                                </view>
+                                <view
+                                    v-if="
+                                        (item.bookId && item.chapterId) ||
+                                        item.bookId === 'custom'
+                                    "
+                                    class="chapter-item-wrap"
+                                >
+                                    <view
+                                        v-for="(
+                                            suggest, suggestIndex
+                                        ) in item.suggestStep"
+                                        :key="suggestIndex"
+                                        class="chapter-item-wrap-step"
+                                    >
+                                        <textarea
+                                            :value="suggest.content"
+                                            maxlength="50"
+                                            placeholder="请填写学员弹奏此曲目时的问题及解决方式"
+                                            placeholder-style="color: #99A0AD;font-size: 24rpx;"
+                                            auto-height
+                                            @input="
+                                                (e) =>
+                                                    $set(
+                                                        form.chapters[index]
+                                                            .suggestStep[
+                                                        suggestIndex
+                                                        ],
+                                                        'content',
+                                                        e.detail.value
+                                                    )
+                                            "
+                                        />
+                                        <image
+                                            v-if="
+                                                suggestIndex ===
+                                                item.suggestStep.length - 1
+                                            "
+                                            src="/static/images/teacher/add.png"
+                                            @click="handleSuggestAdd(index)"
+                                        />
+                                        <image
+                                            v-else
+                                            src="/static/images/teacher/minus.png"
+                                            @click="
+                                                handleSuggestMinus(
+                                                    index,
+                                                    suggestIndex
+                                                )
+                                            "
+                                        />
+                                    </view>
                                 </view>
                             </view>
                         </view>
-                    </view>
-                    <view
-                        class="form-item slider"
-                        v-for="item in scores"
-                        :key="item.prop"
-                    >
-                        <view class="label"
-                            >{{ item.name
-                            }}<text v-if="form[item.prop] > 0" class="score"
-                                >{{ form[item.prop] }}分</text
-                            ></view
-                        >
-                        <van-slider
-                            v-model="form[item.prop]"
-                            use-button-slot
-                            max="10"
-                            active-color="#62BBEC"
-                            bar-height="10rpx"
-                            @change="(e) => (form[item.prop] = e.detail)"
-                        >
-                            <image
-                                slot="button"
-                                :src="`/static/images/teacher/score-icon${
-                                    form[item.prop] > 0 ? '-blue' : ''
-                                }.png`"
-                                style="width: 28rpx; height: 36rpx"
-                            />
-                        </van-slider>
-                        <view class="desc">
-                            <text>很差</text><text>还行</text><text>极好</text>
+                        <view class="form-item slider" v-for="item in scores" :key="item.prop">
+                            <view class="label">
+                                {{
+                                    item.name
+                                }}
+                                <text
+                                    v-if="form[item.prop] > 0"
+                                    class="score"
+                                >{{ form[item.prop] }}分</text>
+                            </view>
+                            <van-slider
+                                v-model="form[item.prop]"
+                                use-button-slot
+                                max="10"
+                                active-color="#62BBEC"
+                                bar-height="10rpx"
+                                @change="(e) => (form[item.prop] = e.detail)"
+                            >
+                                <image
+                                    slot="button"
+                                    :src="`/static/images/teacher/score-icon${form[item.prop] > 0 ? '-blue' : ''
+                                    }.png`"
+                                    style="width: 28rpx; height: 36rpx"
+                                />
+                            </van-slider>
+                            <view class="desc">
+                                <text>很差</text>
+                                <text>还行</text>
+                                <text>极好</text>
+                            </view>
                         </view>
                     </view>
-                </view>
+                </scroll-view>
                 <view class="footer">
-                    <button class="btn cancel" @click="$refs.popup.close()">
-                        取消
-                    </button>
+                    <button class="btn cancel" @click="$refs.popup.close()">取消</button>
                     <button
                         class="btn confirm"
                         :class="{ disabled: disabled }"
                         :disabled="disabled"
                         @click="handleConfirm"
-                    >
-                        确认
-                    </button>
+                    >确认</button>
                 </view>
             </view>
         </uni-popup>
@@ -286,7 +273,7 @@ export default {
     props: {
         detail: {
             type: Object,
-            default: () => {},
+            default: () => { },
         },
     },
     data() {
@@ -329,7 +316,7 @@ export default {
     },
     computed: {
         courseId() {
-            return this.detail?.oneCourse?.coursePackage?.id ?? 0
+            return this.detail?.courseId ?? 0
         },
         disabled() {
             const {
@@ -407,9 +394,8 @@ export default {
                     name: '自定义',
                 })
 
-            this.title = `${this.dayOfWeekOBj[this.detail?.dayOfWeek]} ${
-                this.detail?.periodName
-            }  ${this.detail?.oneCourse.student.studentName}`
+            this.title = `${this.dayOfWeekOBj[this.detail?.dayOfWeek]} ${this.detail?.periodName
+                }  ${this.detail?.oneCourse.student.studentName}`
 
             const chapterScores = courses?.map((item) => ({
                 chapterId: item.id,
@@ -466,9 +452,9 @@ export default {
 
             const res = await this.$http.get(
                 '/mini/teachingBook/listChapterByBookAndCourse?courseId=' +
-                    this.courseId +
-                    '&bookId=' +
-                    id
+                this.courseId +
+                '&bookId=' +
+                id
             )
             const chapterList =
                 res?.data?.map((item) => ({
@@ -624,8 +610,8 @@ export default {
         line-height: 44rpx;
     }
     .content {
-        max-height: 75vh;
-        overflow-y: auto;
+        // max-height: 75vh;
+        // overflow-y: auto;
         padding: 32rpx 32rpx 60rpx;
         .form-item {
             + .form-item {

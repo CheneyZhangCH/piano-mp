@@ -55,17 +55,15 @@ export default {
                 url: '/pages/login/index'
             })
         }
-        this.customHeader()
+
+        let rect = wx.getMenuButtonBoundingClientRect();
+
+        this.headerHeight = rect.height
+        this.headerTop = rect.top
+
         this.init(option)
     },
     methods: {
-        customHeader() {
-            let rect = wx.getMenuButtonBoundingClientRect();
-
-            this.headerHeight = rect.height
-            this.headerTop = rect.top
-        },
-
         async init({id}){
             const res = await this.$http.get('/mini/teachingBook/getBook?bookId='+id)
             if(res.ok){

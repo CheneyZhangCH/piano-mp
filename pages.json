@@ -117,7 +117,8 @@
                 {
                     "path": "datacenter/index",
                     "style": {
-                        "navigationBarTitleText": "数据中心"
+                        "navigationBarTitleText": "数据中心",
+                        "navigationStyle": "custom"
                     }
                 }
             ]
@@ -214,8 +215,12 @@
 		}
 	},
 	"condition": {
-		"current": 3,
+		"current": 0,
 		"list": [
+			{
+				"name": "老师端-个人中心",
+				"path": "pages/teacher/datacenter/index"
+			},
 			{
 				"name": "登录",
 				"path": "pages/login/index"
