@@ -120,6 +120,13 @@
                         "navigationBarTitleText": "数据中心",
                         "navigationStyle": "custom"
                     }
+                },
+                {
+                    "path": "finishLessonRecord/index",
+                    "style": {
+                        "navigationBarTitleText": "消课记录",
+                        "enablePullDownRefresh": true
+                    }
                 }
             ]
         }
@@ -217,10 +224,6 @@
 	"condition": {
 		"current": 0,
 		"list": [
-			{
-				"name": "老师端-个人中心",
-				"path": "pages/teacher/datacenter/index"
-			},
 			{
 				"name": "登录",
 				"path": "pages/login/index"

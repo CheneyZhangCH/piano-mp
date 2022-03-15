@@ -26,21 +26,16 @@
             </view>
         </view>
         <view class="page-courses">
-            <view
-                v-for="item in courses"
-                :key="item.id"
-                @click="coursesDetail(item)"
-                class="item"
-            >
+            <view v-for="item in courses" :key="item.id" @click="coursesDetail(item)" class="item">
                 <image :src="item.coverUrl" />
             </view>
         </view>
         <view class="notify">
-            <image src="/static/images/student/notify.png"/>
+            <image src="/static/images/student/notify.png" />
             <view class="count">8</view>
         </view>
 
-        <customTabbar :active="0" />
+        <customTabbar v-if="showTabBar" :active="0" />
     </view>
 </template>
 
@@ -48,13 +43,14 @@
 export default {
     data() {
         return {
+            showTabBar: true,
             packageId: '',
             packageList: [],
 
             courses: []
         }
     },
-    onLoad() {
+    onLoad(option) {
         const token = uni.getStorageSync('token')
 
         // 权限验证
@@ -67,33 +63,35 @@ export default {
                 url: '/pages/login/index'
             })
         }
+        // 从数据中心隐藏tabbar
+        if (option?.from === 'datacenter') this.showTabBar = false
         this.init()
     },
-    watch:{
-        async packageId(){
-            if(this.packageId) {
-                const res = await this.$http.get('/mini/teachingBook/listByPackageId?packageId='+this.packageId)
-                if(res.ok){
+    watch: {
+        async packageId() {
+            if (this.packageId) {
+                const res = await this.$http.get('/mini/teachingBook/listByPackageId?packageId=' + this.packageId)
+                if (res.ok) {
                     this.courses = res.data ?? []
                 }
             }
         }
     },
     methods: {
-        async init(){
+        async init() {
             const res = await this.$http.post('/mini/coursePackage/listAvailableCoursePackage')
-            if(res.ok){
+            if (res.ok) {
                 this.packageList = res.data ?? []
                 this.packageId = this.packageList.length ? this.packageList[0].id : ''
             }
         },
 
         packageChange(item) {
-            if(!item.available) return
+            if (!item.available) return
             this.packageId = item.id
         },
 
-        coursesDetail({id}){
+        coursesDetail({ id }) {
             uni.navigateTo({ url: `/pages/student/videos/courses?id=${id}` })
         }
     }
@@ -131,7 +129,7 @@ export default {
                 color: #62bbec;
                 line-height: 80rpx;
                 &::after {
-                    content: ' ';
+                    content: " ";
                     display: block;
                     position: absolute;
                     bottom: 0;
@@ -176,14 +174,14 @@ export default {
 
             width: 24rpx;
             height: 24rpx;
-            background: #F15E5E;
-            border: 1px solid #FFFFFF;
+            background: #f15e5e;
+            border: 1px solid #ffffff;
             border-radius: 50%;
             text-align: center;
 
             font-size: 16rpx;
             font-weight: 600;
-            color: #FFFFFF;
+            color: #ffffff;
             line-height: 24rpx;
         }
     }

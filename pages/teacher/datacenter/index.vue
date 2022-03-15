@@ -12,14 +12,16 @@
                     <view class="msg">
                         <text class="name">{{ teacher.teacherName }}</text>
                         <template v-if="groups.length">
-                            <text v-for="g in groups" :key="g.id" class="group">{{g.groupName}}</text>
+                            <text v-for="g in groups" :key="g.id" class="group">{{ g.groupName }}</text>
                         </template>
                     </view>
                     <view class="yanquan" @click="handleYanQuan">
                         <text>输码验券</text>
                         <image src="/static/images/teacher/yanquan.png"></image>
                     </view>
-                    <view class="switch" @click="handleGroupSwitch">切换组内数据</view>
+                    <picker v-if="groups.length" class="switch" :value="groupValue" range-key="groupName" :range="groups" @change="onGroupChange">
+                        切换组内数据
+                    </picker>
                 </view>
             </view>
             <view class="salary-basic">
@@ -42,10 +44,10 @@
                     </view>
                     <view class="wrap">
                         <template v-if="courses.length">
-                            <view v-for="item in courses" class="item" :key="item.courseId">
+                            <view v-for="item in courses" class="item" :key="item.courseId" @click="toFinishLesson(item)">
                                 <view class="name ellipsis">{{ item.courseName }}</view>
                                 <view class="right">
-                                    <text class="num">{{ item.num }}</text>
+                                    <text class="num">{{ item.num }}{{ item.courseType === 'one' ? '节' : '人' }}</text>
                                     <view class="salary">
                                         <text>+{{ item.salary }}元</text>
                                         <uni-icons type="right" size="12"></uni-icons>
@@ -104,12 +106,15 @@
                     <text class="name">教学工具</text>
                 </view>
                 <view class="tools-list">
-                    <view class="tool" @click="toVideo">
+                    <view class="tool" @click="toVideos">
                         <image src="/static/images/teacher/peitaoshipin.png"></image>
                         <text>配套视频</text>
                     </view>
                 </view>
             </view>
+        </view>
+        <view v-else class="page-content group">
+            zunei
         </view>
 
         <customTabbar :active="1" />
@@ -122,6 +127,7 @@ export default {
     data() {
         return {
             groupId: null,
+            groupValue: 0,
             detail: null,
             headerHeight: 0,
             headerTop: 0
@@ -129,7 +135,7 @@ export default {
     },
     computed: {
         customTitleStyle() {
-            return `top: ${this.headerTop*2}rpx; height: ${this.headerHeight*2}rpx; line-height: ${this.headerHeight*2}rpx`
+            return `top: ${this.headerTop * 2}rpx; height: ${this.headerHeight * 2}rpx; line-height: ${this.headerHeight * 2}rpx`
         },
         teacher() {
             return this.detail?.teacher ?? {}
@@ -138,9 +144,11 @@ export default {
             return this.detail?.groups ?? []
         },
         times() {
-            const { startTime, endTime } = this.detail
-            const s = startTime ? dayjs(startTime).format('YYYY-MM-DD') : ''
-            const e = endTime ? dayjs(endTime).format('YYYY-MM-DD') : ''
+            const start = this.detail?.startTime,
+                end = this.detail?.endTime
+
+            const s = start ? dayjs(start).format('YYYY-MM-DD') : '',
+                e = end ? dayjs(end).format('YYYY-MM-DD') : ''
             return [s, e].filter(Boolean).join('~')
         },
         courses() {
@@ -180,7 +188,7 @@ export default {
     methods: {
         async init() {
             // const userId = uni.getStorageSync('userId')
-            const res = await this.$http.get('/mini/teacher/getTeacherDataInfo?teacherId=' + 7)
+            const res = await this.$http.get('/mini/teacher/getTeacherDataInfo?teacherId=' + 16)
             this.detail = res.data ?? {}
         },
 
@@ -189,8 +197,20 @@ export default {
         },
 
         // 切换至组内数据
-        handleGroupSwitch() {
+        onGroupChange(e) {
+            const value = e.detail.value
+            this.groupValue = value
+            this.groupId = this.groups[value].id
+        },
 
+        // 消课记录
+        toFinishLesson({ courseType, courseId }) {
+            uni.navigateTo({ url: '/pages/teacher/finishLessonRecord/index?courseType=' + courseType + '&courseId=' + courseId + '&teacherId=' + this.teacher.accountId })
+        },
+
+        // 配套视频
+        toVideos() {
+            uni.navigateTo({ url: '/pages/student/videos/index?from=datacenter' })
         }
     }
 }
@@ -257,7 +277,7 @@ page {
                     font-weight: 500;
                     color: #eff5ff;
                     line-height: 17px;
-                    +.group {
+                    + .group {
                         margin-left: 6rpx;
                     }
                 }
@@ -265,7 +285,7 @@ page {
             .yanquan {
                 text {
                     font-size: 28rpx;
-                    color: #FFFFFF;
+                    color: #ffffff;
                     margin-right: 4rpx;
                 }
                 image {
@@ -284,7 +304,7 @@ page {
 
             padding: 10rpx 14rpx 8rpx 16rpx;
             font-size: 24rpx;
-            color: #FFFFFF;
+            color: #ffffff;
             line-height: 17px;
         }
     }
