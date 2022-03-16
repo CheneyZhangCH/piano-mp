@@ -122,9 +122,9 @@
                     }
                 },
                 {
-                    "path": "finishLessonRecord/index",
+                    "path": "xiaokeOrhexiaoRecord/index",
                     "style": {
-                        "navigationBarTitleText": "消课记录",
+                        "navigationBarTitleText": "",
                         "enablePullDownRefresh": true
                     }
                 }

@@ -48,20 +48,22 @@
                                     :class="{ custom: item.bookId === 'custom' }"
                                 >
                                     <picker
-                                        class="picker ellipsis"
+                                        class="picker"
                                         :class="{ placeholder: !item.bookId }"
                                         :value="item.bookValue"
                                         range-key="name"
                                         :range="bookList"
                                         @change="onBookChange($event, index)"
                                     >
-                                        {{
-                                            item.bookId
-                                                ? item.bookId === 'custom'
-                                                    ? '自定义'
-                                                    : item.bookName
-                                                : '请选择教材'
-                                        }}
+                                        <text class="ellipsis">
+                                            {{
+                                                item.bookId
+                                                    ? item.bookId === 'custom'
+                                                        ? '自定义'
+                                                        : item.bookName
+                                                    : '请选择教材'
+                                            }}
+                                        </text>
                                         <image
                                             class="arrow"
                                             src="/static/images/teacher/arrow-down.png"
@@ -101,7 +103,7 @@
                                     </template>
                                     <picker
                                         v-else
-                                        class="picker ellipsis"
+                                        class="picker"
                                         :class="{ placeholder: !item.chapterId }"
                                         :value="item.chapterValue"
                                         range-key="name"
@@ -116,7 +118,7 @@
                                         "
                                         @change="onChapterChange($event, index)"
                                     >
-                                        {{ item.chapterName || '请选择曲目' }}
+                                        <text class="ellipsis">{{ item.chapterName || '请选择曲目' }}</text>
                                         <image
                                             class="arrow"
                                             src="/static/images/teacher/arrow-down.png"
@@ -729,7 +731,7 @@ export default {
                         line-height: 56rpx;
                         border-radius: 8rpx;
                         border: 2rpx solid #e3e5e9;
-                        padding: 0 52rpx 0 20rpx;
+                        padding: 0 50rpx 0 20rpx;
                         font-size: 24rpx;
                         color: #141f33;
                         box-sizing: border-box;
@@ -738,6 +740,10 @@ export default {
                         }
                         &:last-child {
                             flex: 1;
+                        }
+                        text {
+                            display: inline-block;
+                            width: 100%;
                         }
                         .arrow {
                             position: absolute;

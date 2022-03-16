@@ -52,9 +52,8 @@
                                         }}</text>
                                         <image
                                             class="gender-icon"
-                                            :src="`/static/images/${
-                                                period.oneCourse.student
-                                                    .gender || 'male'
+                                            :src="`/static/images/${period.oneCourse.student
+                                                .gender || 'male'
                                             }_selected.png`"
                                         ></image>
                                         <text class="student-age">{{
@@ -72,7 +71,7 @@
                                     >
                                         <view
                                             v-for="course in period.oneCourse
-                                                .coursePackage.courses"
+                                            .coursePackage.courses"
                                             :key="course.courseId"
                                             :class="{
                                                 warning:
@@ -104,9 +103,9 @@
                                         <text class="student-name">{{
                                             period.moreCourse.course
                                                 .courseName +
-                                            (period.remainStudentNum === 0
-                                                ? '(满班)'
-                                                : '')
+                                                (period.remainStudentNum === 0
+                                                    ? '(满班)'
+                                                    : '')
                                         }}</text>
                                     </view>
                                     <view
@@ -119,7 +118,7 @@
                                     >
                                         <text
                                             v-for="student in period.moreCourse
-                                                .students"
+                                            .students"
                                             :key="student.studentId"
                                             :class="{
                                                 warning: student.warning,
@@ -139,7 +138,7 @@
                                     >
                                         <text
                                             v-for="chapter in period.moreCourse
-                                                .chapter"
+                                            .chapter"
                                             :key="chapter.chapterId"
                                             class="chapter-item ellipsis"
                                         >
@@ -172,11 +171,11 @@
 
         <customTabbar :active="0" />
 
-        <!-- 学生详情 -->
-        <Student ref="studentDialog" :detail="studentDetail" @update="getStudent"/>
+        <!-- 一对多详情（课程）| 对学生详情组件先后顺序有要求 -->
+        <Course ref="course" :detail="courseDetail" @student="id => studentId = id" />
 
-        <!-- 一对多详情（课程） -->
-        <Course ref="course" />
+        <!-- 学生详情 -->
+        <Student :student-id="studentId" @close="studentId = 0" />
 
         <!-- 消课 - 一对一 -->
         <FinishLessonOne
@@ -221,10 +220,9 @@ export default {
             ],
             periods: [],
 
-            studentDialogVisible: false, // 学生详情弹窗
-            studentDetail: {}, // 当前学生
-
+            studentId: 0,
             finishLessonDetail: {}, // 消课详情
+            courseDetail: {},
         }
     },
     onLoad() {
@@ -247,57 +245,53 @@ export default {
         async handleSearch() {
             wx.showLoading({ title: '加载中' })
             const userId = uni.getStorageSync('userId')
-            const res = await this.$http.post(
-                `/mini/courseTimetable/getTeacherDayTimetable`,
-                {
-                    data: {
-                        teacherId: userId === 28 ? 16 : userId,
-                        dayOfWeek: this.dayOfWeek,
-                    },
+            try {
+                const res = await this.$http.post(
+                    `/mini/courseTimetable/getTeacherDayTimetable`,
+                    {
+                        data: {
+                            // TODO ------ USER_ID
+                            teacherId: userId === 28 ? 16 : userId,
+                            dayOfWeek: this.dayOfWeek,
+                        },
+                    }
+                )
+                const { periods } = res.data ?? {}
+
+                if (periods?.length) {
+                    periods.forEach((period) => {
+                        if (period.periodType === 'work' && period.oneCourse) {
+                            const { expiryDate } = period.oneCourse.student || {}
+                            period.oneCourse.student.expiryDateStr =
+                                this.getExpiryDateStr(expiryDate)
+                            period.oneCourse.student.expiryDateWarning =
+                                dayjs() - expiryDate < 30 * 24 * 60 * 60 * 1000
+                        }
+                        if (period.periodType === 'work' && period.moreCourse) {
+                            const { startClassDate } = period.moreCourse || {}
+                            period.moreCourse.startClassDateStr = startClassDate
+                                ? dayjs(startClassDate).format('YYYY-MM-DD')
+                                : ''
+                        }
+                    })
                 }
-            )
-            wx.hideLoading()
-            const { periods } = res.data ?? {}
-
-            if (periods?.length) {
-                periods.forEach((period) => {
-                    if (period.periodType === 'work' && period.oneCourse) {
-                        const { expiryDate } = period.oneCourse.student || {}
-                        period.oneCourse.student.expiryDateStr =
-                            this.getExpiryDateStr(expiryDate)
-                        period.oneCourse.student.expiryDateWarning =
-                            dayjs() - expiryDate < 30 * 24 * 60 * 60 * 1000
-                    }
-                    if (period.periodType === 'work' && period.moreCourse) {
-                        const { startClassDate } = period.moreCourse || {}
-                        period.moreCourse.startClassDateStr = startClassDate
-                            ? dayjs(startClassDate).format('YYYY-MM-DD')
-                            : ''
-                    }
-                })
+                this.periods = periods || []
+            } finally {
+                wx.hideLoading()
+                uni.stopPullDownRefresh()
             }
-            this.periods = periods || []
-
-            uni.stopPullDownRefresh()
         },
 
         // 学生详情弹窗
         openStudent(period) {
             const studentId = period.oneCourse.student.accountId
-            this.getStudent(studentId)
-            this.$refs.studentDialog.$refs.popup.open()
-        },
-
-        async getStudent(studentId) {
-            const res = await this.$http.get(
-                `/mini/student/getStudentDetail?studentId=${studentId}`
-            )
-            this.studentDetail = res.data ?? {}
+            this.studentId = studentId
         },
 
         // 一对多详情
         openCourse(period) {
-            console.log(period)
+            this.courseDetail = period
+            this.$refs.course.open()
         },
 
         getExpiryDateStr(expiryDate) {
@@ -381,7 +375,7 @@ export default {
             position: relative;
 
             &::after {
-                content: ' ';
+                content: " ";
                 display: block;
                 position: absolute;
                 top: 20rpx;
@@ -460,7 +454,7 @@ export default {
             color: #141f33;
 
             &::after {
-                content: ' ';
+                content: " ";
                 display: inline-block;
                 position: absolute;
                 right: 0;

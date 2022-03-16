@@ -4,9 +4,9 @@
             <view class="center-popup flex flex-column">
                 <view class="center-popup-title flex">
                     <image class="avatar" :src="
-                            student.coverUrl ||
-                            '/static/images/course_type_more.png'
-                        "></image>
+                        student.coverUrl ||
+                        '/static/images/course_type_more.png'
+                    "></image>
                     <view class="center-popup-title-content">
                         <view class="center-popup-title-main flex align-center justify-between">
                             <text>
@@ -17,7 +17,7 @@
                                     coursePackage.packageName
                                 }}</text>
                             </text>
-                            <text class="set-grade" @click="handleSetGrade">设置级别</text>
+                            <text class="set-grade" @click="setGrade">设置级别</text>
                         </view>
                         <view class="center-popup-title-sub">
                             <image v-if="student.gender === 'male'" class="gender-icon" src="/static/images/male_selected.png"></image>
@@ -76,14 +76,14 @@
                             <view class="chapter-item-title ellipsis" :class="{ warning: course.remainCourseNum < 6 }">
                                 <text class="text">{{
                                     course.courseName +
-                                    '(' +
-                                    course.teacherName +
-                                    ')'
+                                        '(' +
+                                        course.teacherName +
+                                        ')'
                                 }}</text>
                                 <text class="text">{{
                                     dayOfWeekOBj[course.dayOfWeek] +
-                                    ' ' +
-                                    course.timetablePeriodName
+                                        ' ' +
+                                        course.timetablePeriodName
                                 }}</text>
                                 <text class="text">{{
                                     '剩余' + course.remainCourseNum + '节'
@@ -91,10 +91,10 @@
                             </view>
                             <template v-if="Array.isArray(course.chapters)">
                                 <view v-for="chapter in course.chapters" :key="chapter.id" class="chapter-item-book ellipsis">
-                                    <text class="chapter-item-book-text">{{
+                                    <text v-if="chapter.bookName" class="chapter-item-book-text">{{
                                         '(' + chapter.bookName + ')'
                                     }}</text>
-                                    <text class="chapter-item-book-text">{{
+                                    <text v-if="chapter.chapterName" class="chapter-item-book-text">{{
                                         '《' + chapter.chapterName + '》'
                                     }}</text>
                                 </view>
@@ -103,7 +103,7 @@
                     </view>
                 </view>
                 <view class="center-popup-footer">
-                    <button class="btn primary" type="primary" @click="$refs.popup.close()">
+                    <button class="btn primary" type="primary" @click="()=> { $refs.popup.close(); $emit('close') }">
                         我知道了
                     </button>
                 </view>
@@ -114,7 +114,7 @@
             <view class="grade-main">
                 <view class="grade-main-title">
                     <text class="btn" @click="$refs.grade.close()">取消</text>
-                    <text class="btn" :class="{ confirm: !disabled }" @click="gradeConfirm">确认</text>
+                    <text class="btn" :class="{ confirm: !disabled }" @click="setGradeConfirm">确认</text>
                 </view>
                 <view class="grade-main-form">
                     <view class="form-item">
@@ -135,19 +135,17 @@
                         <view class="value">
                             <van-radio-group v-model="form.examSeason" @change="(e) => (form.examSeason = e.detail)" direction="horizontal">
                                 <van-radio use-icon-slot name="夏季">
-                                    <image slot="icon" :src="`/static/images/student/icon-radio${
-                                            form.examSeason === '夏季'
-                                                ? '-active'
-                                                : ''
-                                        }.png`" style="width: 28rpx; height: 28rpx" />
+                                    <image slot="icon" :src="`/static/images/student/icon-radio${form.examSeason === '夏季'
+                                    ? '-active'
+                                    : ''
+                                    }.png`" style="width: 28rpx; height: 28rpx" />
                                     夏季
                                 </van-radio>
                                 <van-radio use-icon-slot name="冬季">
-                                    <image slot="icon" :src="`/static/images/student/icon-radio${
-                                            form.examSeason === '冬季'
-                                                ? '-active'
-                                                : ''
-                                        }.png`" style="width: 28rpx; height: 28rpx" />
+                                    <image slot="icon" :src="`/static/images/student/icon-radio${form.examSeason === '冬季'
+                                    ? '-active'
+                                    : ''
+                                    }.png`" style="width: 28rpx; height: 28rpx" />
                                     冬季
                                 </van-radio>
                             </van-radio-group>
@@ -162,13 +160,11 @@
 <script>
 export default {
     props: {
-        detail: {
-            type: Object,
-            default: () => {},
-        },
+        studentId: [String, Number]
     },
     data() {
         return {
+            detail: {},
             dayOfWeekOBj: {
                 2: "周二",
                 3: "周三",
@@ -177,13 +173,20 @@ export default {
                 6: "周六",
                 7: "周日",
             },
-
             form: {
                 grade: "",
                 lastExamTime: "",
                 examSeason: "",
             },
-        };
+        }
+    },
+    watch: {
+        studentId(newVal) {
+            if (newVal) {
+                this.getStudent()
+                this.$refs.popup.open()
+            }
+        }
     },
     computed: {
         student() {
@@ -201,47 +204,54 @@ export default {
         },
     },
     methods: {
-        handleSetGrade() {
+        async getStudent() {
+            const res = await this.$http.get(
+                `/mini/student/getStudentDetail?studentId=${this.studentId}`
+            )
+            this.detail = res.data ?? {}
+        },
+
+        setGrade() {
             this.$refs.grade.open();
             const {
-                grade = "",
-                lastExamTime = "",
-                examSeason = "",
+                grade = '',
+                lastExamTime = '',
+                examSeason = '',
             } = this.student;
             this.form = {
                 grade,
                 lastExamTime,
                 examSeason,
-            };
+            }
         },
 
-        async gradeConfirm() {
-            if (this.disabled) return;
+        async setGradeConfirm() {
+            if (this.disabled) return
 
-            const { grade, lastExamTime, examSeason } = this.form;
+            const { grade, lastExamTime, examSeason } = this.form
             const param = {
                 data: {
                     grade,
                     lastExamTime,
                     examSeason,
-                    studentId: this.student.studentId,
-                },
-            };
+                    studentId: this.studentId
+                }
+            }
             const res = await this.$http.post(
                 "/mini/student/updateStudentGrade",
                 param
-            );
+            )
             if (res.ok) {
                 uni.showToast({
                     title: "设置成功！",
                     icon: "success",
-                });
-                this.$refs.grade.close();
-                this.$emit("update", this.student.studentId);
+                })
+                this.$refs.grade.close()
+                this.getStudent()
             }
-        },
-    },
-};
+        }
+    }
+}
 </script>
 
 <style lang="scss" scoped>

@@ -1,5 +1,5 @@
 <template>
-    <view class="page">
+    <view class="page" :style="pageStyle">
         <view class="custom-header">
             <view class="title" :style="customTitleStyle">
                 数据中心
@@ -10,18 +10,21 @@
                 <image :src="teacher.coverUrl || 'https://static.gangqintonghua.com/img/touxiang/pic1.webp'" class="cover" />
                 <view class="info">
                     <view class="msg">
-                        <text class="name">{{ teacher.teacherName }}</text>
-                        <template v-if="groups.length">
-                            <text v-for="g in groups" :key="g.id" class="group">{{ g.groupName }}</text>
-                        </template>
+                        <text class="name ellipsis">{{ teacher.teacherName }}</text>
+                        <view v-if="groups.length" class="groups" >
+                            <text v-for="g in groups.slice(0, 2)" :key="g.id" class="group ellipsis">{{ g.groupName }}</text>
+                        </view>
                     </view>
                     <view class="yanquan" @click="handleYanQuan">
                         <text>输码验券</text>
                         <image src="/static/images/teacher/yanquan.png"></image>
                     </view>
-                    <picker v-if="groups.length" class="switch" :value="groupValue" range-key="groupName" :range="groups" @change="onGroupChange">
-                        切换组内数据
-                    </picker>
+                    <template v-if="groups.length">
+                        <picker v-if="groups.length > 1" class="switch" :value="groupValue" range-key="groupName" :range="groups" @change="onGroupChange">
+                            切换组内数据
+                        </picker>
+                        <view v-else class="switch" @click="groupId = groups[0]">切换组内数据</view>
+                    </template>
                 </view>
             </view>
             <view class="salary-basic">
@@ -69,7 +72,7 @@
                     </view>
                     <view class="wrap">
                         <template v-if="trainTickets.length">
-                            <view v-for="item in trainTickets" class="item" :key="item.ticketId">
+                            <view v-for="item in trainTickets" class="item" :key="item.ticketId" @click="toTrainTickets(item)">
                                 <text class="name ellipsis">{{ item.ticketName }}</text>
                                 <text class="num">{{ item.num }}张</text>
                                 <view class="salary">
@@ -117,23 +120,33 @@
             zunei
         </view>
 
+        <YanQuan ref="yanquan" @success="init"/>
+
         <customTabbar :active="1" />
     </view>
 </template>
 
 <script lang="js">
 import dayjs from "dayjs"
+import YanQuan from "./components/YanQuan.vue"
 export default {
+    components: {
+        YanQuan
+    },
     data() {
         return {
             groupId: null,
             groupValue: 0,
             detail: null,
+
             headerHeight: 0,
             headerTop: 0
         }
     },
     computed: {
+        pageStyle() {
+            return `padding-top: ${(this.headerHeight + this.headerTop + 20) * 2}rpx;`
+        },
         customTitleStyle() {
             return `top: ${this.headerTop * 2}rpx; height: ${this.headerHeight * 2}rpx; line-height: ${this.headerHeight * 2}rpx`
         },
@@ -187,28 +200,30 @@ export default {
     },
     methods: {
         async init() {
+            // TODO ------ USER_ID
             // const userId = uni.getStorageSync('userId')
             const res = await this.$http.get('/mini/teacher/getTeacherDataInfo?teacherId=' + 16)
             this.detail = res.data ?? {}
         },
 
         handleYanQuan() {
-
+            this.$refs.yanquan.open()
         },
 
-        // 切换至组内数据
         onGroupChange(e) {
             const value = e.detail.value
             this.groupValue = value
             this.groupId = this.groups[value].id
         },
 
-        // 消课记录
         toFinishLesson({ courseType, courseId }) {
-            uni.navigateTo({ url: '/pages/teacher/finishLessonRecord/index?courseType=' + courseType + '&courseId=' + courseId + '&teacherId=' + this.teacher.accountId })
+            uni.navigateTo({ url: '/pages/teacher/xiaokeOrhexiaoRecord/index?courseType=' + courseType + '&courseId=' + courseId + '&teacherId=' + this.teacher.accountId })
         },
 
-        // 配套视频
+        toTrainTickets({ ticketId }) {
+            uni.navigateTo({ url: '/pages/teacher/xiaokeOrhexiaoRecord/index?ticketId=' + ticketId + '&teacherId=' + this.teacher.accountId })
+        },
+
         toVideos() {
             uni.navigateTo({ url: '/pages/student/videos/index?from=datacenter' })
         }
@@ -222,7 +237,6 @@ page {
 }
 
 .page {
-    padding-top: 156rpx;
     .custom-header {
         position: fixed;
         left: 0;
@@ -258,17 +272,26 @@ page {
             margin-right: 24rpx;
         }
         .info {
+            flex: 1;
+            overflow: hidden;
             .msg {
                 display: flex;
                 align-items: center;
                 margin: 14rpx 0 16rpx;
                 .name {
+                    max-width: 128rpx;
                     font-size: 32rpx;
                     font-weight: 500;
                     margin-right: 12rpx;
                     color: #ffffff;
                 }
+                .groups {
+                    flex: 1;
+                    overflow: hidden;
+                }
                 .group {
+                    display: inline-block;
+                    max-width: 120rpx;
                     background: #62bbec;
                     border-radius: 18rpx;
 
@@ -277,12 +300,15 @@ page {
                     font-weight: 500;
                     color: #eff5ff;
                     line-height: 17px;
+                    word-break: keep-all;
                     + .group {
                         margin-left: 6rpx;
                     }
                 }
             }
             .yanquan {
+                display: flex;
+                align-items: center;
                 text {
                     font-size: 28rpx;
                     color: #ffffff;
