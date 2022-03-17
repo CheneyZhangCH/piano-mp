@@ -64,7 +64,7 @@ export default {
             // AFAADKSLIJ
             // AFFFDAFDA3
             // AFFFD3AFDA
-            this.code = 'AFFFDAFDA3'
+            this.code = ''
             this.ticketInfo = null
             this.loading = false
 
