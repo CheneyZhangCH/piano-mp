@@ -1,0 +1,4 @@
+node_modules/
+umi_modules/
+unpackage/
+dist/

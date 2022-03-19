@@ -14,7 +14,11 @@
                             :class="{ continue: item.continueNum > 0 }"
                         >{{ item.continueNum }}</text>
                         <text class="desc">续课人数</text>
-                        <view v-if="accountType === 'ADMIN'" class="edit" @click="edit(item, 'continueNum')">
+                        <view
+                            v-if="accountType === 'ADMIN'"
+                            class="edit"
+                            @click="edit(item, 'continueNum')"
+                        >
                             <text>修改</text>
                             <image src="/static/images/teacher/edit.png" />
                         </view>
@@ -22,7 +26,11 @@
                     <view class="updown">
                         <text class="num">{{ item.discontinueNum }}</text>
                         <text class="desc">未续人数</text>
-                        <view v-if="accountType === 'ADMIN'" class="edit" @click="edit(item, 'discontinueNum')">
+                        <view
+                            v-if="accountType === 'ADMIN'"
+                            class="edit"
+                            @click="edit(item, 'discontinueNum')"
+                        >
                             <text>修改</text>
                             <image src="/static/images/teacher/edit.png" />
                         </view>
@@ -33,7 +41,11 @@
                             :class="{ refund: item.refundNum > 0 }"
                         >{{ item.refundNum }}</text>
                         <text class="desc">退费人数</text>
-                        <view v-if="accountType === 'ADMIN'" class="edit" @click="edit(item, 'refundNum')">
+                        <view
+                            v-if="accountType === 'ADMIN'"
+                            class="edit"
+                            @click="edit(item, 'refundNum')"
+                        >
                             <text>修改</text>
                             <image src="/static/images/teacher/edit.png" />
                         </view>
@@ -85,83 +97,83 @@ export default {
 
 <style lang="scss" scoped>
 .page {
-    min-height: 100vh;
-    background-color: #f5f7fa;
-    &-content {
-        padding: 32rpx 40rpx;
-        .item {
-            background-color: #ffffff;
-            border-radius: 16rpx;
-            padding: 36rpx 40rpx;
-            + .item {
-                margin-top: 36rpx;
-            }
-            .name {
-                font-size: 32rpx;
-                font-weight: 500;
-                color: #141f33;
-                line-height: 44rpx;
-            }
-            .updown {
-                display: flex;
-                align-items: center;
-                flex-direction: column;
-            }
-            .total {
-                padding: 50rpx 0;
-                border-bottom: 2rpx solid #f5f7fa;
-                margin-bottom: 30rpx;
-                .num {
-                    font-size: 32rpx;
-                    font-weight: 500;
-                    color: #141f33;
-                    line-height: 44rpx;
-                    margin-bottom: 8rpx;
-                }
-                .desc {
-                    font-size: 28rpx;
-                    color: #99a0ad;
-                    line-height: 40rpx;
-                }
-            }
-            .infos {
-                display: flex;
-                justify-content: space-around;
-                .num {
-                    font-size: 28rpx;
-                    font-weight: 500;
-                    color: #99a0ad;
-                    line-height: 40rpx;
-                    margin-bottom: 10rpx;
-                }
-                .desc {
-                    font-size: 24rpx;
-                    color: #99a0ad;
-                    line-height: 34rpx;
-                }
-                .continue {
-                    color: #f15e5e;
-                }
-                .refund {
-                    color: #44be5e;
-                }
-                .edit {
-                    margin-top: 2rpx;
-                    display: flex;
-                    align-items: center;
-                    text {
-                        font-size: 24rpx;
-                        color: #62bbec;
-                        line-height: 34rpx;
-                        margin-right: 4rpx;
-                    }
-                    image {
-                        width: 28rpx;
-                        height: 22rpx;
-                    }
-                }
-            }
-        }
-    }
+	min-height: 100vh;
+	background-color: #F5F7FA;
+	&-content {
+		padding: 32rpx 40rpx;
+		.item {
+			padding: 36rpx 40rpx;
+			background-color: #FFF;
+			border-radius: 16rpx;
+			+ .item {
+				margin-top: 36rpx;
+			}
+			.name {
+				font-size: 32rpx;
+				font-weight: 500;
+				line-height: 44rpx;
+				color: #141F33;
+			}
+			.updown {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+			.total {
+				padding: 50rpx 0;
+				margin-bottom: 30rpx;
+				border-bottom: 2rpx solid #F5F7FA;
+				.num {
+					margin-bottom: 8rpx;
+					font-size: 32rpx;
+					font-weight: 500;
+					line-height: 44rpx;
+					color: #141F33;
+				}
+				.desc {
+					font-size: 28rpx;
+					line-height: 40rpx;
+					color: #99A0AD;
+				}
+			}
+			.infos {
+				display: flex;
+				justify-content: space-around;
+				.num {
+					margin-bottom: 10rpx;
+					font-size: 28rpx;
+					font-weight: 500;
+					line-height: 40rpx;
+					color: #99A0AD;
+				}
+				.desc {
+					font-size: 24rpx;
+					line-height: 34rpx;
+					color: #99A0AD;
+				}
+				.continue {
+					color: #F15E5E;
+				}
+				.refund {
+					color: #44BE5E;
+				}
+				.edit {
+					display: flex;
+					align-items: center;
+					margin-top: 2rpx;
+					text {
+						margin-right: 4rpx;
+						font-size: 24rpx;
+						line-height: 34rpx;
+						color: #62BBEC;
+					}
+					image {
+						width: 28rpx;
+						height: 22rpx;
+					}
+				}
+			}
+		}
+	}
 }
 </style>
