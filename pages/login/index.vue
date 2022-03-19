@@ -73,14 +73,18 @@ export default {
 
                                 // uni.navigateBack({ delta: 1 })
 
-                                // if (accountType === 'SUPER_ADMIN') {
-                                //     return uni.redirectTo({ url: '/pages/audition/index/index' })
-                                // }
-
                                 vm.$store.dispatch('tabBar/setTabbar', accountType) // 手动更新store
 
                                 if (accountType === 'AUDITION') {
                                     return uni.redirectTo({ url: '/pages/audition/index/index' })
+                                }
+
+
+                                if (accountType === 'SUPER_ADMIN') {
+                                    return uni.redirectTo({ url: '/pages/admin/index/index' })
+                                }
+                                if (accountType === 'ADMIN') {
+                                    return uni.redirectTo({ url: '/pages/admin/index/index' })
                                 }
                                 if (accountType === 'STUDENT') {
                                     return uni.redirectTo({ url: '/pages/student/videos/index' })

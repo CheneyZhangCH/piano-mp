@@ -16,7 +16,7 @@
                     />
                 </template>
                 <template v-else>
-                    <view v-if="!ticketInfo" class="tip" @click="close">核销失败！请输入正确的券码！</view>
+                    <view v-if="!ticketInfo" class="tip">核销失败！请输入正确的券码！</view>
                     <template v-else>
                         <view class="tip">请确认当前所核销的课程券信息</view>
                         <view v-if="ticketInfo.ticketName" class="name">{{ ticketInfo.ticketName }}</view>
@@ -25,18 +25,19 @@
             </view>
             <view class="footer">
                 <template v-if="step === 0">
-                    <view class="btn" @click="close">取消</view>
-                    <view
+                    <button class="btn cancel" @click="close">取消</button>
+                    <button
                         class="btn"
                         :class="{ confirm: code.length === 10, disabled: code.length < 10 }"
+                        :disabled="code.length < 10"
                         @click="confirm"
-                    >确认</view>
+                    >确认</button>
                 </template>
                 <template v-else>
-                    <view v-if="!ticketInfo" class="btn confirm" @click="close">我知道了</view>
+                    <button v-if="!ticketInfo" class="btn confirm" @click="close">我知道了</button>
                     <template v-else>
-                        <view class="btn" @click="close">取消</view>
-                        <view class="btn confirm" @click="checkConfirm">确认核销</view>
+                        <button class="btn cancel" @click="close">取消</button>
+                        <button class="btn confirm" @click="checkConfirm">确认核销</button>
                     </template>
                 </template>
             </view>
@@ -76,11 +77,11 @@ export default {
         },
 
         async confirm() {
-            if (this.loading || !this.code) return
+            if (this.loading) return
+            this.loading = true
             const param = {
                 data: this.code
             }
-            this.loading = true
             try {
                 const res = await this.$http.post('/mini/trainTicket/getByCode', param)
                 this.step = 1
@@ -114,12 +115,9 @@ export default {
 }
 </script>
 
+<style lang="scss" scoped src="../../schedule/styles/popup.scss"></style>
 <style lang="scss" scoped>
 .main {
-    width: 650rpx;
-    background-color: #fff;
-    border-radius: 32rpx;
-
     .content {
         padding: 64rpx 48rpx;
         .input {
@@ -155,35 +153,6 @@ export default {
             color: #62bbec;
             line-height: 44rpx;
             margin-top: 36rpx;
-        }
-    }
-
-    .footer {
-        display: flex;
-        column-gap: 48rpx;
-        padding: 32rpx 48rpx;
-        .btn {
-            flex: 1;
-            height: 72rpx;
-            line-height: 72rpx;
-            border-radius: 44rpx;
-            border: 2rpx solid #d3d7e0;
-            background: #fff;
-
-            text-align: center;
-            font-size: 32rpx;
-            font-weight: 500;
-            color: #616b80;
-        }
-        .disabled {
-            background: #e1e1e1;
-            border: none;
-            color: #ffffff;
-        }
-        .confirm {
-            background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
-            border: none;
-            color: #ffffff;
         }
     }
 }

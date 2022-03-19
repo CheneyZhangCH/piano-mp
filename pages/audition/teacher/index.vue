@@ -468,7 +468,7 @@
               <template v-if="Array.isArray(course.chapters)">
                 <view v-for="chapter in course.chapters" :key="chapter.id" class="chapter-item-book ellipsis">
                   <text class="chapter-item-book-text">{{ '(' + chapter.bookName + ')' }}</text>
-                  <text class="chapter-item-book-text">{{ '《' + chapter.chapterName + '》' }}</text>
+                  <text class="chapter-item-book-text">{{ chapter.chapterName }}</text>
                 </view>
               </template>
             </view>

@@ -14,7 +14,7 @@
         <view class="videos">
             <view class="title">视频合集</view>
             <view class="content">
-                <view v-for="item in videos" :key="item.id" class="item" :class="{active:item.id === video.id}">
+                <view v-for="item in videos" :key="item.id" class="item" :class="{active:item.id === video.id}" @click="videosChange(item)">
                     {{ item.videoName }}
                     <image v-if="item.id === video.id" class="on" :src="'/static/images/student/video-on.png'"/>
                 </view>
@@ -29,6 +29,7 @@ export default {
         return {
             chapter: null,
             videos: [],
+
             video: null
         }
     },
@@ -61,6 +62,11 @@ export default {
 					title: chapter.chapterName
 				})
             }
+        },
+
+        videosChange(item) {
+            if(this.video.id === item.id) return
+            this.video = item
         }
     }
 }

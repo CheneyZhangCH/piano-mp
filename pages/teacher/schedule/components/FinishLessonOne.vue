@@ -5,14 +5,14 @@
                 <view class="header">{{ title }}</view>
                 <scroll-view scroll-y="true" style="max-height: 75vh;">
                     <view class="content">
-                        <view class="form-item rate">
+                        <view v-if="form.chapterScores.length" class="form-item rate">
                             <view class="label">回课情况</view>
                             <view
                                 v-for="(item, index) in form.chapterScores"
                                 :key="item.chapterId"
                                 class="rate-item"
                             >
-                                <text class="name ellipsis">《{{ item.chapterName }}》</text>
+                                <text class="name ellipsis">{{ item.chapterName }}</text>
                                 <view class="rate-wrap">
                                     <van-rate
                                         v-model="item.chapterScore"
@@ -376,7 +376,7 @@ export default {
         },
     },
     methods: {
-        open() {
+        async open() {
             this.form = {
                 attitudeScore: 0,
                 chapterScores: [],
@@ -384,27 +384,41 @@ export default {
                 handScore: 0,
                 musicScore: 0,
             }
-            const courses = this.detail?.oneCourse?.coursePackage?.courses ?? []
+            try {
+                const lastChaptersRes = await this.$http.post('/mini/finishiLesson/getLastFinishLessonChapters', {
+                    data: {
+                        "courseId": this.detail.courseId,
+                        studentId: this.detail.oneCourse.student.studentId,
+                        timetableId: this.detail.timetableId,
+                        timetablePeriodId: this.detail.timetablePeriodId
+                    }
+                })
+                const chapterScores = lastChaptersRes.data?.map((item) => ({
+                    chapterId: item.chapterId,
+                    chapterName: item.chapterName,
+                    chapterScore: 0,
+                    finishChapterId: item.finishLessonId
+                })) ?? []
+                this.$set(this.form, 'chapterScores', chapterScores)
 
-            this.bookList = courses
-                .map((item) => ({
-                    id: item.courseId,
-                    name: item.courseName,
-                }))
-                .concat({
+                const packageId = this.detail?.oneCourse?.coursePackage?.packageId
+                const teachingBookRes = await this.$http.get(
+                    '/mini/teachingBook/listByPackageId?packageId=' + packageId
+                )
+                this.bookList = teachingBookRes?.data?.map((item) => ({
+                    id: item.id,
+                    name: item.bookName,
+                })).concat({
                     id: 'custom',
                     name: '自定义',
                 })
+            } catch (error) {
+                console.log(error)
+            }
 
             this.title = `${this.dayOfWeekOBj[this.detail?.dayOfWeek]} ${this.detail?.periodName
                 }  ${this.detail?.oneCourse.student.studentName}`
 
-            const chapterScores = courses?.map((item) => ({
-                chapterId: item.id,
-                chapterName: item.courseName,
-                chapterScore: 0,
-            }))
-            this.$set(this.form, 'chapterScores', chapterScores)
 
             const chapters = []
             for (let i = 0; i < 2; i++) {
@@ -482,7 +496,7 @@ export default {
             const { id, name } = target.chapterList.filter(
                 (c) =>
                     c.id !== this.form.chapters[index === 0 ? 1 : 0].chapterId
-            )[value]
+            )[value] ?? {}
 
             this.$set(target, 'chapterId', id)
             this.$set(target, 'chapterName', name)
@@ -548,21 +562,21 @@ export default {
                 }
                 if (!suggestStep.filter((s) => s.content).length) continue
                 validChapters.push({
-                    bookId: bookId === 'custom' ? 0 : bookId,
+                    bookId: bookId === 'custom' ? null : bookId,
                     bookName,
-                    chapterId: bookId === 'custom' ? 0 : chapterId,
-                    chapterName,
+                    chapterId: bookId === 'custom' ? null : chapterId,
+                    chapterName: bookId === 'custom' ? `《${chapterName}》` : chapterName,
                     suggestStep: suggestStep
                         .filter((s) => s.content)
                         .map((s, subscript) => ({
                             content: s.content,
-                            sort: subscript + 1,
+                            sortNo: subscript + 1,
                         })),
                     workStep: workStep
                         .filter((s) => s.content)
                         .map((s, subscript) => ({
                             content: s.content,
-                            sort: subscript + 1,
+                            sortNo: subscript + 1,
                         })),
                 })
             }
@@ -597,23 +611,10 @@ export default {
 }
 </script>
 
+<style lang="scss" scoped src="../styles/popup.scss"></style>
 <style lang="scss" scoped>
 .main {
-    width: 650rpx;
-    background-color: #fff;
-    border-radius: 32rpx;
-
-    .header {
-        padding: 22rpx 0;
-        font-size: 32rpx;
-        font-weight: 500;
-        color: #141f33;
-        text-align: center;
-        line-height: 44rpx;
-    }
     .content {
-        // max-height: 75vh;
-        // overflow-y: auto;
         padding: 32rpx 32rpx 60rpx;
         .form-item {
             + .form-item {
@@ -754,37 +755,6 @@ export default {
                         }
                     }
                 }
-            }
-        }
-    }
-    .footer {
-        padding: 32rpx 48rpx;
-        box-shadow: 0px -4rpx 8rpx 0px rgba(0, 0, 0, 0.05);
-
-        display: flex;
-
-        .btn {
-            + .btn {
-                margin-left: 48rpx;
-            }
-            flex: 1;
-            height: 72rpx;
-            line-height: 72rpx;
-            background-color: #fff;
-            border-radius: 44rpx;
-            border: 1px solid #d3d7e0;
-
-            padding: 0 56rpx;
-            font-size: 32rpx;
-            font-weight: 500;
-            color: #616b80;
-            &.confirm {
-                color: #ffffff;
-                background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
-            }
-            &.disabled {
-                background: #e1e1e1;
-                border: none;
             }
         }
     }

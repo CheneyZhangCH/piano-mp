@@ -19,7 +19,7 @@
                 </view>
             </scroll-view>
             <view class="footer">
-                <button class="btn primary" type="primary" @click="$refs.popup.close()">我知道了</button>
+                <button class="btn confirm" @click="$refs.popup.close()">我知道了</button>
             </view>
         </view>
     </uni-popup>
@@ -35,12 +35,21 @@ export default {
     },
     data() {
         return {
-
+            dayOfWeekOBj: {
+                2: '周二',
+                3: '周三',
+                4: '周四',
+                5: '周五',
+                6: '周六',
+                7: '周日',
+            },
         }
     },
     computed: {
         title() {
-            return this.detail?.moreCourse?.course?.courseName ?? ''
+            return `${this.dayOfWeekOBj[this.detail?.dayOfWeek]} ${
+                this.detail?.periodName
+            }  ${this.detail?.moreCourse?.course?.courseName}`
         },
         students() {
             return this.detail?.moreCourse?.students ?? []
@@ -54,22 +63,11 @@ export default {
 }
 </script>
 
+<style lang="scss" scoped src="../styles/popup.scss"></style>
 <style lang="scss" scoped>
 .main {
-    width: 650rpx;
-    background-color: #fff;
-    border-radius: 32rpx;
-
-    .header {
-        padding: 22rpx 0;
-        font-size: 32rpx;
-        font-weight: 500;
-        color: #141f33;
-        text-align: center;
-        line-height: 44rpx;
-    }
     .content {
-        padding: 32rpx 32rpx 70rpx;
+        padding: 32rpx 32rpx 60rpx;
         .student {
             display: flex;
             align-items: center;
@@ -115,21 +113,6 @@ export default {
                 color: #62BBEC;
                 line-height: 32rpx;
             }
-        }
-    }
-    .footer {
-        padding: 32rpx;
-        box-shadow: 0px -2px 4px 0px rgba(0, 0, 0, 0.05);
-
-        .btn {
-            height: 72rpx;
-            line-height: 72rpx;
-            background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
-            border-radius: 44rpx;
-
-            font-size: 32rpx;
-            font-weight: 500;
-            color: #ffffff;
         }
     }
 }

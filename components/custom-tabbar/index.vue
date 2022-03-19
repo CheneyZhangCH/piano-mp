@@ -5,9 +5,12 @@
         inactive-color="#616B80"
         @change="tabbarChange"
     >
-        <!-- dot -->
-        <!-- info="5" -->
-        <van-tabbar-item v-for="item in tabBars" :key="item.text">
+        <van-tabbar-item
+            v-for="item in tabBars"
+            :key="item.text"
+            :info="item.key ? tabBarInfo[item.key] ? tabBarInfo[item.key] : null : null"
+            :dot="item.key ? !!tabbarDot[item.key] : false"
+        >
             <image
                 slot="icon"
                 :src="item.iconPath"
@@ -32,11 +35,11 @@ export default {
         active: Number
     },
     computed: {
-        ...mapGetters(['tabBars']),
+        ...mapGetters(['tabBars', 'tabBarInfo', 'tabbarDot']),
     },
     methods: {
         tabbarChange(e) {
-            if(this.active === e.detail) return
+            if (this.active === e.detail) return
             uni.redirectTo({ url: this.tabBars[e.detail].pagePath })
         }
     }

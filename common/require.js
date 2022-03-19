@@ -68,7 +68,7 @@ export default {
                 }
                 uni.showToast({
                     title: response.message,
-                    icon: 'error'
+                    icon: 'none'
                 })
                 reject(response)
             }
@@ -121,7 +121,7 @@ export default {
                 }
                 uni.showToast({
                     title: response.message,
-                    icon: 'error'
+                    icon: 'none'
                 })
                 reject(response)
             }

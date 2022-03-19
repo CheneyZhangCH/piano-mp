@@ -124,26 +124,48 @@
                 {
                     "path": "xiaokeOrhexiaoRecord/index",
                     "style": {
-                        "navigationBarTitleText": "",
+                        "navigationBarTitleText": "消课记录", // 核销记录
                         "enablePullDownRefresh": true
+                    }
+                },
+                {
+                    "path": "continueData/index",
+                    "style": {
+                        "navigationBarTitleText": "续课数据"
+                    }
+                }
+            ]
+        },
+        {
+            "root": "pages/admin",
+            "pages": [
+                {
+                    "path": "index/index",
+                    "style": {
+                        "navigationBarTitleText": "老师管理"
+                    }
+                },
+                {
+                    "path": "teacherManage/index",
+                    "style": {
+                        "navigationBarTitleText": "老师管理"
+                    }
+                },
+                {
+                    "path": "complaintManage/index",
+                    "style": {
+                        "navigationBarTitleText": "投诉管理"
+                    }
+                },
+                {
+                    "path": "complaint/index",
+                    "style": {
+                        "navigationBarTitleText": "投诉处理"
                     }
                 }
             ]
         }
 	],
-    // "tabBar":{
-    //     "list": [
-    //         {
-    //             "pagePath": "pages/student/videos/index"
-    //         },
-    //         {
-    //             "pagePath": "pages/student/homework/index"
-    //         },
-    //         {
-    //             "pagePath": "pages/student/center/index"
-    //         }
-    //     ]
-    // },
 	"globalStyle": {
 		"pageOrientation": "portrait",
 		"navigationBarTitleText": "钢琴童话",

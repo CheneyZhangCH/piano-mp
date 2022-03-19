@@ -1,3 +1,19 @@
+// key 用于tabbar info dot
+const ADMIN = [
+    {
+        pagePath: "/pages/admin/index/index",
+        text: '老师管理',
+        iconPath: '/static/images/tabBar/kebiao.png',
+        selectedIconPath: '/static/images/tabBar/kebiao_selected.png'
+    },
+    {
+        key: 'waitDealComplaintCount',
+        pagePath: "/pages/admin/complaintManage/index",
+        text: "投诉管理",
+        iconPath: "/static/images/tabBar/user.png",
+        selectedIconPath: "/static/images/tabBar/user_selected.png"
+    }
+]
 const STUDENT = [
     {
         pagePath: "/pages/student/videos/index",
@@ -34,6 +50,7 @@ const TEACHER = [
 ]
 
 export default {
+    ADMIN,
     STUDENT,
     TEACHER
 }

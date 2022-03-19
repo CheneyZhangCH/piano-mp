@@ -149,14 +149,18 @@ export default {
                 chapterName: '',
                 studentIds: [],
             }
-            const res = await this.$http.get(
-                '/mini/teachingBook/listByCourseId?courseId=' + this.courseId
-            )
-            this.bookList =
-                res.data?.map((item) => ({
-                    id: item.id,
-                    name: item.bookName,
-                })) ?? []
+            try {
+                const res = await this.$http.get(
+                    '/mini/teachingBook/listByCourseId?courseId=' + this.courseId
+                )
+                this.bookList =
+                    res.data?.map((item) => ({
+                        id: item.id,
+                        name: item.bookName,
+                    })) ?? []
+            } catch (error) {
+                console.log(error)
+            }
             this.bookValue = 0
             this.chapterList = []
             this.chapterValue = 0
@@ -242,20 +246,9 @@ export default {
 }
 </script>
 
+<style lang="scss" scoped src="../styles/popup.scss"></style>
 <style lang="scss" scoped>
 .main {
-    width: 650rpx;
-    background-color: #fff;
-    border-radius: 32rpx;
-
-    .header {
-        padding: 22rpx 32rpx;
-        font-size: 32rpx;
-        font-weight: 500;
-        color: #141f33;
-        text-align: center;
-        line-height: 44rpx;
-    }
     .content {
         padding: 32rpx 32rpx 60rpx;
         .form-item {
@@ -296,38 +289,6 @@ export default {
                         height: 20rpx;
                     }
                 }
-            }
-        }
-    }
-
-    .footer {
-        padding: 32rpx 48rpx;
-        box-shadow: 0px -4rpx 8rpx 0px rgba(0, 0, 0, 0.05);
-
-        display: flex;
-
-        .btn {
-            + .btn {
-                margin-left: 48rpx;
-            }
-            flex: 1;
-            height: 72rpx;
-            line-height: 72rpx;
-            background-color: #fff;
-            border-radius: 44rpx;
-            border: 1px solid #d3d7e0;
-
-            padding: 0 56rpx;
-            font-size: 32rpx;
-            font-weight: 500;
-            color: #616b80;
-            &.confirm {
-                color: #ffffff;
-                background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
-            }
-            &.disabled {
-                background: #e1e1e1;
-                border: none;
             }
         }
     }

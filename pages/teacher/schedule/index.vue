@@ -13,163 +13,147 @@
         </view>
         <view class="page-content">
             <template v-if="periods.length">
-                <template v-for="period in periods">
-                    <view
-                        v-if="['work', 'rest'].includes(period.periodType)"
-                        :key="period.timetablePeriodId"
-                        class="period-item"
-                    >
-                        <template v-if="period.periodType === 'work'">
-                            <view v-if="period.oneCourse" class="period-main">
-                                <image
-                                    class="avatar"
-                                    :src="
-                                        period.oneCourse.student.coverUrl ||
-                                        '/static/images/course_type_more.png'
-                                    "
-                                    @click="openStudent(period)"
-                                />
+                <!-- v-if="['work', 'rest'].includes(period.periodType)" -->
+                <view
+                    v-for="period in periods"
+                    :key="period.timetablePeriodId"
+                    class="period-item"
+                >
+                    <template v-if="period.periodType === 'work'">
+                        <!-- 1表示一对一生效,2表示一对多生效,3表示无安排,4表示一对一待生效 -->
+                        <view v-if="period.periodStatus === '1' && period.oneCourse" class="period-main">
+                            <image
+                                class="avatar"
+                                :src="
+                                    period.oneCourse.student.coverUrl ||
+                                    '/static/images/course_type_more.png'
+                                "
+                                @click="openStudent(period)"
+                            />
+                            <view
+                                v-if="period.oneCourse.newStudent"
+                                class="period-status new"
+                                >新学员
+                            </view>
+                            <view class="period-name">{{
+                                period.periodName
+                            }}</view>
+                            <view class="period-content">
+                                <view class="period-content-title">
+                                    <text class="student-name" :class="{ weekHaveFinish: period.oneCourse.weekHaveFinish }">{{
+                                        period.oneCourse.student.studentName
+                                    }}</text>
+                                    <image
+                                        class="gender-icon"
+                                        :src="`/static/images/${period.oneCourse.student
+                                        .gender || 'male'
+                                        }_selected.png`"
+                                    ></image>
+                                    <text class="student-age">{{
+                                        period.oneCourse.student.age + '岁'
+                                    }}</text>
+                                </view>
+                                <view
+                                    v-if="period.oneCourse.chapters.length"
+                                    class="chapter"
+                                >
+                                    <view
+                                        v-for="chapter in period.oneCourse.chapters"
+                                        :key="chapter.id"
+                                        class="chapter-item ellipsis"
+                                    >
+                                        {{ chapter.chapterName }}
+                                    </view>
+                                </view>
+                            </view>
+                            <view
+                                v-if="!teacherId"
+                                class="finish-lesson"
+                                @click="handleFinishLesson(period)"
+                                >消课</view
+                            >
+                        </view>
+                        <view v-else-if="period.periodStatus === '2' && period.moreCourse" class="period-main">
+                            <image
+                                class="avatar"
+                                src="/static/images/course_type_more.png"
+                                @click="openCourse(period)"
+                            />
+                            <view class="period-name">{{
+                                period.periodName
+                            }}</view>
+                            <view class="period-content">
+                                <view class="period-content-title">
+                                    <text class="course-name">
+                                        {{ period.moreCourse.course.courseName + (period.remainStudentNum === 0 ? '(满班)' : '') }}
+                                    </text>
+                                </view>
                                 <view
                                     v-if="
-                                        [
-                                            'finish_course_discontinue',
-                                            'finish_course_continue',
-                                        ].includes(
-                                            period.oneCourse.student.status
+                                        Array.isArray(
+                                            period.moreCourse.students
                                         )
                                     "
-                                    class="period-status"
-                                    :class="period.oneCourse.student.status"
-                                    >即将清退
-                                </view>
-                                <view class="period-name">{{
-                                    period.periodName
-                                }}</view>
-                                <view class="period-content">
-                                    <view class="period-content-title">
-                                        <text class="student-name">{{
-                                            period.oneCourse.student.studentName
-                                        }}</text>
-                                        <image
-                                            class="gender-icon"
-                                            :src="`/static/images/${period.oneCourse.student
-                                                .gender || 'male'
-                                            }_selected.png`"
-                                        ></image>
-                                        <text class="student-age">{{
-                                            period.oneCourse.student.age + '岁'
-                                        }}</text>
-                                    </view>
-                                    <view
-                                        v-if="
-                                            Array.isArray(
-                                                period.oneCourse.coursePackage
-                                                    .courses
-                                            )
-                                        "
-                                        class="course"
+                                    class="student ellipsis"
+                                >
+                                    <text
+                                        v-for="student in period.moreCourse
+                                        .students"
+                                        :key="student.studentId"
+                                        :class="{
+                                            weekHaveFinish: student.weekHaveFinish,
+                                        }"
+                                        class="student-item"
                                     >
-                                        <view
-                                            v-for="course in period.oneCourse
-                                            .coursePackage.courses"
-                                            :key="course.courseId"
-                                            :class="{
-                                                warning:
-                                                    course.remainCourseNum < 6,
-                                            }"
-                                            class="course-item ellipsis"
-                                        >
-                                            {{ course.courseName }}
-                                        </view>
-                                    </view>
+                                        {{ student.studentName }}
+                                    </text>
                                 </view>
                                 <view
-                                    class="finish-lesson"
-                                    @click="handleFinishLesson(period)"
-                                    >消课</view
+                                    v-if="period.moreCourse.chapter"
+                                    class="chapter ellipsis"
                                 >
-                            </view>
-                            <view v-if="period.moreCourse" class="period-main">
-                                <image
-                                    class="avatar"
-                                    src="/static/images/course_type_more.png"
-                                    @click="openCourse(period)"
-                                />
-                                <view class="period-name">{{
-                                    period.periodName
-                                }}</view>
-                                <view class="period-content">
-                                    <view class="period-content-title">
-                                        <text class="student-name">{{
-                                            period.moreCourse.course
-                                                .courseName +
-                                                (period.remainStudentNum === 0
-                                                    ? '(满班)'
-                                                    : '')
-                                        }}</text>
-                                    </view>
-                                    <view
-                                        v-if="
-                                            Array.isArray(
-                                                period.moreCourse.students
-                                            )
-                                        "
-                                        class="student ellipsis"
-                                    >
-                                        <text
-                                            v-for="student in period.moreCourse
-                                            .students"
-                                            :key="student.studentId"
-                                            :class="{
-                                                warning: student.warning,
-                                            }"
-                                            class="student-item"
-                                        >
-                                            {{ student.studentName }}
-                                        </text>
-                                    </view>
-                                    <view
-                                        v-if="
-                                            Array.isArray(
-                                                period.moreCourse.chapter
-                                            )
-                                        "
-                                        class="chapter"
-                                    >
-                                        <text
-                                            v-for="chapter in period.moreCourse
-                                            .chapter"
-                                            :key="chapter.chapterId"
-                                            class="chapter-item ellipsis"
-                                        >
-                                            {{ chapter.chapterName }}
-                                        </text>
+                                    <view class="chapter-item">
+                                        {{ period.moreCourse.chapter.chapterName }}
                                     </view>
                                 </view>
-                                <view
-                                    class="finish-lesson"
-                                    @click="handleFinishLesson(period)"
-                                    >消课</view
-                                >
                             </view>
-                        </template>
-
-                        <view
-                            class="period-rest"
-                            v-if="period.periodType === 'rest'"
-                        >
-                            <view class="period-rest-divider"></view>
-                            <view class="period-rest-name">
-                                {{ period.periodName }} 休息
-                            </view>
-                            <view class="period-rest-divider"></view>
+                            <view
+                                v-if="!teacherId"
+                                class="finish-lesson"
+                                @click="handleFinishLesson(period)"
+                                >消课</view
+                            >
                         </view>
+                        <view v-else-if="period.periodStatus === '3'" class="period-main">
+                            <view class="period-name">{{
+                                period.periodName
+                            }}</view>
+                        </view>
+                        <view v-else-if="period.periodStatus === '4'" class="period-main lock">
+                            <view class="period-name">{{
+                                period.periodName
+                            }}</view>
+                            <view class="period-content">
+                                该时间段已被锁定，请勿做其余安排
+                            </view>
+                        </view>
+                    </template>
+
+                    <view
+                        v-if="period.periodType === 'rest'"
+                        class="period-rest"
+                    >
+                        <view class="period-rest-divider"></view>
+                        <view class="period-rest-name">
+                            {{ period.periodName }} 休息
+                        </view>
+                        <view class="period-rest-divider"></view>
                     </view>
-                </template>
+                </view>
             </template>
         </view>
 
-        <customTabbar :active="0" />
+        <customTabbar v-if="!teacherId" :active="0" />
 
         <!-- 一对多详情（课程）| 对学生详情组件先后顺序有要求 -->
         <Course ref="course" :detail="courseDetail" @student="id => studentId = id" />
@@ -209,6 +193,8 @@ export default {
     },
     data() {
         return {
+            // teacherId 存在表示具体老师，否则表示老师端-登录人课表
+            teacherId: 0,
             dayOfWeek: 2,
             dayOfWeekArr: [
                 { label: '周二', value: 2 },
@@ -225,12 +211,19 @@ export default {
             courseDetail: {},
         }
     },
-    onLoad() {
+    onLoad(option) {
         const token = uni.getStorageSync('token')
         // 权限验证
         if (!token) {
             uni.showToast({ title: '请先登录', icon: 'none' })
             return uni.navigateTo({ url: '/pages/login/index' })
+        }
+
+        this.teacherId = option.teacherId ?? 0
+        if (this.teacherId) {
+            uni.setNavigationBarTitle({
+                title: option.teacherName ?? '我的课表'
+            })
         }
 
         this.dayOfWeek = 2
@@ -243,41 +236,23 @@ export default {
         },
 
         async handleSearch() {
-            wx.showLoading({ title: '加载中' })
+            // wx.showLoading({ title: '加载中' })
             const userId = uni.getStorageSync('userId')
             try {
                 const res = await this.$http.post(
                     `/mini/courseTimetable/getTeacherDayTimetable`,
                     {
                         data: {
-                            // TODO ------ USER_ID
-                            teacherId: userId === 28 ? 16 : userId,
+                            // TODO userId
+                            teacherId: this.teacherId || (userId === 28 ? 16 : userId),
                             dayOfWeek: this.dayOfWeek,
                         },
                     }
                 )
                 const { periods } = res.data ?? {}
-
-                if (periods?.length) {
-                    periods.forEach((period) => {
-                        if (period.periodType === 'work' && period.oneCourse) {
-                            const { expiryDate } = period.oneCourse.student || {}
-                            period.oneCourse.student.expiryDateStr =
-                                this.getExpiryDateStr(expiryDate)
-                            period.oneCourse.student.expiryDateWarning =
-                                dayjs() - expiryDate < 30 * 24 * 60 * 60 * 1000
-                        }
-                        if (period.periodType === 'work' && period.moreCourse) {
-                            const { startClassDate } = period.moreCourse || {}
-                            period.moreCourse.startClassDateStr = startClassDate
-                                ? dayjs(startClassDate).format('YYYY-MM-DD')
-                                : ''
-                        }
-                    })
-                }
                 this.periods = periods || []
             } finally {
-                wx.hideLoading()
+                // wx.hideLoading()
                 uni.stopPullDownRefresh()
             }
         },
@@ -292,34 +267,6 @@ export default {
         openCourse(period) {
             this.courseDetail = period
             this.$refs.course.open()
-        },
-
-        getExpiryDateStr(expiryDate) {
-            const [expireYear, expireMonth, expireDay] = dayjs(expiryDate)
-                .format('YYYY-MM-DD')
-                .split('-')
-            const [curYear, curMonth, curDay] = dayjs()
-                .format('YYYY-MM-DD')
-                .split('-')
-            let year = expireYear - curYear
-            let month = expireMonth - curMonth
-            let day = expireDay - curDay
-            if (day < 0) {
-                day += 30
-                month -= 1
-            }
-            if (month < 0) {
-                month += 12
-                year -= 1
-            }
-            return (
-                [
-                    year * 2 + month ? year * 2 + month + '月' : '',
-                    day ? day + '天' : '',
-                ]
-                    .filter(Boolean)
-                    .join('') || '-'
-            )
         },
 
         // 消课
@@ -344,8 +291,9 @@ export default {
 
 <style lang="scss" scoped>
 .page {
-    height: 100vh;
+    min-height: 100vh;
     padding-top: 80rpx;
+    padding-bottom: 100rpx;
     background: #f5f7fa;
 }
 
@@ -420,24 +368,32 @@ export default {
         background: #ffffff;
         box-shadow: 0px 0px 8px 0px #e3e5e9;
         border-radius: 16rpx;
+        &.lock {
+            border: 2rpx dashed #979797;
+            .period-content {
+                display: flex;
+                align-items: center;
+
+                padding-left: 20rpx;
+                font-size: 28rpx;
+                color: #99a0ad;
+            }
+        }
 
         .period-status {
             position: absolute;
             top: 0;
             left: 0;
+
             height: 36rpx;
             line-height: 36rpx;
-            padding: 0 14rpx;
             background: #f15e5e;
             border-radius: 16rpx 0 16rpx 0;
+            padding: 0 14rpx;
 
-            &.finish_course_discontinue {
-                background: #99a0ad;
-            }
-
-            &.finish_course_continue {
-                background: #44be5e;
-            }
+            font-size: 24rpx;
+            font-weight: 500;
+            color: #ffffff;
         }
 
         .period-name {
@@ -480,9 +436,19 @@ export default {
                 .student-name {
                     font-size: 28rpx;
                     font-weight: 500;
-                    color: #62bbec;
-                    line-height: 20px;
+                    color: #141f33;
+                    line-height: 40rpx;
+                    &.weekHaveFinish {
+                        color: #62bbec;
+                    }
                 }
+                .course-name {
+                    font-size: 28rpx;
+                    font-weight: 500;
+                    color: #62bbec;
+                    line-height: 40rpx;
+                }
+
 
                 .gender-icon {
                     width: 24rpx;
@@ -498,33 +464,29 @@ export default {
                     margin-left: 8rpx;
                 }
             }
-
-            .course {
-                padding: 0 10rpx 20rpx 20rpx;
-
-                .course-item {
-                    + .course-item {
-                        margin-top: 10rpx;
-                    }
-                    font-size: 24rpx;
-                    color: #525666;
-                    line-height: 34rpx;
-
-                    &.warning {
-                        font-weight: 500;
-                        color: #f15e5e;
-                    }
-                }
-            }
             .student {
                 padding: 0 10rpx 20rpx 20rpx;
                 .student-item {
+                    font-size: 24rpx;
+                    font-weight: 600;
+                    color: #525666;
+                    line-height: 34rpx;
                     + .student-item {
                         margin-left: 10rpx;
                     }
+                    &.weekHaveFinish {
+                        color: #62BBEC;
+                    }
+                }
+            }
+            .chapter {
+                padding: 0 10rpx 20rpx 20rpx;
 
+                .chapter-item {
+                    + .chapter-item {
+                        margin-top: 10rpx;
+                    }
                     font-size: 24rpx;
-                    font-weight: 600;
                     color: #525666;
                     line-height: 34rpx;
                 }

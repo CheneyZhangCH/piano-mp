@@ -27,11 +27,16 @@ export default {
             })
         }
 
-        if (accountType === 'SUPER_ADMIN') {
-            return uni.redirectTo({ url: '/pages/audition/index/index' })
-        }
+
         if (accountType === 'AUDITION') {
             return uni.redirectTo({ url: '/pages/audition/index/index' })
+        }
+
+        if (accountType === 'SUPER_ADMIN') {
+            return uni.redirectTo({ url: '/pages/admin/index/index' })
+        }
+        if (accountType === 'ADMIN') {
+            return uni.redirectTo({ url: '/pages/admin/index/index' })
         }
         if (accountType === 'STUDENT') {
             return uni.redirectTo({ url: '/pages/student/videos/index' })
