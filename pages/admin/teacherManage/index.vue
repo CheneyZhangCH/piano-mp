@@ -54,9 +54,12 @@ export default {
                 this.teacher = res.data?.teacher ?? {}
             }
         },
-        toTeacher() {
 
+        toTeacher() {
+            const { accountId, teacherName } = this.teacher;
+            uni.navigateTo({ url: `/pages/admin/teacherData/index?teacherId=${accountId}&teacherName=${teacherName}` });
         },
+
         toSchedule() {
             const { accountId, teacherName } = this.teacher;
             uni.navigateTo({ url: `/pages/teacher/schedule/index?teacherId=${accountId}&teacherName=${teacherName}` });

@@ -115,7 +115,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped src="../../schedule/styles/popup.scss"></style>
+<style lang="scss" scoped src="@/components/custom-popup/index.scss"></style>
 <style lang="scss" scoped>
 .main {
     .content {

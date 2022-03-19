@@ -243,7 +243,7 @@ export default {
                     `/mini/courseTimetable/getTeacherDayTimetable`,
                     {
                         data: {
-                            // TODO userId
+                        // TODO: userId
                             teacherId: this.teacherId || (userId === 28 ? 16 : userId),
                             dayOfWeek: this.dayOfWeek,
                         },

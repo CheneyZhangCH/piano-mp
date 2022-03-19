@@ -170,8 +170,10 @@
                 </view>
                 <view class="container fenhong">
                     <view class="block-title">
-                        <text class="name">利润分红(元)</text>
-                        <text class="times">{{ groupTimes }}</text>
+                        <view>
+                            <text class="name">利润分红(元)</text>
+                            <text class="times">{{ groupTimes }}</text>
+                        </view>
                     </view>
                     <view class="content">
                         <view v-for="item in group.teacherAmounts" :key="item.id" class="fenhong-item">
@@ -224,7 +226,7 @@
 
         <YanQuan ref="yanquan" @success="init"/>
 
-        <UpdateToNextQuarter ref="utnq" @confirm="updateToNextQuarterConfirm" />
+        <customPopupDialog ref="utnq" content="更新至下一季度后续课利润将为初始状态 请问是否确认更新" @confirm="updateToNextQuarterConfirm" />
 
         <customTabbar v-if="datacenterFlag" :active="1" />
     </view>
@@ -233,13 +235,13 @@
 <script lang="js">
 import dayjs from "dayjs"
 import YanQuan from "./components/YanQuan.vue"
-import UpdateToNextQuarter from './components/UpdateToNextQuarter.vue'
+import customPopupDialog from '@/components/custom-popup/dialog'
 
 import { weekOrDateTime } from '@/utils/format'
 export default {
     components: {
         YanQuan,
-        UpdateToNextQuarter
+        customPopupDialog
     },
     data() {
         return {
@@ -317,8 +319,8 @@ export default {
             const start = this.group?.startTime,
                 end = this.group?.endTime
 
-            const s = start ? dayjs(start).format('YYYY-MM-DD') : '',
-                e = end ? dayjs(end).format('YYYY-MM-DD') : ''
+            const s = start ? dayjs(start).format('YYYY/M/D') : '',
+                e = end ? dayjs(end).format('YYYY/M/D') : ''
             return [s, e].filter(Boolean).join('~')
         }
     },
@@ -355,7 +357,7 @@ export default {
         weekOrDateTime,
         async init() {
             const userId = uni.getStorageSync('userId')
-            // TODO userId
+            // TODO: userId
             const res = await this.$http.get('/mini/teacher/getTeacherDataInfo?teacherId=' + (userId === 28 ? 16 : userId))
             this.detail = res.data ?? {}
         },

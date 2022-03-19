@@ -2,7 +2,7 @@
     <uni-popup ref="popup" :is-mask-click="false" type="center">
         <view class="main">
             <view class="content">
-                <view class="tip">更新至下一季度后续课利润将为初始状态 请问是否确认更新</view>
+                <view class="tip">{{ content }}</view>
             </view>
             <view class="footer">
                 <button class="btn cancel" @click="close">取消</button>
@@ -14,6 +14,9 @@
 
 <script>
 export default {
+    props: {
+        content: String
+    },
     data() {
         return {
             loading: false
@@ -38,7 +41,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped src="../../schedule/styles/popup.scss"></style>
+<style lang="scss" scoped src="./index.scss"></style>
 <style lang="scss" scoped>
 .main {
     .content {

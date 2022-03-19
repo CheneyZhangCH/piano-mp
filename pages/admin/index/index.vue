@@ -20,8 +20,6 @@
                     </view>
                 </view>
             </template>
-
-            {{$store.getters.tabBarInfo}}
         </view>
 
         <customTabbar :active="0" />

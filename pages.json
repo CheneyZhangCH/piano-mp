@@ -152,6 +152,12 @@
                     }
                 },
                 {
+                    "path": "teacherData/index",
+                    "style": {
+                        "navigationBarTitleText": "老师数据"
+                    }
+                },
+                {
                     "path": "complaintManage/index",
                     "style": {
                         "navigationBarTitleText": "投诉管理"
