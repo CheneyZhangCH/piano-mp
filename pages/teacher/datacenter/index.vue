@@ -22,9 +22,9 @@
                     </view>
                     <template v-if="groups.length">
                         <picker v-if="groups.length > 1" class="switch" :value="groupValue" range-key="groupName" :range="groups" @change="onGroupChange">
-                            切换组内数据
+                            切换至组内数据
                         </picker>
-                        <view v-else class="switch" @click="groupId = groups[0]">切换组内数据</view>
+                        <view v-else class="switch" @click="onGroupChange({ detail: { value: 0 } })">切换至组内数据</view>
                     </template>
                 </view>
             </view>
@@ -34,7 +34,7 @@
                     <text class="times">{{ times }}</text>
                 </view>
                 <view class="salary">{{ detail.salary }}</view>
-                <view class="desc">* 基本收入为税前收入，额外奖金不含在内</view>
+                <view class="desc">* 基本收入为税前收入，额外奖金不含在内另行计算</view>
             </view>
             <view class="list block">
                 <view class="container">
@@ -180,7 +180,7 @@
                             <view class="info">
                                 <image :src="item.coverUrl || ''"/>
                                 <text class="name ellipsis">{{ item.teacherName }}<template v-if="item.groupTeacherType === 'leader'">(组长)</template></text>
-                                <text v-if="leaderFlag" class="btn" @click="toTeacher(item)">查看课表</text>
+                                <text v-if="leaderFlag && item.accountId !== userId" class="btn" @click="toTeacher(item)">查看课表</text>
                             </view>
                             <view class="num">
                                 <text class="ratio">{{ item.ratio }}%</text>
@@ -226,7 +226,12 @@
 
         <YanQuan ref="yanquan" @success="init"/>
 
-        <customPopupDialog ref="utnq" content="更新至下一季度后续课利润将为初始状态 请问是否确认更新" @confirm="updateToNextQuarterConfirm" />
+        <pianoMessageBox
+            ref="utnq"
+            message="更新至下一季度后续课利润将为初始状态 请问是否确认更新"
+            showCancelButton
+            @confirm="updateToNextQuarterConfirm"
+        />
 
         <customTabbar v-if="datacenterFlag" :active="1" />
     </view>
@@ -235,13 +240,11 @@
 <script lang="js">
 import dayjs from "dayjs"
 import YanQuan from "./components/YanQuan.vue"
-import customPopupDialog from '@/components/custom-popup/dialog'
 
 import { weekOrDateTime } from '@/utils/format'
 export default {
     components: {
-        YanQuan,
-        customPopupDialog
+        YanQuan
     },
     data() {
         return {
@@ -269,7 +272,8 @@ export default {
             headerHeight: 0,
             headerTop: 0,
 
-            accountType: '' // ADMIN - 更新续课利润至下个季度
+            accountType: '', // ADMIN - 更新续课利润至下个季度
+            userId: 0
         }
     },
     computed: {
@@ -312,8 +316,7 @@ export default {
             return this.group?.teachers?.filter(item => item.groupTeacherType === 'leader') ?? []
         },
         leaderFlag() {
-            const userId = uni.getStorageSync('userId')
-            return !!this.leaderTeachers.filter(item => item.accountId === userId)?.length
+            return !!this.leaderTeachers.filter(item => item.accountId === this.userId)?.length
         },
         groupTimes() {
             const start = this.group?.startTime,
@@ -327,6 +330,7 @@ export default {
     onLoad(option) {
         const token = uni.getStorageSync('token')
         const accountType = uni.getStorageSync('accountType')
+        const userId = uni.getStorageSync('userId')
 
         // 权限验证
         if (!token) {
@@ -339,6 +343,7 @@ export default {
             })
         }
         this.accountType = accountType
+        this.userId = userId
 
         let rect = wx.getMenuButtonBoundingClientRect();
 
@@ -356,9 +361,7 @@ export default {
     methods: {
         weekOrDateTime,
         async init() {
-            const userId = uni.getStorageSync('userId')
-            // TODO: userId
-            const res = await this.$http.get('/mini/teacher/getTeacherDataInfo?teacherId=' + (userId === 28 ? 16 : userId))
+            const res = await this.$http.get('/mini/teacher/getTeacherDataInfo?teacherId=' + this.userId)
             this.detail = res.data ?? {}
         },
 
@@ -724,8 +727,10 @@ export default {
             .content {
                 display: flex;
                 justify-content: space-around;
+                flex-wrap: wrap;
+                row-gap: 24rpx;
                 .item {
-                    flex: 1;
+                    width: calc(50% - 12rpx);
                     display: flex;
                     text-align: center;
                     flex-direction: column;

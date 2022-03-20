@@ -105,21 +105,18 @@
             <image src="/static/images/teacher/refresh.png" />
         </view>
 
-        <customPopupDialog
+        <pianoMessageBox
             ref="utnm"
-            content="更新至下个月后收入将恢复至底薪 请问是否确认更新"
+            message="更新至下个月后收入将恢复至底薪 请问是否确认更新"
+            showCancelButton
             @confirm="updateToNextMonthConfirm"
         />
     </view>
 </template>
 
 <script>
-import customPopupDialog from '@/components/custom-popup/dialog'
 import dayjs from "dayjs";
 export default {
-    components: {
-        customPopupDialog
-    },
     data() {
         return {
             teacherId: 0,
@@ -157,9 +154,9 @@ export default {
             return uni.navigateTo({ url: "/pages/login/index" });
         }
         this.teacherId = option.teacherId
-        // uni.setNavigationBarTitle({
-        //     title: option.teacherName
-        // })
+        uni.setNavigationBarTitle({
+            title: option.teacherName
+        })
         this.init()
     },
     methods: {

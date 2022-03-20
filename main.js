@@ -1,7 +1,7 @@
 import App from './App'
 import store from './store'
+import Global from './utils/global'
 
-// #ifndef VUE3
 import Vue from 'vue'
 Vue.config.productionTip = false
 Vue.prototype.$store = store
@@ -16,6 +16,11 @@ Vue.prototype.$http = hRequire
 
 import customTabbar from './components/custom-tabbar'
 Vue.component('customTabbar', customTabbar)
+
+import pianoMessageBox from './components/message-box'
+Vue.component('pianoMessageBox', pianoMessageBox)
+
+Vue.use(Global)
 
 // 权限验证操作
 Vue.prototype.checkAuth = (callback) => {
@@ -39,14 +44,3 @@ const app = new Vue({
     ...App
 })
 app.$mount()
-// #endif
-
-// #ifdef VUE3
-import { createSSRApp } from 'vue'
-export function createApp() {
-  const app = createSSRApp(App)
-  return {
-    app
-  }
-}
-// #endif

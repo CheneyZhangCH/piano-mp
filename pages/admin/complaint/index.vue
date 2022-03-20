@@ -14,7 +14,7 @@ export default {
     data() {
         return {
             complaintId: 0,
-            detail: null,
+            detail: {},
             form: {
                 dealContent: '',
                 status: '' // 处理状态,可用值:deal,not_deal
@@ -37,10 +37,9 @@ export default {
         async init() {
             try {
                 const res = await this.$http.get(`/mini/studentComplaint/getStudentComplaintVo?id=${this.complaintId}`)
-
-                // await this.$http.get(`/mini/studentComplaint/getComplaintReason`)
+                this.detail = res.data ?? {}
             } catch (error) {
-
+                console.log(error)
             }
         },
 
@@ -51,15 +50,18 @@ export default {
             const param = {
                 data: {
                     ...this.form,
-                    id: this.complaintId,
-                    // dealContent: "",
-                    // status: ""
+                    id: this.complaintId
                 }
             }
             try {
                 await this.$http.post('/mini/studentComplaint/dealComplaint', param)
-            } catch (error) {
-
+                uni.showToast({
+                    title: '处理成功！',
+                    icon: 'success',
+                })
+                uni.navigateBack({ delta: 1 })
+            } finally {
+                this.loading = false
             }
         }
     }

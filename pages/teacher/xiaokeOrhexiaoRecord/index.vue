@@ -1,7 +1,22 @@
 <template>
-    <view class="page">
+    <view class="page" :class="{ selectAble }">
         <view class="page-search">
             <view class="mode" @click="toggleSearchMode">{{ mode === 'month' ? '自定义时间' : '按月份筛选' }}</view>
+            <view
+                v-if="accountType === 'ADMIN' && courseId"
+                class="switch"
+                :class="{ selectAble }"
+                @click="toggleSelectAble"
+            >
+                <image class="refresh" src="/static/images/teacher/refresh.png" />恢复课时
+                <uni-icons
+                    v-if="selectAble"
+                    type="closeempty"
+                    color="#62BBEC"
+                    size="12"
+                    style="margin-left: 8rpx;"
+                />
+            </view>
         </view>
         <view class="page-records">
             <view class="title">
@@ -19,13 +34,13 @@
 
                     <uni-datetime-picker
                         v-if="mode === 'range'"
-                        :value="range"
+                        :value="dateRange"
                         :border="false"
                         :clear-icon="false"
                         type="daterange"
                         @change="onDaterRangeChange"
                     >
-                        {{ range.length ? range.join(' 至 ') : '请选择日期范围' }}
+                        {{ dateRange.length ? dateRange.join(' 至 ') : '请选择日期范围' }}
                         <uni-icons type="bottom" size="14" style="margin-left: 6rpx;" />
                     </uni-datetime-picker>
                 </view>
@@ -33,8 +48,18 @@
             </view>
             <view class="list">
                 <template v-if="records.length">
-                    <view v-for="item in records" :key="item.id" class="item">
+                    <view
+                        v-for="item in records"
+                        :key="item.id"
+                        class="item"
+                        @click="onRecordClick(item)"
+                    >
                         <template v-if="courseId">
+                            <image
+                                v-if="selectAble"
+                                class="select-icon"
+                                :src="`/static/images/student/icon-radio${selectedFinishLesson.id === item.id ? '-active' : ''}.png`"
+                            />
                             <view class="info">
                                 <view class="chapters">
                                     <view
@@ -81,6 +106,30 @@
                 </template>
             </view>
         </view>
+        <view v-if="accountType === 'ADMIN' && courseId && selectAble" class="page-footer">
+            <!-- 一对一、一对多但只有一个学生 -->
+            <button
+                v-if="courseType === 'one' || (courseType === 'more' && (!selectedFinishLesson || selectedFinishLesson && selectedFinishLesson.students.length === 1))"
+                class="btn"
+                :class="{ confirm: !!selectedFinishLesson, disabled: !selectedFinishLesson }"
+                :disabled="!selectedFinishLesson"
+                @click="openRecoverLesson(0)"
+            >确定</button>
+            <picker
+                v-else
+                class="btn confirm picker"
+                :value="recoverLessonStudent"
+                range-key="studentName"
+                :range="selectedFinishLesson.students"
+                @change="onRecoverLessonStudentChange"
+            >确定</picker>
+        </view>
+        <pianoMessageBox
+            ref="recoverLesson"
+            message="恢复该课时后老师与家长数据相应发生改变 请问是否确认恢复"
+            showCancelButton
+            @confirm="confirmRecoverLesson"
+        />
     </view>
 </template>
 
@@ -88,12 +137,13 @@
 import dayjs from "dayjs"
 const CUR_MONTH = dayjs().format('YYYY-MM')
 const DEFAULT_RANGE_DATE = [dayjs().subtract(15, 'days').format('YYYY-MM-DD'), dayjs().add(15, 'days').format('YYYY-MM-DD')]
+const WEEK_DAY = ['', '一', '二', '三', '四', '五', '六', '日']
 export default {
     filters: {
         time({ finishTime }) {
             if (!finishTime) return ''
             const day = dayjs(finishTime).format('YYYY-MM-DD')
-            const week = '周' + ['', '一', '二', '三', '四', '五', '六', '日'][new Date(finishTime).getDay()]
+            const week = '周' + WEEK_DAY[new Date(finishTime).getDay()]
             const time = dayjs(finishTime).format('HH:mm')
             return [day, week, time].join(' ')
         },
@@ -103,7 +153,7 @@ export default {
         },
         weekAndTime({ useTime }) {
             if (!useTime) return ''
-            const week = '周' + ['', '一', '二', '三', '四', '五', '六', '日'][new Date(useTime).getDay()]
+            const week = '周' + WEEK_DAY[new Date(useTime).getDay()]
             const time = dayjs(useTime).format('HH:mm')
             return [week, time].join(' ')
         }
@@ -112,14 +162,21 @@ export default {
         return {
             mode: 'month',
             month: CUR_MONTH,
-            range: [],
+            dateRange: [],
 
             courseType: '',
             courseId: 0,
             ticketId: 0,
             teacherId: 0,
 
-            records: []
+            records: [],
+
+            accountType: '',
+
+            selectAble: false,
+            selectedFinishLesson: null,
+            recoverLessonStudent: 0,
+            recoverLessonParam: {}
         }
     },
     computed: {
@@ -133,11 +190,14 @@ export default {
     },
     onLoad(option) {
         const token = uni.getStorageSync('token')
+        const accountType = uni.getStorageSync('accountType')
+
         // 权限验证
         if (!token) {
             uni.showToast({ title: '请先登录', icon: 'none' })
             return uni.navigateTo({ url: '/pages/login/index' })
         }
+        this.accountType = accountType
 
         this.courseType = option.courseType ?? ''
         this.courseId = option.courseId ?? 0
@@ -153,7 +213,7 @@ export default {
         toggleSearchMode() {
             this.mode = (this.mode === 'month' ? 'range' : 'month')
             this.month = CUR_MONTH
-            this.range = DEFAULT_RANGE_DATE
+            this.dateRange = DEFAULT_RANGE_DATE
             this.handleSearch()
         },
 
@@ -163,12 +223,12 @@ export default {
         },
 
         onDaterRangeChange(e) {
-            this.range = e
+            this.dateRange = e
             this.handleSearch()
         },
 
         async handleSearch() {
-            const { month, range, courseId, ticketId, teacherId } = this
+            const { month, dateRange, courseId, ticketId, teacherId } = this
 
             const param = {
                 data: {
@@ -181,8 +241,8 @@ export default {
                         minMonth: month,
                         maxMonth: month
                     } : {
-                        minDate: range[0],
-                        maxDate: range[1]
+                        minDate: dateRange[0],
+                        maxDate: dateRange[1]
                     }),
                     teacherId
                 }
@@ -195,7 +255,46 @@ export default {
                 wx.hideLoading()
                 uni.stopPullDownRefresh()
             }
-        }
+        },
+
+        toggleSelectAble() {
+            this.selectAble = !this.selectAble
+            this.selectedFinishLesson = null
+        },
+
+        onRecordClick(item) {
+            if (!this.selectAble) return
+            this.selectedFinishLesson = this.selectedFinishLesson?.id === item.id ? null : item
+        },
+
+        // 一对多且有多个学生
+        onRecoverLessonStudentChange(e) {
+            const value = e.detail.value
+            this.recoverLessonStudent = value
+            this.openRecoverLesson(value)
+        },
+
+        openRecoverLesson(index){
+            const { id, students } = this.selectedFinishLesson
+            this.recoverLessonParam = {
+                finishLessonId: id,
+                studentId: students[index].studentId
+            }
+            this.$refs.recoverLesson.open()
+        },
+
+        async confirmRecoverLesson() {
+            try {
+                await this.$http.get('/mini/finishiLesson/recoverLesson', this.recoverLessonParam)
+                this.$toast({
+                    title: '消课成功！',
+                    icon: 'success'
+                })
+                this.$refs.recoverLesson.close()
+            } finally {
+                this.$refs.recoverLesson.loading = false
+            }
+        },
     },
     onPullDownRefresh() {
         this.handleSearch()
@@ -207,8 +306,13 @@ export default {
 .page {
     min-height: 100vh;
     background-color: #fff;
+    &.selectAble {
+        padding-bottom: 148rpx;
+    }
     &-search {
         display: flex;
+        align-items: center;
+        justify-content: space-between;
         padding: 20rpx 30rpx;
         .mode {
             border-radius: 4px;
@@ -224,6 +328,25 @@ export default {
             font-size: 28rpx;
             color: #62bbec;
             line-height: 20px;
+        }
+        .switch {
+            font-size: 24rpx;
+            color: #141f33;
+            .refresh {
+                width: 24rpx;
+                height: 22rpx;
+                margin-right: 4rpx;
+            }
+            &.selectAble {
+                background: #e2f3ff;
+                border-radius: 6px;
+                border: 1px solid #62bbec;
+                padding: 6rpx 10rpx 4rpx 20rpx;
+
+                font-weight: 500;
+                color: #62bbec;
+                line-height: 34rpx;
+            }
         }
     }
     &-records {
@@ -251,6 +374,11 @@ export default {
                 align-items: center;
                 margin: 0 30rpx;
                 padding: 30rpx 0;
+                .select-icon {
+                    width: 28rpx;
+                    height: 28rpx;
+                    margin-right: 20rpx;
+                }
                 .info {
                     flex: 1;
                     .chapters {
@@ -317,9 +445,9 @@ export default {
                         display: flex;
                         flex-direction: column;
                         font-size: 24rpx;
-                        color: #99A0AD;
+                        color: #99a0ad;
                         line-height: 34rpx;
-                        text+ text {
+                        text + text {
                             margin-top: 4rpx;
                         }
                     }
@@ -327,11 +455,46 @@ export default {
                         width: 120rpx;
                         font-size: 24rpx;
                         font-weight: 500;
-                        color: #141F33;
+                        color: #141f33;
                         line-height: 34rpx;
                     }
                 }
             }
+        }
+    }
+    &-footer {
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+
+        display: flex;
+        column-gap: 48rpx;
+        padding: 32rpx 48rpx;
+        box-shadow: 0px -4rpx 8rpx 0px rgba(0, 0, 0, 0.05);
+        background-color: #fff;
+        .btn {
+            flex: 1;
+            height: 84rpx;
+            line-height: 84rpx;
+            padding: 0 56rpx;
+            font-size: 32rpx;
+            font-weight: 500;
+            color: #616b80;
+            border-radius: 44rpx;
+            border: none;
+            &::after {
+                display: none;
+            }
+            &.confirm {
+                color: #fff;
+                background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
+            }
+            &.disabled {
+                background: #e1e1e1;
+            }
+        }
+        .picker {
+            text-align: center;
         }
     }
 }
