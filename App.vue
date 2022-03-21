@@ -1,8 +1,3 @@
-<template>
-    <view>
-        123
-    </view>
-</template>
 <script>
 	export default {
 		onLaunch: function() {
@@ -17,7 +12,7 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
 	/* 每个页面公共css */
 	@import "./common/uni.css";
 
@@ -33,15 +28,17 @@
 	/* 全局样式 */
 	@import "./common/common.css";
 
+	/* page */
+	@import "./common/page.scss";
+
 	page {
-		background-color: #efeff4;
 		height: 100%;
+		background-color: #F5F7FA;
 		font-size: 28rpx;
         font-family: PingFangSC-Regular, PingFang SC;
-		/* line-height: 1.8; */
 	}
 
-	view {
+    view {
 		line-height: 1;
 	}
 

@@ -3,7 +3,7 @@
         <view class="page-info">
             <image
                 class="cover"
-                :src="teacher.coverUrl || 'https://static.gangqintonghua.com/img/touxiang/pic1.webp'"
+                :src="teacher.coverUrl"
             />
             <text class="name">{{ teacher.teacherName }}</text>
         </view>

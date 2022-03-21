@@ -8,7 +8,7 @@
         </view>
         <scroll-view v-if="!groupId" scroll-y='true' class="page-content personal">
             <view class="user">
-                <image :src="teacher.coverUrl || defaultCoverUrl" class="cover" />
+                <image :src="teacher.coverUrl" class="cover" />
                 <view class="info">
                     <view class="msg">
                         <text class="name ellipsis">{{ teacher.teacherName }}</text>
@@ -123,11 +123,11 @@
             <view class="teachers">
                 <view v-if="memberTeachers.length" class="member">
                     <text>启蒙组成员：</text>
-                    <image v-for="item in memberTeachers" :key="item.accountId"  :src="item.coverUrl || defaultCoverUrl" />
+                    <image v-for="item in memberTeachers" :key="item.accountId"  :src="item.coverUrl" />
                 </view>
                 <view v-if="leaderTeachers.length" class="leader">
                     <text>组长：</text>
-                    <image v-for="item in leaderTeachers" :key="item.accountId"  :src="item.coverUrl || defaultCoverUrl" />
+                    <image v-for="item in leaderTeachers" :key="item.accountId"  :src="item.coverUrl" />
                 </view>
                 <view v-if="datacenterFlag" class="switch" @click="() => { groupId = null; group = null }">切换至个人数据</view>
             </view>
@@ -197,7 +197,7 @@
                 </view>
                 <view class="list">
                     <view v-for="item in listStudent" :key="item.id" class="item">
-                        <image class="cover" :src="item.student.coverUrl || defaultCoverUrl" />
+                        <image class="cover" :src="item.student.coverUrl || defaultCover" />
                         <view class="content">
                             <view class="student">
                                 <view class="l">
@@ -212,7 +212,7 @@
                             <view class="teacher">
                                 <view class="l">
                                     <text>老师：</text>
-                                    <image v-for="teacher in item.teachers" :key="teacher.accountId" :src="teacher.coverUrl || defaultCoverUrl" />
+                                    <image v-for="teacher in item.teachers" :key="teacher.accountId" :src="teacher.coverUrl" />
                                 </view>
                                 <view v-if="['studentContinue', 'refund'].includes(item.changeType)" class="r" :class="item.changeType">
                                     {{ item.amount > 0 ? `+${item.amount}` : item.amount }}
@@ -241,6 +241,7 @@
 import dayjs from "dayjs"
 import YanQuan from "./components/YanQuan.vue"
 
+import dicts from '@/utils/dicts'
 import { weekOrDateTime } from '@/utils/format'
 export default {
     components: {
@@ -248,7 +249,8 @@ export default {
     },
     data() {
         return {
-            defaultCoverUrl: 'https://static.gangqintonghua.com/img/touxiang/pic1.webp',
+            dicts,
+            defaultCover: 'https://static.gangqintonghua.com/img/touxiang/pic1.webp',
             detail: null,
 
             groupValue: 0,
@@ -259,13 +261,6 @@ export default {
             pageSize: 10,
             totalPage: 0,
             listStudent: [],
-            dicts: {
-                changeType: {
-                    'studentContinue': '续课',
-                    'discontinue': '不续课',
-                    'refund': '退费'
-                }
-            },
             datacenterFlag: true,
 
 
@@ -458,7 +453,6 @@ export default {
 <style lang="scss" scoped>
 .page {
     height: 100vh;
-    background-color: #f5f7fa;
     overflow: hidden;
     box-sizing: border-box;
 

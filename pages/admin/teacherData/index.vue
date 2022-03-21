@@ -201,7 +201,6 @@ export default {
 .page {
     min-height: 100vh;
     padding-top: 30rpx;
-    background: #f5f7fa;
     .block {
         margin: 0 30rpx;
         background: #ffffff;

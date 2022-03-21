@@ -196,7 +196,6 @@ export default {
 
 <style lang="scss" scoped>
 .page {
-    background: #F5F7FA;
     padding-bottom: 284rpx;
     &-content {
         padding: 28rpx 52rpx;

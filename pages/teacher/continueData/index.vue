@@ -98,7 +98,6 @@ export default {
 <style lang="scss" scoped>
 .page {
 	min-height: 100vh;
-	background-color: #F5F7FA;
 	&-content {
 		padding: 32rpx 40rpx;
 		.item {

@@ -50,10 +50,10 @@ export default {
                 const res = await this.$http.get('/mini/teacherGroup/listTeachers')
                 this.teacherGroup = res.data ?? []
 
-                // const listWaitDealComplaintRes = await this.$http.post('/mini/studentComplaint/listWaitDealComplaint')
+                const countWaitDealComplaintRes = await this.$http.post('/mini/studentComplaint/countWaitDealComplaint')
                 this.$store.dispatch('accountBusinessCount/setTabbarInfo', {
                     key: 'waitDealComplaintCount',
-                    count: 2// listWaitDealComplaintRes?.data?.length ?? 0
+                    count: countWaitDealComplaintRes.data ?? 0
                 })
             } catch (error) {
                 console.log(error)
@@ -74,7 +74,6 @@ export default {
 <style lang="scss" scoped>
 .page {
     min-height: 100vh;
-    background: #f5f7fa;
     padding-bottom: 100rpx;
     .group {
         &-title {

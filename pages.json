@@ -101,6 +101,24 @@
                         "navigationBarTitleText": "学员中心",
                         "navigationStyle": "custom"
                     }
+                },
+                {
+                    "path": "trainTicket/index",
+                    "style": {
+                        "navigationBarTitleText": "课程陪练券"
+                    }
+                },
+                {
+                    "path": "complaint/index",
+                    "style": {
+                        "navigationBarTitleText": "我要投诉" // 课时申诉
+                    }
+                },
+                {
+                    "path": "complaintSuccess/index",
+                    "style": {
+                        "navigationBarTitleText": "" // 申/投诉提交成功
+                    }
                 }
             ]
         },
@@ -160,7 +178,8 @@
                 {
                     "path": "complaintManage/index",
                     "style": {
-                        "navigationBarTitleText": "投诉管理"
+                        "navigationBarTitleText": "投诉管理",
+                        "enablePullDownRefresh": true
                     }
                 },
                 {

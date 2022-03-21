@@ -103,9 +103,6 @@ export default {
                 },
             })
         },
-        back() {
-            uni.navigateBack({ delta: 1 })
-        },
     },
 }
 </script>

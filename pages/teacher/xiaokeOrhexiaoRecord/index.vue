@@ -1,14 +1,22 @@
 <template>
-    <view class="page" :class="{ selectAble }">
+    <view class="page common" :class="{ selectAble }">
         <view class="page-search">
             <view class="mode" @click="toggleSearchMode">{{ mode === 'month' ? '自定义时间' : '按月份筛选' }}</view>
             <view
-                v-if="accountType === 'ADMIN' && courseId"
+                v-if="['ADMIN', 'STUDENT'].includes(accountType) && courseId"
                 class="switch"
                 :class="{ selectAble }"
                 @click="toggleSelectAble"
             >
-                <image class="refresh" src="/static/images/teacher/refresh.png" />恢复课时
+                <template v-if="accountType === 'ADMIN'">
+                    <image class="refresh" src="/static/images/teacher/refresh.png" />恢复课时
+                </template>
+                <template v-else>
+                    <image
+                        class="refresh"
+                        :src="`/static/images/student/shensu${selectAble ? '-blue' : ''}.png`"
+                    />课时申诉
+                </template>
                 <uni-icons
                     v-if="selectAble"
                     type="closeempty"
@@ -81,7 +89,7 @@
                                 <view v-if="courseType === 'one'" class="touxiang one">
                                     <image
                                         class="cover"
-                                        :src="item.students[0].coverUrl || 'https://static.gangqintonghua.com/img/touxiang/pic1.webp'"
+                                        :src="item.students[0].coverUrl || defaultCover"
                                     />
                                     <text class="name ellipsis">{{ item.students[0].studentName }}</text>
                                 </view>
@@ -90,7 +98,7 @@
                                         v-for="s in item.students"
                                         :key="s.studentId"
                                         class="cover"
-                                        :src="s.coverUrl || 'https://static.gangqintonghua.com/img/touxiang/pic1.webp'"
+                                        :src="s.coverUrl || defaultCover"
                                     />
                                 </view>
                             </template>
@@ -106,23 +114,35 @@
                 </template>
             </view>
         </view>
-        <view v-if="accountType === 'ADMIN' && courseId && selectAble" class="page-footer">
-            <!-- 一对一、一对多但只有一个学生 -->
+        <view
+            v-if="['ADMIN', 'STUDENT'].includes(accountType) && courseId && selectAble"
+            class="page-footer"
+        >
+            <template v-if="accountType === 'ADMIN'">
+                <!-- 一对一、一对多但只有一个学生 -->
+                <button
+                    v-if="courseType === 'one' || (courseType === 'more' && (!selectedFinishLesson || selectedFinishLesson && selectedFinishLesson.students.length === 1))"
+                    class="btn"
+                    :class="{ confirm: !!selectedFinishLesson, disabled: !selectedFinishLesson }"
+                    :disabled="!selectedFinishLesson"
+                    @click="openRecoverLesson(0)"
+                >确定</button>
+                <picker
+                    v-else
+                    class="btn confirm picker"
+                    :value="recoverLessonStudent"
+                    range-key="studentName"
+                    :range="selectedFinishLesson.students"
+                    @change="onRecoverLessonStudentChange"
+                >确定</picker>
+            </template>
             <button
-                v-if="courseType === 'one' || (courseType === 'more' && (!selectedFinishLesson || selectedFinishLesson && selectedFinishLesson.students.length === 1))"
+                v-else
                 class="btn"
                 :class="{ confirm: !!selectedFinishLesson, disabled: !selectedFinishLesson }"
                 :disabled="!selectedFinishLesson"
-                @click="openRecoverLesson(0)"
+                @click="toComplaint"
             >确定</button>
-            <picker
-                v-else
-                class="btn confirm picker"
-                :value="recoverLessonStudent"
-                range-key="studentName"
-                :range="selectedFinishLesson.students"
-                @change="onRecoverLessonStudentChange"
-            >确定</picker>
         </view>
         <pianoMessageBox
             ref="recoverLesson"
@@ -160,6 +180,7 @@ export default {
     },
     data() {
         return {
+            defaultCover: 'https://static.gangqintonghua.com/img/touxiang/pic1.webp',
             mode: 'month',
             month: CUR_MONTH,
             dateRange: [],
@@ -251,6 +272,7 @@ export default {
             try {
                 const res = await this.$http.post(`/mini/${courseId ? 'finishiLesson/searchFinishLesson' : 'trainTicket/searchUsedTrainTicket'}`, param)
                 this.records = res.data ?? []
+                this.selectedFinishLesson = null
             } finally {
                 wx.hideLoading()
                 uni.stopPullDownRefresh()
@@ -274,7 +296,7 @@ export default {
             this.openRecoverLesson(value)
         },
 
-        openRecoverLesson(index){
+        openRecoverLesson(index) {
             const { id, students } = this.selectedFinishLesson
             this.recoverLessonParam = {
                 finishLessonId: id,
@@ -285,16 +307,21 @@ export default {
 
         async confirmRecoverLesson() {
             try {
-                await this.$http.get('/mini/finishiLesson/recoverLesson', this.recoverLessonParam)
+                await this.$http.post('/mini/finishiLesson/recoverLesson', this.recoverLessonParam)
                 this.$toast({
                     title: '消课成功！',
                     icon: 'success'
                 })
                 this.$refs.recoverLesson.close()
+                this.handleSearch()
             } finally {
                 this.$refs.recoverLesson.loading = false
             }
         },
+
+        toComplaint() {
+            uni.navigateTo({ url: '/pages/student/complaint/index?finishLessonId=' + this.selectedFinishLesson.id })
+        }
     },
     onPullDownRefresh() {
         this.handleSearch()
@@ -463,36 +490,6 @@ export default {
         }
     }
     &-footer {
-        position: fixed;
-        width: 100%;
-        bottom: 0;
-
-        display: flex;
-        column-gap: 48rpx;
-        padding: 32rpx 48rpx;
-        box-shadow: 0px -4rpx 8rpx 0px rgba(0, 0, 0, 0.05);
-        background-color: #fff;
-        .btn {
-            flex: 1;
-            height: 84rpx;
-            line-height: 84rpx;
-            padding: 0 56rpx;
-            font-size: 32rpx;
-            font-weight: 500;
-            color: #616b80;
-            border-radius: 44rpx;
-            border: none;
-            &::after {
-                display: none;
-            }
-            &.confirm {
-                color: #fff;
-                background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
-            }
-            &.disabled {
-                background: #e1e1e1;
-            }
-        }
         .picker {
             text-align: center;
         }
