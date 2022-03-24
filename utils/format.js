@@ -27,3 +27,26 @@ export const dayWeekTime = date => {
     const time = dayjs(date).format('HH:mm')
     return [day, week, time]
 }
+
+// 账户有效期
+export const getExpiryDate = expiryDate => {
+    const [expireYear, expireMonth, expireDay] = dayjs(expiryDate).format('YYYY-MM-DD').split('-')
+    const [curYear, curMonth, curDay] = dayjs().format('YYYY-MM-DD').split('-')
+    let year = expireYear - curYear
+    let month = expireMonth - curMonth
+    let day = expireDay - curDay
+    if (day < 0) {
+        day += 30
+        month -= 1
+    }
+    if (month < 0) {
+        month += 12
+        year -= 1
+    }
+    return [(year * 2 + month) ? (year * 2 + month) + '月' : '', day ? day + '天' : ''].filter(Boolean).join('') || '-'
+}
+
+// n天到期
+export const getExpiryDateWarning = (expiryDate, n = 30) => {
+    return expiryDate - dayjs() < n * 24 * 60 * 60 * 1000
+}

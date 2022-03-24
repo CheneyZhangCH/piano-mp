@@ -280,6 +280,7 @@ export default {
     },
     data() {
         return {
+            loading: false,
             form: {
                 attitudeScore: 0,
                 chapterScores: [],
@@ -529,6 +530,8 @@ export default {
         },
 
         async handleConfirm() {
+            if(this.loading) return
+            this.loading = true
             const {
                 timetableId,
                 timetablePeriodId,
@@ -594,24 +597,26 @@ export default {
                     timetablePeriodId, // 课表时间段id
                 },
             }
-            const res = await this.$http.post(
-                '/mini/finishiLesson/finishLesson',
-                param
-            )
-            if (res.ok) {
+            try {
+                await this.$http.post(
+                    '/mini/finishiLesson/finishLesson',
+                    param
+                )
                 uni.showToast({
                     title: '消课成功！',
                     icon: 'success',
                 })
                 this.$refs.popup.close()
-                this.$emit('success')
+                this.$emit('success', false) // 列表不loading
+            } finally {
+                this.loading = false
             }
         },
     },
 }
 </script>
 
-<style lang="scss" scoped src="../styles/popup.scss"></style>
+<style lang="scss" scoped src="@/components/Student/popup.scss"></style>
 <style lang="scss" scoped>
 .main {
     .content {

@@ -14,6 +14,41 @@ const ADMIN = [
         selectedIconPath: "/static/images/tabBar/user_selected.png"
     }
 ]
+const AUDITION = [
+    {
+        pagePath: "/pages/audition/index/index",
+        text: '老师课表',
+        iconPath: '/static/images/tabBar/kebiao.png',
+        selectedIconPath: '/static/images/tabBar/kebiao_selected.png'
+    },
+    {
+        pagePath: "/pages/audition/accountAdd/index",
+        text: '账号开通',
+        iconPath: '/static/images/tabBar/kaitong.png',
+        selectedIconPath: '/static/images/tabBar/kaitong_selected.png'
+    },
+    {
+        key: "xufei",
+        pagePath: "/pages/audition/xufei/index",
+        text: '学员续费',
+        iconPath: '/static/images/tabBar/xufei.png',
+        selectedIconPath: '/static/images/tabBar/xufei_selected.png'
+    }
+]
+const TEACHER = [
+    {
+        pagePath: "/pages/teacher/schedule/index",
+        text: '我的课表',
+        iconPath: '/static/images/tabBar/schedule.png',
+        selectedIconPath: '/static/images/tabBar/schedule_selected.png'
+    },
+    {
+        pagePath: "/pages/teacher/datacenter/index",
+        text: '数据中心',
+        iconPath: '/static/images/tabBar/datacenter.png',
+        selectedIconPath: '/static/images/tabBar/datacenter_selected.png'
+    }
+]
 const STUDENT = [
     {
         pagePath: "/pages/student/videos/index",
@@ -34,23 +69,10 @@ const STUDENT = [
         selectedIconPath: "/static/images/tabBar/user_selected.png"
     }
 ]
-const TEACHER = [
-    {
-        pagePath: "/pages/teacher/schedule/index",
-        text: '我的课表',
-        iconPath: '/static/images/tabBar/schedule.png',
-        selectedIconPath: '/static/images/tabBar/schedule_selected.png'
-    },
-    {
-        pagePath: "/pages/teacher/datacenter/index",
-        text: '数据中心',
-        iconPath: '/static/images/tabBar/datacenter.png',
-        selectedIconPath: '/static/images/tabBar/datacenter_selected.png'
-    }
-]
 
 export default {
     ADMIN,
     STUDENT,
-    TEACHER
+    TEACHER,
+    AUDITION
 }

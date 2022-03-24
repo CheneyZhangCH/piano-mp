@@ -268,13 +268,13 @@ export default {
                     teacherId
                 }
             }
-            wx.showLoading({ title: '加载中' })
+            uni.showLoading({ title: '加载中' })
             try {
                 const res = await this.$http.post(`/mini/${courseId ? 'finishiLesson/searchFinishLesson' : 'trainTicket/searchUsedTrainTicket'}`, param)
                 this.records = res.data ?? []
                 this.selectedFinishLesson = null
             } finally {
-                wx.hideLoading()
+                uni.hideLoading()
                 uni.stopPullDownRefresh()
             }
         },

@@ -67,28 +67,33 @@ export default {
         if (option?.from === 'datacenter') this.showTabBar = false
         this.init()
     },
-    watch: {
-        async packageId() {
-            if (this.packageId) {
-                const res = await this.$http.get('/mini/teachingBook/listByPackageId?packageId=' + this.packageId)
-                if (res.ok) {
-                    this.courses = res.data ?? []
-                }
-            }
-        }
-    },
     methods: {
         async init() {
-            const res = await this.$http.post('/mini/coursePackage/listAvailableCoursePackage')
-            if (res.ok) {
+            uni.showLoading({ title: '加载中', mask: true })
+            try {
+                const res = await this.$http.post('/mini/coursePackage/listAvailableCoursePackage')
                 this.packageList = res.data ?? []
                 this.packageId = this.packageList.length ? this.packageList[0].id : ''
+                this._listByPackageId()
+            } finally {
+                uni.hideLoading()
             }
         },
 
         packageChange(item) {
             if (!item.available) return
             this.packageId = item.id
+            this._listByPackageId()
+        },
+
+        async _listByPackageId() {
+            uni.showLoading({ title: '加载中', mask: true })
+            try {
+               const res = await this.$http.get('/mini/teachingBook/listByPackageId?packageId=' + this.packageId)
+               this.courses = res.data ?? []
+            } finally {
+                uni.hideLoading()
+            }
         },
 
         coursesDetail({ id }) {

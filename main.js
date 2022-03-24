@@ -14,10 +14,10 @@ Vue.prototype.$backgroundAudioData = {
 import hRequire from './common/require.js'
 Vue.prototype.$http = hRequire
 
-import customTabbar from './components/custom-tabbar'
-Vue.component('customTabbar', customTabbar)
+import CustomTabbar from './components/CustomTabbar'
+Vue.component('customTabbar', CustomTabbar)
 
-import pianoMessageBox from './components/message-box'
+import pianoMessageBox from './components/MessageBox'
 Vue.component('pianoMessageBox', pianoMessageBox)
 
 Vue.use(Global)

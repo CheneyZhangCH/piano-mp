@@ -10,7 +10,7 @@
 		</view>
 		<view v-else class="uni-dialog-content">
 			<slot>
-				<input class="uni-dialog-input" v-model="val" type="text" :placeholder="placeholderText" :focus="focus" >
+				<input class="uni-dialog-input" v-model="val" type="text" :placeholder="placeholderText" :maxlength="maxlength" :focus="focus" >
 			</slot>
 		</view>
 		<view class="uni-dialog-button-group">
@@ -65,6 +65,10 @@
 				type: [String, Number],
 				default: ''
 			},
+            maxlength: {
+                type: Number,
+				default: 50
+            },
 			type: {
 				type: String,
 				default: 'error'

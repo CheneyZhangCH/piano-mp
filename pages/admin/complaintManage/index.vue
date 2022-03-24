@@ -8,33 +8,34 @@
                         <image class="cover" :src="item.student.coverUrl || defaultCover" />
                         <text class="name">{{ item.student.studentName }}</text>
                     </view>
-                    <text class="time">周一 10:20</text>
+                    <text class="time">{{ weekOrDateTime(item.createTime) }}</text>
                 </view>
                 <view class="complaint-item-content">
                     <view class="infos">
                         <view class="info">
-                            <template v-if="item.complaintType === 'finishLesson'">
+                            <template
+                                v-if="item.complaintType === 'finishLesson' && item.finishLesson"
+                            >
                                 <view class="content-2 mb-16">{{ item.finishLesson | chapterNames }}</view>
                                 <view class="content mb-16">{{ item.finishLesson | finishTime }}</view>
-                                <view class="scores content mb-16">
+                                <view
+                                    v-if="item.finishLesson.courseType === 'one'"
+                                    class="scores content mb-16"
+                                >
                                     <text>手型评分:{{ item.finishLesson.handScore || 0 }}分</text>
                                     <text>识谱评分:{{ item.finishLesson.musicScore || 0 }}分</text>
                                     <text>学习态度:{{ item.finishLesson.attitudeScore || 0 }}分</text>
                                 </view>
                             </template>
-                            <template v-else>
-                                <view class="content-2">投诉原因：{{ item.complaintReason }}</view>
-                            </template>
+                            <view v-else class="content-2">投诉原因：{{ item.complaintReason }}</view>
+
                             <view class="content">投诉详情：{{ item.content }}</view>
                         </view>
                         <view
                             v-if="item.complaintType === 'finishLesson' && item.finishLesson"
                             class="teacher"
                         >
-                            <image
-                                class="cover"
-                                :src="item.finishLesson.teacher.coverUrl"
-                            />
+                            <image class="cover" :src="item.finishLesson.teacher.coverUrl" />
                             <text class="name">{{ item.finishLesson.teacher.teacherName }}</text>
                         </view>
                     </view>
@@ -44,6 +45,7 @@
                             v-for="url in item.imgUrls"
                             :key="url"
                             :src="url"
+                            @click="preview(url, item.imgUrls)"
                         />
                     </view>
                 </view>
@@ -107,6 +109,13 @@ export default {
             }
         },
 
+        preview(current, urls) {
+            wx.previewImage({
+                current,
+                urls
+            })
+        },
+
         dealComplaint({ id }) {
             uni.navigateTo({ url: '/pages/admin/complaint/index?id=' + id })
         }
@@ -125,8 +134,7 @@ export default {
     min-height: 100vh;
     padding-bottom: 100rpx;
     &-content {
-        padding: 0 30rpx;
-        padding-top: 36rpx;
+        padding: 36rpx 30rpx;
         .complaint-item {
             background-color: #fff;
             border-radius: 20rpx;

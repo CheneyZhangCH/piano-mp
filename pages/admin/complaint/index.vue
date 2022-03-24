@@ -5,7 +5,7 @@
                 <image class="cover" :src="student.coverUrl || defaultCover" />
                 <text class="name">{{ student.studentName }}</text>
             </view>
-            <view class="btn" @click="toStudent">
+            <view class="btn" @click="openStudent">
                 学员详情
                 <uni-icons type="right" color="#99A0AD" size="14" />
             </view>
@@ -14,40 +14,47 @@
             <view class="complaint-info">
                 <view class="complaint-info-header">
                     <text class="type">{{ dicts.complaintType[detail.complaintType] }}</text>
-                    <text class="time">周一 10:20</text>
+                    <text class="time">{{ weekOrDateTime(detail.createTime) }}</text>
                 </view>
                 <view class="complaint-info-content">
                     <view class="infos">
                         <view class="info">
-                            <template v-if="detail.complaintType === 'finishLesson'">
+                            <template
+                                v-if="detail.complaintType === 'finishLesson' && detail.finishLesson"
+                            >
                                 <view
                                     class="content-2 mb-16"
                                 >{{ detail.finishLesson | chapterNames }}</view>
                                 <view class="content mb-16">{{ detail.finishLesson | finishTime }}</view>
-                                <view class="scores content mb-16">
+                                <view
+                                    v-if="detail.finishLesson.courseType === 'one'"
+                                    class="scores content mb-16"
+                                >
                                     <text>手型评分:{{ detail.finishLesson.handScore || 0 }}分</text>
                                     <text>识谱评分:{{ detail.finishLesson.musicScore || 0 }}分</text>
                                     <text>学习态度:{{ detail.finishLesson.attitudeScore || 0 }}分</text>
                                 </view>
                             </template>
-                            <template v-else>
-                                <view class="content-2">投诉原因：{{ detail.complaintReason }}</view>
-                            </template>
+                            <view v-else class="content-2">投诉原因：{{ detail.complaintReason }}</view>
+
                             <view class="content">投诉详情：{{ detail.content }}</view>
                         </view>
                         <view
                             v-if="detail.complaintType === 'finishLesson' && detail.finishLesson"
                             class="teacher"
                         >
-                            <image
-                                class="cover"
-                                :src="detail.finishLesson.teacher.coverUrl"
-                            />
+                            <image class="cover" :src="detail.finishLesson.teacher.coverUrl" />
                             <text class="name">{{ detail.finishLesson.teacher.teacherName }}</text>
                         </view>
                     </view>
                     <view v-if="detail.imgUrls.length" class="imgs">
-                        <image class="img" v-for="url in detail.imgUrls" :key="url" :src="url" />
+                        <image
+                            class="img"
+                            v-for="url in detail.imgUrls"
+                            :key="url"
+                            :src="url"
+                            @click="preview(url, detail.imgUrls)"
+                        />
                     </view>
                 </view>
             </view>
@@ -89,13 +96,20 @@
                 @click="confirm"
             >确认</button>
         </view>
+
+        <!-- 学生详情 -->
+        <Student :student-id="studentId" @close="studentId = 0" />
     </view>
 </template>
 
 <script>
+import Student from '@/components/Student'
 import dicts from '@/utils/dicts'
 import { weekOrDateTime, dayWeekTime } from '@/utils/format'
 export default {
+    components: {
+        Student
+    },
     filters: {
         finishTime({ finishTime }) {
             return dayWeekTime(finishTime)?.filter(Boolean).join(' ')
@@ -113,7 +127,8 @@ export default {
             form: {
                 dealContent: '',
                 status: '' // 处理状态,可用值:deal,not_deal
-            }
+            },
+            studentId: 0
         }
     },
     computed: {
@@ -147,8 +162,15 @@ export default {
             }
         },
 
-        toStudent() {
-            uni.navigateTo({ url: '/pages/student/center/index?studentId=' + this.student.studentId })
+        preview(current, urls) {
+            wx.previewImage({
+                current,
+                urls
+            })
+        },
+
+        openStudent() {
+            this.studentId = this.student.studentId
         },
 
         async confirm() {

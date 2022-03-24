@@ -22,41 +22,26 @@
         </view>
     </view>
 </template>
+
 <script>
 export default {
-    components: {},
     data() {
         return {
-            jumpPage: '',
-            keyword: '',
             loading: false,
         }
     },
-    onReady: function () {},
-    onLoad(option) {
-        if (option.page !== '') {
-            this.jumpPage = option.page
-        }
-
-        if (option.keyword !== '') {
-            this.keyword = option.keyword
-        }
-    },
+    onReady() {},
+    onLoad() {},
     methods: {
-        navToLogin() {
-            uni.navigateTo({ url: '/pages/login/login' })
-        },
         async getUserPhoneNumber(e) {
-            console.log('getUserPhoneNumber', e)
-            console.log(e.detail.code)
             if (this.loading) return
             this.loading = true
             const vm = this
 
             wx.login({
                 success(res) {
-                    console.log('wx.login', res)
                     if (res.code) {
+                        if(!e.detail?.code) return
                         vm.$http
                             .post('/login/wechatPhoneLoginMini', {
                                 data: {
@@ -64,21 +49,18 @@ export default {
                                     phoneCode: e.detail.code,
                                 },
                             })
-                            .then((res) => {
+                            .then(res => {
                                 const { accountType, token, phone, id } = res.data
                                 uni.setStorageSync('accountType', accountType)
                                 uni.setStorageSync('token', token)
                                 uni.setStorageSync('phone', phone)
                                 uni.setStorageSync('userId', id)
 
-                                // uni.navigateBack({ delta: 1 })
-
                                 vm.$store.dispatch('tabBar/setTabbar', accountType) // 手动更新store
 
                                 if (accountType === 'AUDITION') {
                                     return uni.redirectTo({ url: '/pages/audition/index/index' })
                                 }
-
 
                                 if (accountType === 'SUPER_ADMIN') {
                                     return uni.redirectTo({ url: '/pages/admin/index/index' })
@@ -87,6 +69,13 @@ export default {
                                     return uni.redirectTo({ url: '/pages/admin/index/index' })
                                 }
                                 if (accountType === 'STUDENT') {
+                                    // try {
+                                    //     const res = await vm.$http.get('/mini/studentContract/getUnconfirmContract')
+                                    //     if(res.data) return uni.redirectTo({ url: '/pages/student/contract/index' })
+
+                                    // } catch (error) {
+                                    //     console.log(error)
+                                    // }
                                     return uni.redirectTo({ url: '/pages/student/videos/index' })
                                 }
                                 if (accountType === 'TEACHER') {
@@ -102,6 +91,10 @@ export default {
                     }
                 },
             })
+        },
+
+        navToLogin() {
+            uni.navigateTo({ url: '/pages/login/login' })
         },
     },
 }

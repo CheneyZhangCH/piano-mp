@@ -63,7 +63,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped src="../styles/popup.scss"></style>
+<style lang="scss" scoped src="../Student/popup.scss"></style>
 <style lang="scss" scoped>
 .main {
     .content {

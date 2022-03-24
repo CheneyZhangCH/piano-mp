@@ -11,7 +11,7 @@
                             class="chapter"
                         >{{ chapter.chapterName }}</view>
                         <view class="time text">{{ finishLesson | finishTime }}</view>
-                        <view class="scores text">
+                        <view v-if="finishLesson.courseType === 'one'" class="scores text">
                             <text>手型评分:{{ finishLesson.handScore || 0 }}分</text>
                             <text>识谱评分:{{ finishLesson.musicScore || 0 }}分</text>
                             <text>学习态度:{{ finishLesson.attitudeScore || 0 }}分</text>
@@ -64,7 +64,11 @@
                             <text class="sub-tit">（最多可上传4张）</text>
                         </view>
                         <view class="imgs">
-                            <view v-for="(img, index) in form.imgUrls" :key="img" class="img">
+                            <view
+                                v-for="(img, index) in form.imgUrls"
+                                :key="img"
+                                class="img"
+                            >
                                 <image :src="img" class="upload-item" />
                                 <image
                                     class="del"
@@ -173,21 +177,20 @@ export default {
 
         upload() {
             const that = this
-            wx.chooseMessageFile({
+            wx.chooseImage({
                 count: 4,
                 type: 'image',
                 success(res) {
-                    for (let i = 0; i < res.tempFiles.length; i++) {
-                        const { path, name } = res.tempFiles[i]
+                    for (let i = 0; i < res.tempFilePaths.length; i++) {
                         wx.getFileSystemManager().readFile({
-                            filePath: path, //选择图片返回的相对路径
+                            filePath: res.tempFilePaths[i], //选择图片返回的相对路径
                             encoding: 'base64', //编码格式
                             success: async res => { //成功的回调
                                 try {
                                     const r = await that.$http.post('/qiniu/upload', {
                                         data: {
                                             fileData: res.data,
-                                            fileName: name
+                                            fileName: Date.now()
                                         }
                                     })
                                     if (!r.data) return
@@ -209,7 +212,7 @@ export default {
         },
 
         async confirm() {
-            const { complaintReason, complaintReasonId, content } = this.form
+            const { complaintReason, complaintReasonId, content, imgUrls } = this.form
             const param = {
                 data: {
                     ...(this.finishLessonId ? {
@@ -219,7 +222,7 @@ export default {
                         complaintReasonId
                     }),
                     content,
-                    imgUrls: []
+                    imgUrls
                 }
             }
             try {

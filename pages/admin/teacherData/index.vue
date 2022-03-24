@@ -6,7 +6,7 @@
                 <text class="times">{{ times }}</text>
             </view>
             <view class="salary">{{ detail.salary }}</view>
-            <view class="desc">* 基本收入为税前收入，额外奖金不含在内</view>
+            <view class="desc">* 基本收入为税前收入，额外奖金不含在内另行计算</view>
         </view>
         <view class="list block">
             <view class="container">
@@ -189,6 +189,7 @@ export default {
                     icon: 'success',
                 })
                 this.$refs.utnm.close()
+                this.init()
             } catch (error) {
                 console.log(error)
             }

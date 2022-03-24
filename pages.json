@@ -24,39 +24,30 @@
 			"root": "pages/audition",
 			"pages": [
 				{
-					"path": "group/index",
+					"path": "index/index",
 					"style": {
-						"navigationBarTitleText": ""
+						"navigationBarTitleText": "老师课表"
 					}
 				},
 				{
 					"path": "teacher/index",
 					"style": {
-						"navigationBarTitleText": ""
+						"navigationBarTitleText": "", // 具体老师
+                        "enablePullDownRefresh": true
 					}
 				},
 				{
-					"path": "index/index",
+					"path": "xufei/index",
 					"style": {
-						"navigationBarTitleText": ""
+						"navigationBarTitleText": "学员续费",
+                        "enablePullDownRefresh": true
 					}
 				},
 				{
-					"path": "contract/index",
+					"path": "banji/index",
 					"style": {
-						"navigationBarTitleText": "钢琴童话教育培训协议"
-					}
-				},
-				{
-					"path": "success/index",
-					"style": {
-						"navigationBarTitleText": ""
-					}
-				},
-				{
-					"path": "record/index",
-					"style": {
-						"navigationBarTitleText": "开通记录"
+						"navigationBarTitleText": "班级详情",
+                        "navigationStyle": "custom"
 					}
 				}
 			]
@@ -271,39 +262,10 @@
 	"condition": {
 		"current": 0,
 		"list": [
-			{
+            {
 				"name": "登录",
 				"path": "pages/login/index"
-			},
-			{
-				"name": "其他电话登录",
-				"path": "pages/login/login"
-			},
-			{
-				"name": "老师课表",
-				"path": "pages/audition/group/index"
-			},
-			{
-				"name": "老师详情",
-				"path": "pages/audition/teacher/index",
-				"query": "id=16&name=张老师"
-			},
-			{
-				"name": "账号开通",
-				"path": "pages/audition/index/index"
-			},
-			{
-				"name": "合同",
-				"path": "pages/audition/contract/index"
-			},
-			{
-				"name": "开通成功",
-				"path": "pages/audition/success/index"
-			},
-			{
-				"name": "开通记录",
-				"path": "pages/audition/record/index"
 			}
-		]
+        ]
 	}
 }
