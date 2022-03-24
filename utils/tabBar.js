@@ -22,7 +22,7 @@ const AUDITION = [
         selectedIconPath: '/static/images/tabBar/kebiao_selected.png'
     },
     {
-        pagePath: "/pages/audition/accountAdd/index",
+        pagePath: "/pages/audition/account/index",
         text: '账号开通',
         iconPath: '/static/images/tabBar/kaitong.png',
         selectedIconPath: '/static/images/tabBar/kaitong_selected.png'

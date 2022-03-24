@@ -157,7 +157,7 @@
 import dayjs from "dayjs"
 const CUR_MONTH = dayjs().format('YYYY-MM')
 const DEFAULT_RANGE_DATE = [dayjs().subtract(15, 'days').format('YYYY-MM-DD'), dayjs().add(15, 'days').format('YYYY-MM-DD')]
-const WEEK_DAY = ['', '一', '二', '三', '四', '五', '六', '日']
+import { WEEK_DAY } from '@/utils/format'
 export default {
     filters: {
         time({ finishTime }) {

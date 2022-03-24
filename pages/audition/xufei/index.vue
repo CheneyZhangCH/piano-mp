@@ -20,7 +20,6 @@
                 <image
                     class="cover"
                     :src="item.student.coverUrl || defaultCover"
-                    @click="studentId = item.student.studentId"
                 />
                 <view class="info">
                     <view class="msg">
@@ -67,7 +66,7 @@
                                 </template>
                             </view>
                         </view>
-                        <button class="btn" @click="toStudent(item.student)">查看详情</button>
+                        <button class="btn" @click="studentId = item.student.studentId">查看详情</button>
                     </view>
                 </view>
             </view>
@@ -187,11 +186,7 @@ export default {
         openRemark(student) {
             this.studentDetail = student
             this.$refs.remark.open()
-        },
-
-        toStudent({ studentId }) {
-            uni.navigateTo({ url: '/pages/student/center/index?studentId=' + studentId })
-        },
+        }
     },
     onPullDownRefresh() {
         this.handleSearch()

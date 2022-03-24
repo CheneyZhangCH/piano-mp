@@ -14,8 +14,14 @@ const dealComplaint_status = {
     not_deal: '不通过'
 }
 
+export const gender = {
+    male: '男',
+    female: '女'
+}
+
 export default {
     complaintType,
     changeType,
-    dealComplaint_status
+    dealComplaint_status,
+    gender
 }

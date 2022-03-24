@@ -12,7 +12,7 @@
             </view>
         </view>
         <scroll-view scroll-y="true" class="page-content">
-            <view class="banji">
+            <view v-if="detail.timetablePeriodId" class="banji">
                 <view class="msg ellipsis">
                     <text>周{{ WEEK_DAY[detail.dayOfWeek] }}</text>
                     <text>{{ detail.periodName }}</text>
@@ -23,8 +23,14 @@
                         <view class="edit-wrap">
                             <text>开班日期</text>
                             <view class="edit">
-                                修改
-                                <image src="/static/images/account/edit.png" />
+                                <uni-datetime-picker
+                                    type="date"
+                                    :value="detail.startClassDate"
+                                    @change="startClassDateChange"
+                                >
+                                    修改
+                                    <image src="/static/images/account/edit.png" />
+                                </uni-datetime-picker>
                             </view>
                         </view>
                         <text class="value">{{ startClassDate }}</text>
@@ -47,7 +53,6 @@
                     <image
                         class="cover"
                         :src="item.student.coverUrl || defaultCover"
-                        @click="studentId = item.student.studentId"
                     />
                     <view class="info">
                         <view class="msg">
@@ -94,7 +99,7 @@
                                     </template>
                                 </view>
                             </view>
-                            <button class="btn" @click="toStudent(item.student)">查看详情</button>
+                            <button class="btn" @click="studentId = item.student.studentId">查看详情</button>
                         </view>
                     </view>
                 </view>
@@ -170,19 +175,16 @@ export default {
     methods: {
         getExpiryDate,
         getExpiryDateWarning,
-        async init() {
+        async init(loading = true) {
+            if (loading) uni.showLoading({ title: '加载中', mask: true })
             const data = {
                 data: this.query
             }
-            uni.showLoading({
-                title: '加载中',
-                mask: true
-            })
             try {
                 const res = await this.$http.post('/mini/courseTimetable/getTimetablePeriodClass', data)
                 this.detail = res.data ?? {}
             } finally {
-                uni.hideLoading();
+                if (loading) uni.hideLoading();
             }
         },
 
@@ -191,8 +193,20 @@ export default {
             this.$refs.remark.open()
         },
 
-        toStudent({ studentId }) {
-            uni.navigateTo({ url: '/pages/student/center/index?studentId=' + studentId })
+        async startClassDateChange(e) {
+            const data = {
+                data: {
+                    ...this.query,
+                    startClassDate: e
+                }
+            }
+            try {
+                await this.$http.post('/mini/courseTimetable/updateTimetablePeriodClassDate', data)
+                this.$toast({ title: '修改成功！', icon: 'success' })
+                this.init(false)
+            } catch (error) {
+                console.log(error)
+            }
         },
 
         back() {

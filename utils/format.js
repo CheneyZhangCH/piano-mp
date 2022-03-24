@@ -1,6 +1,11 @@
 import dayjs from "dayjs"
 export const WEEK_DAY = ['', '一', '二', '三', '四', '五', '六', '日']
 
+export const dayjsFormat = (date, y = 'YYYY-MM-DD') => {
+    if(!date) return dayjs().format(y)
+    return dayjs(date).format(y)
+}
+
 export const weekOrDateTime = timestamp => {
     const target = dayjs(timestamp).format('YYYY-MM-DD')
     const time = dayjs(timestamp).format('HH:mm')

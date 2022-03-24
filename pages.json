@@ -49,6 +49,30 @@
 						"navigationBarTitleText": "班级详情",
                         "navigationStyle": "custom"
 					}
+				},
+				{
+					"path": "account/index",
+					"style": {
+						"navigationBarTitleText": "账号开通"
+					}
+				},
+				{
+					"path": "accountOld/index",
+					"style": {
+						"navigationBarTitleText": "账号开通-老"
+					}
+				},
+				{
+					"path": "accountSuccess/index",
+					"style": {
+						"navigationBarTitleText": ""
+					}
+				},
+				{
+					"path": "record/index",
+					"style": {
+						"navigationBarTitleText": "开通记录"
+					}
 				}
 			]
 		},
