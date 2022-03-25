@@ -26,6 +26,7 @@
 </template>
 
 <script>
+import { WEEK_DAY } from '@/utils/format'
 export default {
     props: {
         detail: {
@@ -33,21 +34,9 @@ export default {
             default: () => { }
         }
     },
-    data() {
-        return {
-            dayOfWeekOBj: {
-                2: '周二',
-                3: '周三',
-                4: '周四',
-                5: '周五',
-                6: '周六',
-                7: '周日',
-            },
-        }
-    },
     computed: {
         title() {
-            return `${this.dayOfWeekOBj[this.detail?.dayOfWeek]} ${
+            return `周${WEEK_DAY[this.detail?.dayOfWeek]} ${
                 this.detail?.periodName
             }  ${this.detail?.moreCourse?.course?.courseName}`
         },

@@ -5,7 +5,7 @@
                 <view v-for="group in teacherGroup" :key="group.id" class="group">
                     <view class="group-title">
                         <view class="name ellipsis">
-                            <image class="icon" src="/static/images/group.png"></image>
+                            <image class="icon" src="/static/images/audition/group.png"></image>
                             <text>{{ group.groupName }}</text>
                         </view>
                         <view class="num">{{ group.teachers.length + '人' }}</view>

@@ -271,6 +271,8 @@
 </template>
 
 <script>
+import { WEEK_DAY } from '@/utils/format'
+import { numToChinese } from '@/utils/dicts'
 export default {
     props: {
         detail: {
@@ -293,26 +295,7 @@ export default {
                 { name: '识谱评分', prop: 'musicScore' },
                 { name: '学习态度', prop: 'attitudeScore' },
             ],
-            dayOfWeekOBj: {
-                2: '周二',
-                3: '周三',
-                4: '周四',
-                5: '周五',
-                6: '周六',
-                7: '周日',
-            },
-            numToChinese: {
-                1: '一',
-                2: '二',
-                3: '三',
-                4: '四',
-                5: '五',
-                6: '六',
-                7: '七',
-                8: '八',
-                9: '九',
-                10: '十',
-            },
+            numToChinese,
             title: '',
             bookList: [],
         }
@@ -417,7 +400,7 @@ export default {
                 console.log(error)
             }
 
-            this.title = `${this.dayOfWeekOBj[this.detail?.dayOfWeek]} ${this.detail?.periodName
+            this.title = `周${WEEK_DAY[this.detail?.dayOfWeek]} ${this.detail?.periodName
                 }  ${this.detail?.oneCourse.student.studentName}`
 
 

@@ -30,6 +30,12 @@
 					}
 				},
 				{
+					"path": "refund/index",
+					"style": {
+						"navigationBarTitleText": "退费操作"
+					}
+				},
+				{
 					"path": "teacher/index",
 					"style": {
 						"navigationBarTitleText": "", // 具体老师
@@ -57,9 +63,9 @@
 					}
 				},
 				{
-					"path": "accountOld/index",
+					"path": "contract/index",
 					"style": {
-						"navigationBarTitleText": "账号开通-老"
+						"navigationBarTitleText": "钢琴童话教育培训协议"
 					}
 				},
 				{
@@ -107,7 +113,14 @@
                 {
                     "path": "homework/index",
                     "style": {
-                        "navigationBarTitleText": "课后作业"
+                        "navigationBarTitleText": "课后作业",
+                        "navigationStyle": "custom"
+                    }
+                },
+                {
+                    "path": "homeworkDetail/index",
+                    "style": {
+                        "navigationBarTitleText": "课堂报告与作业"
                     }
                 },
                 {
@@ -285,11 +298,6 @@
 	},
 	"condition": {
 		"current": 0,
-		"list": [
-            {
-				"name": "登录",
-				"path": "pages/login/index"
-			}
-        ]
+		"list": []
 	}
 }

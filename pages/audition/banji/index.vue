@@ -29,7 +29,7 @@
                                     @change="startClassDateChange"
                                 >
                                     修改
-                                    <image src="/static/images/account/edit.png" />
+                                    <image src="/static/images/teacher/edit.png" />
                                 </uni-datetime-picker>
                             </view>
                         </view>

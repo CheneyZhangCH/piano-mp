@@ -1,19 +1,229 @@
 <template>
-    <view class="page">
-        <view>课后作业</view>
+    <view class="page" :style="pageStyle">
+        <view class="custom-header">
+            <view class="title" :style="customTitleStyle">课后作业</view>
+        </view>
+        <scroll-view scroll-y="true" class="page-content" @scrolltolower="lower">
+            <view v-if="studentScore.accountId" class="student-score">
+                <view class="msg ellipsis">
+                    <text>
+                        在钢琴童话学习的第
+                        <text class="num">{{ studentScore.studyDays }}</text>天
+                    </text>
+                    <text>
+                        目前共掌握了
+                        <text class="num">{{ studentScore.studyChapters }}</text>首曲目
+                    </text>
+                </view>
+                <view class="infos">
+                    <view class="info">
+                        <view class="title">
+                            课堂数据
+                            <image
+                                src="/static/images/student/wenhao.png"
+                                @click="openMessage('ketang')"
+                            />
+                        </view>
+                        <view class="scores">
+                            <view class="score">
+                                <text class="num">{{ studentScore.handScore || '-' }}</text>
+                                <text class="desc">手型平均分</text>
+                            </view>
+                            <view class="score">
+                                <text class="num">{{ studentScore.musicScore || '-' }}</text>
+                                <text class="desc">识谱平均分</text>
+                            </view>
+                            <view class="score">
+                                <text class="num">{{ studentScore.attitudeScore || '-' }}</text>
+                                <text class="desc">学习态度分</text>
+                            </view>
+                        </view>
+                    </view>
+                    <view class="info">
+                        <view class="title">
+                            学习数据
+                            <image
+                                src="/static/images/student/wenhao.png"
+                                @click="openMessage('xuexi')"
+                            />
+                        </view>
+                        <view class="scores">
+                            <view class="score">
+                                <text class="num">{{ studentScore.finishChapterScore || '-' }}</text>
+                                <text class="desc">回课成绩分</text>
+                            </view>
+                            <view class="score">
+                                <text class="num">
+                                    {{
+                                        studentScore.grade ? studentScore.grade + '级' : '-'
+                                    }}
+                                </text>
+                                <text class="desc">当前级别</text>
+                            </view>
+                            <view class="score">
+                                <text class="num">{{ lastExamTime }}</text>
+                                <text class="desc">上次考级时间</text>
+                            </view>
+                        </view>
+                    </view>
+                </view>
+            </view>
+
+            <view v-if="list.length" class="list">
+                <view v-for="item in list" :key="item.id" class="item">
+                    <view class="teacher">
+                        <view class="info">
+                            <image class="cover" :src="item.teacher.coverUrl" />
+                            <text class="name">{{ item.teacher.teacherName }}</text>
+                            <text class="sub-name">{{ item.courseName }}</text>
+                        </view>
+                        <text class="sub-name">布置于 {{ weekOrDateTime(item.finishTime) }}</text>
+                    </view>
+                    <view class="content">
+                        <template v-if="item.courseType === 'one'">
+                            <view class="info ellipsis">
+                                <text class="name">回课情况</text>
+                                <text class="msg">
+                                    <text v-for="score in item.chapterScores" :key="score.id">
+                                        {{ score.chapterName }}
+                                        <text class="num">{{ score.score }}分</text>
+                                    </text>
+                                </text>
+                            </view>
+                            <view class="info ellipsis">
+                                <text class="name">本课表现</text>
+                                <text class="msg">
+                                    <text>
+                                        手型得分
+                                        <text class="num">{{ item.handScore }}分</text>
+                                    </text>
+                                    <text>
+                                        识谱得分
+                                        <text class="num">{{ item.musicScore }}分</text>
+                                    </text>
+                                    <text>
+                                        学习态度
+                                        <text class="num">{{ item.attitudeScore }}分</text>
+                                    </text>
+                                </text>
+                            </view>
+                            <view class="info ellipsis">
+                                <text class="name">作业详情</text>
+                                <text class="msg">
+                                    <text
+                                        v-for="chapter in item.chapters"
+                                        :key="chapter.id"
+                                    >({{ chapter.bookName }}){{ chapter.chapterName }}</text>
+                                </text>
+                            </view>
+                        </template>
+                        <template v-else>
+                            <view class="info ellipsis">
+                                <text class="name">新知识点</text>
+                                <text class="msg">{{ item.chapters[0].knowledge }}</text>
+                            </view>
+                            <view class="info ellipsis">
+                                <text class="name">本课曲目</text>
+                                <text class="msg">{{ item.chapters[0].chapterName }}</text>
+                            </view>
+                            <view class="info homework">
+                                <text class="name">作业详情</text>
+                                <view class="msg">
+                                    <view
+                                        v-for="(work, workIndex) in item.chapters[0].workStep"
+                                        :key="workIndex"
+                                        class="work"
+                                    >
+                                        <text>步骤{{ numToChinese[workIndex + 1] }}：</text>
+                                        <text class="work-content">{{ work.content }}</text>
+                                    </view>
+                                </view>
+                            </view>
+                            <view class="info videos">
+                                <text class="name">配套视频</text>
+                                <view class="video" @click="toVideo(item.chapters[0])">
+                                    点击观看配套与讲解视频
+                                    <image src="/static/images/student/play-red.png" />
+                                </view>
+                            </view>
+                        </template>
+                    </view>
+                    <view v-if="item.courseType === 'one'" class="action">
+                        <text class="read" :class="{ unread }">{{ item.unread ? '未读' : '已读' }}</text>
+                        <view class="btn" @click="toDetail(item)">
+                            查看课堂报告与作业详情
+                            <uni-icons type="right" color="#99A0AD" size="12" />
+                        </view>
+                    </view>
+                </view>
+            </view>
+            <view v-else class="empty"></view>
+        </scroll-view>
+
+        <uni-popup ref="message" :is-mask-click="false" type="center">
+            <view class="piano-message-box">
+                <view class="piano-message-box__content">
+                    <view
+                        v-if="messageMode === 'ketang'"
+                        class="msg"
+                    >课堂上老师针对手型、识谱、学习态度 打出的分值相加除以打分次数得出的平均值</view>
+                    <template v-else>
+                        <view class="msg">
+                            <text class="label">回课成绩分：</text>
+                            <text class="value">由老师针对回课所打出的分值 相加除以打分次数得出的平均值</text>
+                        </view>
+                        <view class="msg">
+                            <text class="label">考级信息：</text>
+                            <text class="value">根据学员真实考级数据录入</text>
+                        </view>
+                    </template>
+                </view>
+                <view class="piano-message-box__btns">
+                    <button class="btn confirm" @click="$refs.message.close()">我知道了</button>
+                </view>
+            </view>
+        </uni-popup>
+
         <customTabbar :active="1" />
     </view>
 </template>
 
 <script lang="js">
-import dayjs from "dayjs"
+import { numToChinese } from '@/utils/dicts'
+import { weekOrDateTime } from '@/utils/format'
 export default {
     data() {
         return {
+            headerHeight: 0,
+            headerTop: 0,
+
+            userId: 0,
+            studentId: 0,
+            studentScore: {},
+            messageMode: '',
+            numToChinese,
+
+            pageNum: 1,
+            pageSize: 5,
+            totalPage: 0,
+            list: []
         }
+    },
+    computed: {
+        pageStyle() {
+            return `padding-top: ${(this.headerHeight + this.headerTop + 20) * 2}rpx; padding-bottom: 100rpx;`
+        },
+        customTitleStyle() {
+            return `top: ${this.headerTop * 2}rpx; height: ${this.headerHeight * 2}rpx; line-height: ${this.headerHeight * 2}rpx`
+        },
+
+        lastExamTime() {
+            return [this.student?.lastExamTime, this.student?.examSeason].filter(Boolean).join(' | ') || '-'
+        },
     },
     onLoad() {
         const token = uni.getStorageSync('token')
+        const userId = uni.getStorageSync('userId')
 
         // 权限验证
         if (!token) {
@@ -25,12 +235,336 @@ export default {
                 url: '/pages/login/index'
             })
         }
+
+        this.userId = userId
+
+        let rect = wx.getMenuButtonBoundingClientRect();
+        this.headerHeight = rect.height
+        this.headerTop = rect.top
+
+        this.init()
+        this.handleSearch()
     },
     methods: {
+        weekOrDateTime,
+        async init() {
+            uni.showLoading({ title: '加载中', icon: 'none' })
+            try {
+                const res = await this.$http.get('/mini/student/getStudentScore?studentId=' + this.userId)
+                this.studentScore = res.data ?? {}
+            } finally {
+                uni.hideLoading()
+            }
+        },
+
+        async handleSearch() {
+            uni.showLoading({ title: '加载中', icon: 'none' })
+            const param = {
+                page: {
+                    pageNum: this.pageNum,
+                    pageSize: this.pageSize
+                },
+                param: {
+                    studentId: this.userId
+                }
+            }
+            try {
+                const res = await this.$http.post('/mini/finishiLesson/pageStudentWork', param)
+                const { data, totalPage } = res.data ?? {}
+                this.totalPage = totalPage ?? 0
+                this.list = this.list.concat(data ?? [])
+            } finally {
+                uni.hideLoading()
+            }
+        },
+
+        lower() {
+            if (this.pageNum >= this.totalPage) return
+            this.pageNum++
+            this.handleSearch()
+        },
+
+        toVideo({ id }) {
+            uni.navigateTo({ url: `/pages/student/videos/chapter?id=${id}` })
+        },
+
+        toDetail({ id }) {
+            uni.navigateTo({ url: `/pages/student/homeworkDetail/index?id=${id}` })
+        },
+
+        openMessage(mode) {
+            this.messageMode = mode
+            this.$refs.message.open()
+        }
     }
 }
 </script>
 
 <style lang="scss" scoped>
+.page {
+    height: 100vh;
+    overflow: hidden;
+    box-sizing: border-box;
 
+    .custom-header {
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 500rpx;
+        background-image: url("https://static.gangqintonghua.com/img/beijing/bg1.png");
+        background-size: 100%;
+        background-repeat: no-repeat;
+        &.group {
+            background-image: url("https://static.gangqintonghua.com/img/beijing/bg2.png");
+        }
+        .title {
+            position: absolute;
+            width: 100%;
+            z-index: 1;
+            text-align: center;
+            font-size: 32rpx;
+            font-weight: 500;
+            color: #fff;
+        }
+    }
+    &-content {
+        position: relative;
+        z-index: 1;
+        height: 100%;
+        .student-score {
+            margin: 0 24rpx;
+            height: 478rpx;
+            background-image: url("https://static.gangqintonghua.com/img/beijing/banji.png");
+            background-repeat: no-repeat;
+            background-size: 100%;
+
+            padding: 44rpx 40rpx 0;
+            .msg {
+                font-size: 24rpx;
+                color: #141f33;
+                line-height: 34rpx;
+                margin-bottom: 60rpx;
+                .num {
+                    color: #62bbec;
+                }
+                > text {
+                    + text {
+                        margin-left: 20rpx;
+                    }
+                }
+            }
+            .infos {
+                .info {
+                    + .info {
+                        margin-top: 30rpx;
+                    }
+                    .title {
+                        display: flex;
+                        align-items: center;
+                        font-size: 28rpx;
+                        font-weight: 500;
+                        color: #141f33;
+                        line-height: 40rpx;
+                        margin-bottom: 20rpx;
+                        image {
+                            width: 20rpx;
+                            height: 20rpx;
+                            margin-left: 8rpx;
+                        }
+                    }
+                    .scores {
+                        display: flex;
+                        .score {
+                            display: flex;
+                            flex-direction: column;
+                            flex: 1;
+                            text-align: center;
+                            .num {
+                                font-size: 28rpx;
+                                font-weight: 500;
+                                color: #141f33;
+                                line-height: 40rpx;
+                                margin-bottom: 2rpx;
+                            }
+                            .desc {
+                                font-size: 24rpx;
+                                color: #99a0ad;
+                                line-height: 34rpx;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .list {
+            padding: 34rpx 30rpx;
+            .item {
+                background: #ffffff;
+                border-radius: 20rpx;
+                margin-bottom: 36rpx;
+                .teacher {
+                    padding: 16rpx 32rpx;
+                    border-bottom: 1px solid #f5f7fa;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    .info {
+                        flex: 1;
+                        display: flex;
+                        align-items: center;
+                        .cover {
+                            width: 60rpx;
+                            height: 60rpx;
+                            border-radius: 50%;
+                            margin-right: 16rpx;
+                        }
+                        .name {
+                            font-size: 28rpx;
+                            color: #141f33;
+                            margin-right: 16rpx;
+                        }
+                    }
+                    .sub-name {
+                        font-size: 24rpx;
+                        color: #99a0ad;
+                    }
+                }
+                .content {
+                    padding: 20rpx 32rpx;
+                    .info {
+                        font-size: 24rpx;
+                        line-height: 34rpx;
+                        + .info {
+                            margin-top: 16rpx;
+                        }
+                        .name {
+                            color: #99a0ad;
+                            margin-right: 56rpx;
+                        }
+                        .msg {
+                            color: #525666;
+                            .num {
+                                font-weight: 500;
+                                color: #62bbec;
+                                margin: 0 16rpx 0 8rpx;
+                            }
+                        }
+                        &.homework {
+                            display: flex;
+                            .work {
+                                font-size: 24rpx;
+                                color: #525666;
+                                line-height: 34rpx;
+                                + .work {
+                                    margin-top: 10rpx;
+                                }
+                                &-content {
+                                    font-weight: 500;
+                                    color: #62bbec;
+                                    margin-left: 12rpx;
+                                }
+                            }
+                        }
+                        &.videos {
+                            display: flex;
+                            .video {
+                                display: flex;
+                                align-items: center;
+                                font-size: 24rpx;
+                                color: #f15e5e;
+                                line-height: 34rpx;
+                                image {
+                                    width: 22rpx;
+                                    height: 22rpx;
+                                    margin-left: 10rpx;
+                                }
+                            }
+                        }
+                    }
+                }
+                .action {
+                    padding: 14rpx 32rpx 16rpx;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    .read {
+                        font-size: 24rpx;
+                        color: #3eb156;
+                        line-height: 34rpx;
+                        &.unread {
+                            color: #f15e5e;
+                        }
+                    }
+                    .btn {
+                        font-size: 24rpx;
+                        color: #62bbec;
+                        line-height: 34rpx;
+                    }
+                }
+            }
+        }
+    }
+}
+</style>
+
+<style lang="scss" scoped>
+.piano-message-box {
+    width: 650rpx;
+    background-color: #fff;
+    border-radius: 32rpx;
+    &___header {
+        padding: 22rpx 0;
+        text-align: center;
+    }
+    &__content {
+        padding: 60rpx 32rpx 36rpx;
+        .msg {
+            display: flex;
+            font-size: 28rpx;
+            color: #99a0ad;
+            line-height: 40rpx;
+            .label {
+                flex-basis: 160rpx;
+            }
+            .value {
+                flex: 1;
+                overflow: hidden;
+            }
+            + .msg {
+                margin-top: 12rpx;
+            }
+        }
+    }
+    &__btns {
+        display: flex;
+        column-gap: 48rpx;
+        padding: 32rpx 48rpx;
+        box-shadow: 0px -4rpx 8rpx 0px rgba(0, 0, 0, 0.05);
+        .btn {
+            flex: 1;
+            height: 72rpx;
+            padding: 0 56rpx;
+            font-size: 32rpx;
+            font-weight: 500;
+            line-height: 72rpx;
+            color: #616b80;
+            background-color: #fff;
+            border: 1px solid #d3d7e0;
+            border-radius: 44rpx;
+            &::after {
+                display: none;
+            }
+            &.confirm {
+                color: #fff;
+                background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
+                border: none;
+            }
+            &.disabled {
+                background: #e1e1e1;
+                border: none;
+            }
+        }
+    }
+}
 </style>

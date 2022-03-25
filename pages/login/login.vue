@@ -185,7 +185,7 @@ export default {
                                 phone: vm.phone,
                                 verifyCode: vm.verifyCode,
                             }
-                        }).then(res => {
+                        }).then(async res => {
                             const { accountType, token, phone, id } = res.data
                             uni.setStorageSync('accountType', accountType)
                             uni.setStorageSync('token', token)
@@ -206,7 +206,16 @@ export default {
                                 return uni.redirectTo({ url: '/pages/admin/index/index' })
                             }
                             if (accountType === 'STUDENT') {
-                                return uni.redirectTo({ url: '/pages/student/videos/index' })
+                                try {
+                                    const res = await vm.$http.get('/mini/studentContract/getUnconfirmContract')
+                                    if(res.data) {
+                                        uni.setStorageSync('contract', JSON.stringify(res.data))
+                                        return uni.redirectTo({ url: '/pages/student/contract/index' })
+                                    }
+                                    return uni.redirectTo({ url: '/pages/student/videos/index' })
+                                } catch (error) {
+                                    console.log(error)
+                                }
                             }
                             if (accountType === 'TEACHER') {
                                 return uni.redirectTo({ url: '/pages/teacher/schedule/index' })

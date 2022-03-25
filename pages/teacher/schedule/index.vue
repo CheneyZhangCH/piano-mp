@@ -95,7 +95,7 @@
                         >
                             <image
                                 class="avatar"
-                                src="/static/images/course_type_more.png"
+                                src="/static/images/teacher/course_type_more.png"
                                 @click="openCourse(period)"
                             />
                             <view class="period-name">{{

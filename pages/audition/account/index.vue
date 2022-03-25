@@ -7,7 +7,7 @@
                         <view class="label">学员姓名：</view>
                         <view class="value border-b">
                             <input v-model="form.studentName" placeholder="请输入姓名或昵称 例：茹茹"
-                                placeholder-style="color: #99A0AD;font-size: 32rpx;" maxlength="10">
+                                placeholder-style="color: #99A0AD;font-size: 32rpx;" maxlength="3">
                         </view>
                     </view>
                     <view class="item">
@@ -28,7 +28,8 @@
                     <view class="item">
                         <view class="label">出生日期：</view>
                         <view class="value border-b birth">
-                            <uni-datetime-picker type="date" :value="form.birthday" @change="e => form.birthday = e">
+                            <uni-datetime-picker type="date" :value="form.birthday" :end="dayjsFormat()"
+                                @change="e => form.birthday = e">
                                 <view class="birth-box">
                                     <text>
                                         <text class="day" :class="{ placeholder: !form.birthday }">
@@ -59,7 +60,7 @@
                         <view class="value package">
                             <picker class="picker" :value="packageIndex" :range="packages" range-key="packageName"
                                 @change="packageChange">
-                                <text>{{ packages[packageIndex].packageName }}</text>
+                                <text>{{ form.packageName }}</text>
                                 <image src="/static/images/audition/arrow_down.png" />
                             </picker>
                         </view>
@@ -75,7 +76,7 @@
                                 </text>
                                 <view class="action" @click="dialogOpen('course', index)">
                                     <text>修改课时</text>
-                                    <image src="/static/images/account/edit.png" />
+                                    <image src="/static/images/teacher/edit.png" />
                                 </view>
                             </view>
                             <view class="value">
@@ -106,7 +107,7 @@
                             </text>
                             <view class="action" @click="dialogOpen('expiryMonth')">
                                 <text>修改</text>
-                                <image src="/static/images/account/edit.png" />
+                                <image src="/static/images/teacher/edit.png" />
                             </view>
                         </view>
                         <view class="value">
@@ -117,12 +118,34 @@
             </template>
             <template v-else>
                 <view class="block">
-
+                    <view class="item days">
+                        <view class="label">当前学习天数：</view>
+                        <view class="value border-b ">
+                            <text class="text">{{ form.basicStudyDays }}</text>
+                            <text class="unit">天</text>
+                            <view class="action" @click="dialogOpen('basicStudyDays')">
+                                <text>修改</text>
+                                <image src="/static/images/teacher/edit.png" />
+                            </view>
+                        </view>
+                    </view>
+                    <view class="item days">
+                        <view class="label">当前所学曲目：</view>
+                        <view class="value border-b">
+                            <text class="text">{{ form.basicStudyChapters }}</text>
+                            <text class="unit">曲</text>
+                            <view class="action" @click="dialogOpen('basicStudyChapters')">
+                                <text>修改</text>
+                                <image src="/static/images/teacher/edit.png" />
+                            </view>
+                        </view>
+                    </view>
                 </view>
             </template>
         </view>
         <view class="page-footer">
-            <button v-if="step === 0" class="btn cancel" @click="next">
+            <button v-if="step === 0" class="btn " :class="{ confirm: !disabled, disabled }" :disabled="disabled"
+                @click="next">
                 下一步
             </button>
             <button v-else class="btn confirm" @click="confirm">
@@ -198,8 +221,9 @@ export default {
                 'age': '',
                 courses: [],
                 expiryMonths: 0,
-                gender: '', // female,male
+                gender: '',
                 packageId: 0,
+                'packageName': '',
                 phone: '',
                 studentName: '',
                 expiryDate: 0,
@@ -242,6 +266,22 @@ export default {
             })
         }
         this.initOptions()
+    },
+    computed: {
+        disabled() {
+            const { studentName, gender, birthday, phone, packageId, courses } = this.form
+            if (!studentName || !gender || !birthday || !phone || !packageId || !courses.length) return true
+
+            let coursesValid = false
+            for (let i = 0; i < courses.length; i++) {
+                const { courseId, courseNum, teacherId, timetableId, timetablePeriodId } = courses[i]
+                if (!courseId || !courseNum || !teacherId || !timetableId || !timetablePeriodId) {
+                    coursesValid = true
+                    break
+                }
+            }
+            return coursesValid
+        }
     },
     watch: {
         'form.birthday'(newVal) {
@@ -294,8 +334,11 @@ export default {
                     // "timetablePeriodId": 0
                     teachers: teacherRes[index].data
                 }))
+
+                this.form.packageName = coursePackage.packageName
                 this.form.expiryMonths = coursePackage.expiryMonths
-                this.form.expiryDate = dayjs().add(coursePackage.expiryMonths, 'month').format('YYYY年 MM月 DD日')
+                // 账号有效期至：当天+课程包月份-1
+                this.form.expiryDate = dayjs().add(coursePackage.expiryMonths, 'month').subtract(1, 'days').format('YYYY年 MM月 DD日')
 
             } catch (error) {
                 console.log(error)
@@ -391,6 +434,10 @@ export default {
         },
 
         dialogConfirm(value) {
+            const regExp = this.dialogMode === 'basicStudyChapters'
+                ? /^(0|[1-9]{1}\d{0,4})$/
+                : /^([1-9]{1}\d{0,4})$/
+            if (!regExp.test(+value)) return uni.showToast({ title: '请输入正确的数字！', icon: 'none' })
             switch (this.dialogMode) {
                 case 'course':
                     this.form.courses[this.dialogCourseIndex].courseNum = +value
@@ -410,7 +457,19 @@ export default {
         },
 
         next() {
+            const {
+                phone
+            } = this.form
+            if (!/\d{11}/.test(phone)) return uni.showToast({ title: '请输入正确的手机号码', icon: 'none' })
 
+            this.step += 1
+        },
+
+        confirm() {
+            uni.setStorageSync('contract', JSON.stringify(this.form))
+            uni.navigateTo({
+                url: '/pages/audition/contract/index'
+            })
         },
 
         toRecord() {
@@ -422,7 +481,7 @@ export default {
 
 <style lang="scss" scoped>
 .page {
-    height: 100vh;
+    min-height: 100vh;
     padding-bottom: 100rpx;
     &-content {
         padding: 36rpx 32rpx;
@@ -561,6 +620,31 @@ export default {
                         }
                     }
                 }
+                &.days {
+                    .label {
+                        flex-basis: 230rpx;
+                    }
+                    .value {
+                        display: flex;
+                        .text {
+                            flex: 1;
+                            overflow: hidden;
+                            text-align: center;
+                        }
+                        .unit {
+                            margin-left: 60rpx;
+                        }
+                    }
+                    .action {
+                        color: #62bbec;
+                        font-size: 24rpx;
+                        margin-left: 32rpx;
+                        image {
+                            width: 28rpx;
+                            height: 20rpx;
+                        }
+                    }
+                }
             }
             .course {
                 + .course {
@@ -623,6 +707,7 @@ export default {
     }
     &-footer {
         padding: 0 52rpx;
+        margin-bottom: 16rpx;
         .btn {
             height: 84rpx;
             line-height: 84rpx;
@@ -632,7 +717,7 @@ export default {
             &::after {
                 display: none;
             }
-            &.cancel {
+            &.disabled {
                 background: #e1e1e1;
                 color: #99a0ad;
             }

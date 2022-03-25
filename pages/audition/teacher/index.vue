@@ -71,7 +71,7 @@
                         <view v-else-if="
                             period.periodStatus === '2' && period.moreCourse
                         " class="period-main">
-                            <image class="avatar" src="/static/images/course_type_more.png"
+                            <image class="avatar" src="/static/images/teacher/course_type_more.png"
                                 @click="openCourse(period)" />
                             <view class="period-name">{{
                                 period.periodName
@@ -142,7 +142,7 @@
         <Course ref="course" :detail="courseDetail" @student="(id) => (studentId = id)" />
 
         <!-- 学生详情 -->
-        <Student :student-id="studentId" :accountType="accountType" @close="studentId = 0" />
+        <Student :student-id="studentId" @close="studentId = 0" />
 
         <!-- 备注 -->
         <Remark ref="remark" :detail="studentDetail" @confirm="handleSearch" />
@@ -180,7 +180,6 @@ export default {
             ],
             periods: [],
 
-            accountType: '',
             studentId: 0,
             courseDetail: {},
             studentDetail: {}
@@ -188,14 +187,12 @@ export default {
     },
     onLoad(option) {
         const token = uni.getStorageSync("token");
-        const accountType = uni.getStorageSync("accountType");
         const userId = uni.getStorageSync("userId");
         // 权限验证
         if (!token) {
             uni.showToast({ title: "请先登录", icon: "none" });
             return uni.navigateTo({ url: "/pages/login/index" });
         }
-        this.accountType = accountType
         this.userId = userId;
 
         if (option?.teacherId) {
@@ -206,7 +203,7 @@ export default {
         }
 
         const week = new Date().getDay()
-        this.dayOfWeek = week === 1 ? 2 : week;
+        this.dayOfWeek = 2// week === 1 ? 2 : week;
         this.handleSearch();
     },
     methods: {

@@ -1,6 +1,6 @@
 <template>
     <view class="page">
-        <view v-if="chapter" class="chapter">
+        <view v-if="chapter && video" class="chapter">
             <video
                 id="video"
                 class="video"
@@ -11,7 +11,7 @@
         <view v-if="chapter && video" class="video">
             {{chapter.chapterName}}-{{video.videoName}}
         </view>
-        <view class="videos">
+        <view v-if="videos.length" class="videos">
             <view class="title">视频合集</view>
             <view class="content">
                 <view v-for="item in videos" :key="item.id" class="item" :class="{active:item.id === video.id}" @click="videosChange(item)">

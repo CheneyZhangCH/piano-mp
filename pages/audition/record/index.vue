@@ -34,7 +34,7 @@
                     <view class="page-list-item__title">
                         <view class="sub-title">
                             <text>{{ listItem.date }}</text>
-                            <image class="arrow_down" src="/static/images/arrow_down_dark.png"></image>
+                            <image class="arrow_down" src="/static/images/audition/arrow_down_dark.png"></image>
                         </view>
                         <view class="desc">{{ `开通账号${listItem.items.length}个` }}</view>
                     </view>
@@ -72,7 +72,7 @@
                                     <view v-for="course in item.contract.courses" :key="course.courseId"
                                         class="course">
                                         <text>{{ course.courseName }}({{ course.teacherName }}老师)</text>
-                                        <text>{{ dayOfWeekOBj[course.dayOfWeek] }}</text>
+                                        <text>周{{ WEEK_DAY[course.dayOfWeek] }}</text>
                                         <text>{{ course.timetablePeriodName }}</text>
                                     </view>
                                 </template>
@@ -87,6 +87,7 @@
 <script>
 import tuiSticky from "@/components/ThorUi/tui-sticky/better-sticky"
 import dayjs from "dayjs";
+import { WEEK_DAY } from '@/utils/format'
 const CUR_MONTH = dayjs().format('YYYY-MM')
 const DEFAULT_RANGE_DATE = [dayjs().subtract(15, 'days').format('YYYY-MM-DD'), dayjs().add(15, 'days').format('YYYY-MM-DD')]
 export default {
@@ -98,8 +99,7 @@ export default {
             mode: 'month',
             month: '',
             dateRange: [],
-
-            dayOfWeekOBj: { 2: '周二', 3: '周三', 4: '周四', 5: '周五', 6: '周六', 7: '周日', },
+            WEEK_DAY,
 
             list: {},
             scrollTop: 0

@@ -16,14 +16,12 @@
                                     coursePackage.packageName
                                 }}</text>
                             </view>
-                            <text v-if="accountType !== 'AUDITION'" class="set-grade" @click="setGrade">设置级别</text>
+                            <text v-if="!['AUDITION', 'ADMIN'].includes(accountType)" class="set-grade" @click="setGrade">设置级别</text>
                             <uni-icons v-else type="closeempty" size="14" @click="close" />
                         </view>
                         <view class="center-popup-title-sub">
-                            <image v-if="student.gender === 'male'" class="gender-icon"
-                                src="/static/images/male_selected.png"></image>
-                            <image v-if="student.gender === 'female'" class="gender-icon"
-                                src="/static/images/female_selected.png"></image>
+                            <image class="gender-icon"
+                                :src="`/static/images/student/${student.gender || 'male'}-selected.png`" />
                             <text class="text">{{ student.age + '岁' }}</text>
                             <text class="text">{{
                                 '课程陪练券' + trainTicketNum + '张'
@@ -31,7 +29,7 @@
                         </view>
                     </view>
                 </view>
-                <view class="content">
+                <scroll-view scroll-y="true" class="content" :style="contentStyle">
                     <view class="score px-28">
                         <view class="score-item">
                             <text class="score-item-num">{{
@@ -81,7 +79,7 @@
                                         ')'
                                 }}</text>
                                 <text>{{
-                                    dayOfWeekOBj[course.dayOfWeek] +
+                                    '周' + WEEK_DAY[course.dayOfWeek] +
                                         ' ' +
                                         course.timetablePeriodName
                                 }}</text>
@@ -89,25 +87,25 @@
                                     '剩余' + course.remainCourseNum + '节'
                                 }}</text>
                             </view>
-                            <view v-if="Array.isArray(course.chapters)" class="course-item-chapter">
+                            <view v-if="Array.isArray(course.chapters)" class="course-item-chapter"
+                                :class="course.courseType">
                                 <view v-for="chapter in course.chapters" :key="chapter.id"
                                     class="course-item-chapter-item ellipsis">
-                                    <text v-if="chapter.bookName">{{
-                                        '(' + chapter.bookName + ')'
-                                    }}</text>
-                                    <text v-if="chapter.chapterName">{{
-                                        chapter.chapterName
-                                    }}</text>
+                                    <text class="name">
+                                        ({{ chapter.bookName }}){{ chapter.chapterName }}
+                                    </text>
+                                    <view v-if="['AUDITION', 'ADMIN'].includes(accountType) && course.courseType === 'more'" class="btn"
+                                        @click="toClass(course)">
+                                        班级详情
+                                        <uni-icons type="right" color="#99A0AD" size="12" />
+                                    </view>
                                 </view>
                             </view>
-                            <view v-if="accountType === 'AUDITION'" class="course-item-btn" @click="toClass(course)">
-                                班级详情
-                                <uni-icons type="right" color="#99A0AD" size="12" />
-                            </view>
+
                         </view>
                     </view>
-                    <!-- 试听端 -->
-                    <template v-if="accountType === 'AUDITION'">
+                    <!-- 试听端、管理端 -->
+                    <template v-if="['AUDITION', 'ADMIN'].includes(accountType)">
                         <view class="section-divider"></view>
                         <view class="expire-date px-28" :class="{ 'warning': expiryDateWarning }">
                             {{ '账户有效期：剩余' + expiryDate }}
@@ -124,14 +122,31 @@
                             </template>
                         </view>
                     </template>
+                </scroll-view>
+                <view v-if="['AUDITION', 'ADMIN'].includes(accountType)" class="action">
+                    <view>
+                        <button class="btn cancel" @click="disContinue">
+                            不续课
+                        </button>
+                        <button class="btn confirm" @click="doContinue">
+                            续课
+                        </button>
+                    </view>
+                    <view>
+                        <button class="text" @click="refund">
+                            操作退费
+                        </button>
+                        <button class="text" @click="edit">
+                            修改信息
+                        </button>
+                    </view>
+                    <view v-if="accountType === 'ADMIN'">
+                        <button class="danger" @click="del">
+                            删除学员
+                        </button>
+                    </view>
                 </view>
-                <view class="footer">
-                    <!-- <button class="btn cancel" @click="disContinue">
-                        不续课
-                    </button>
-                    <button class="btn confirm" @click="doContinue">
-                        续课
-                    </button> -->
+                <view v-else class="footer">
                     <button class="btn confirm" @click="close">
                         我知道了
                     </button>
@@ -139,7 +154,7 @@
             </view>
         </uni-popup>
 
-        <uni-popup ref="grade" type="bottom" class="grade">
+        <uni-popup v-if="!['AUDITION', 'ADMIN'].includes(accountType)" ref="grade" type="bottom" class="grade">
             <view class="grade-main">
                 <view class="grade-main-title">
                     <text class="btn" @click="$refs.grade.close()">取消</text>
@@ -192,31 +207,21 @@
 
 <script>
 import Remark from "@/components/Remark";
-import { getExpiryDate } from '@/utils/format'
+import { WEEK_DAY, getExpiryDate } from '@/utils/format'
 import dayjs from 'dayjs'
 export default {
     components: {
         Remark
     },
     props: {
-        studentId: [String, Number],
-        accountType: {
-            type: String,
-            default: 'TEACHER'
-        }
+        studentId: [String, Number]
     },
     data() {
         return {
+            accountType: '',
+            WEEK_DAY,
             defaultCover: "https://static.gangqintonghua.com/img/touxiang/pic1.webp",
             detail: {},
-            dayOfWeekOBj: {
-                2: "周二",
-                3: "周三",
-                4: "周四",
-                5: "周五",
-                6: "周六",
-                7: "周日",
-            },
             form: {
                 grade: "",
                 lastExamTime: "",
@@ -254,7 +259,27 @@ export default {
         },
         expiryDateWarning() {
             return this.student.expiryDate - dayjs() < 30 * 24 * 60 * 60 * 1000
+        },
+        contentStyle() {
+            let h = 60
+            // 管理端有删除按钮
+            // 试听端有操作
+            switch (this.accountType) {
+                case 'AUDITION':
+                    h = 55
+                    break;
+                case 'ADMIN':
+                    h = 50
+                    break;
+                default:
+                    break;
+            }
+            return `max-height: ${h}vh;`
         }
+    },
+    created() {
+        const accountType = uni.getStorageSync("accountType")
+        this.accountType = accountType
     },
     methods: {
         async getStudent() {
@@ -321,6 +346,18 @@ export default {
 
         },
 
+        refund() {
+            uni.navigateTo({ url: '/pages/audition/refund/index?studentId=' + this.studentId})
+        },
+
+        edit() {
+
+        },
+
+        del() {
+
+        },
+
         toClass({ courseId, teacherId, timetablePeriodId }) {
             uni.navigateTo({ url: `/pages/audition/banji/index?courseId=${courseId}&teacherId=${teacherId}&timetablePeriodId=${timetablePeriodId}` })
         }
@@ -328,9 +365,11 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped src="./popup.scss"></style>
 <style lang="scss" scoped>
 .main {
+    width: 650rpx;
+    background-color: #fff;
+    border-radius: 32rpx;
     .title {
         position: relative;
         height: 200rpx;
@@ -472,6 +511,19 @@ export default {
                     }
                 }
                 &-chapter {
+                    &.more {
+                        .course-item-chapter-item {
+                            display: flex;
+                            justify-content: space-between;
+                            .name {
+                                flex: 1;
+                                padding-right: 20rpx;
+                                overflow: hidden;
+                                white-space: nowrap;
+                                text-overflow: ellipsis;
+                            }
+                        }
+                    }
                     &-item {
                         font-size: 24rpx;
                         color: #99a0ad;
@@ -479,13 +531,12 @@ export default {
                         + .course-item-chapter-item {
                             margin-top: 12rpx;
                         }
+                        .btn {
+                            font-size: 24rpx;
+                            color: #99a0ad;
+                            line-height: 34rpx;
+                        }
                     }
-                }
-                &-btn {
-                    font-size: 24rpx;
-                    color: #99a0ad;
-                    line-height: 34rpx;
-                    text-align: right;
                 }
             }
         }
@@ -524,6 +575,70 @@ export default {
                 height: 20rpx;
                 margin-left: 8rpx;
             }
+        }
+    }
+
+    .footer,
+    .action {
+        padding: 32rpx 48rpx;
+        box-shadow: 0px -4rpx 8rpx 0px rgba(0, 0, 0, 0.05);
+        .btn {
+            height: 72rpx;
+            font-size: 32rpx;
+            font-weight: 500;
+            line-height: 72rpx;
+            color: #616b80;
+            background-color: #fff;
+            border: 1px solid #d3d7e0;
+            border-radius: 44rpx;
+            &::after {
+                display: none;
+            }
+            &.confirm {
+                color: #fff;
+                background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
+                border: none;
+            }
+            &.disabled {
+                background: #e1e1e1;
+                border: none;
+            }
+        }
+    }
+    .footer {
+        display: flex;
+        column-gap: 48rpx;
+        .btn {
+            flex: 1;
+        }
+    }
+    .action {
+        > view {
+            display: flex;
+            column-gap: 48rpx;
+            button {
+                flex: 1;
+                &::after {
+                    display: none;
+                }
+            }
+        }
+        .text {
+            font-size: 28rpx;
+            color: #99a0ad;
+            line-height: 40rpx;
+            background: none;
+            margin-top: 24rpx;
+        }
+        .danger {
+            height: 68rpx;
+            background: #f15e5e;
+            border-radius: 12rpx;
+
+            font-size: 32rpx;
+            font-weight: 500;
+            color: #fff;
+            margin-top: 30rpx;
         }
     }
 }

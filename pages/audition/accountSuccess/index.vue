@@ -4,7 +4,7 @@
         <view class="tip">
             合同已发送，等待对方确认
         </view>
-        <button class="btn" @click="back">我知道了</button>
+        <button class="btn" @click="toAccount">我知道了</button>
     </view>
 </template>
 
@@ -25,8 +25,8 @@ export default {
         }
     },
     methods: {
-        back() {
-            uni.navigateBack({ delta: 1 })
+        toAccount() {
+            uni.redirectTo({ url: '/pages/audition/account/index' })
         }
     }
 }

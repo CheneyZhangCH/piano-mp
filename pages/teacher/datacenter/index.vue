@@ -398,7 +398,6 @@ export default {
         },
 
         lower() {
-            console.log('lower')
             if (this.pageNum >= this.totalPage) return
             this.pageNum++
             this._listStudentChangeByGroup()

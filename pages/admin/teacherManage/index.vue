@@ -60,9 +60,10 @@ export default {
             uni.navigateTo({ url: `/pages/admin/teacherData/index?teacherId=${accountId}&teacherName=${teacherName}` });
         },
 
+        // 试听端
         toSchedule() {
             const { accountId, teacherName } = this.teacher;
-            uni.navigateTo({ url: `/pages/teacher/schedule/index?teacherId=${accountId}&teacherName=${teacherName}` });
+            uni.navigateTo({ url: `/pages/audition/teacher/index?teacherId=${accountId}&teacherName=${teacherName}` });
         },
 
         addDiscipline() {

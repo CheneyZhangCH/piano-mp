@@ -42,6 +42,7 @@ export default {
                 success(res) {
                     if (res.code) {
                         if(!e.detail?.code) return
+                        uni.showLoading({ title: '登录中',  mask: true })
                         vm.$http
                             .post('/login/wechatPhoneLoginMini', {
                                 data: {
@@ -49,7 +50,7 @@ export default {
                                     phoneCode: e.detail.code,
                                 },
                             })
-                            .then(res => {
+                            .then(async res => {
                                 const { accountType, token, phone, id } = res.data
                                 uni.setStorageSync('accountType', accountType)
                                 uni.setStorageSync('token', token)
@@ -69,14 +70,16 @@ export default {
                                     return uni.redirectTo({ url: '/pages/admin/index/index' })
                                 }
                                 if (accountType === 'STUDENT') {
-                                    // try {
-                                    //     const res = await vm.$http.get('/mini/studentContract/getUnconfirmContract')
-                                    //     if(res.data) return uni.redirectTo({ url: '/pages/student/contract/index' })
-
-                                    // } catch (error) {
-                                    //     console.log(error)
-                                    // }
-                                    return uni.redirectTo({ url: '/pages/student/videos/index' })
+                                    try {
+                                        const res = await vm.$http.get('/mini/studentContract/getUnconfirmContract')
+                                        if(res.data) {
+                                            uni.setStorageSync('contract', JSON.stringify(res.data))
+                                            return uni.redirectTo({ url: '/pages/student/contract/index' })
+                                        }
+                                        return uni.redirectTo({ url: '/pages/student/videos/index' })
+                                    } catch (error) {
+                                        console.log(error)
+                                    }
                                 }
                                 if (accountType === 'TEACHER') {
                                     return uni.redirectTo({ url: '/pages/teacher/schedule/index' })
@@ -84,6 +87,7 @@ export default {
                             })
                             .finally(() => {
                                 vm.loading = false
+                                uni.hideLoading()
                             })
                     } else {
                         this.loading = false
