@@ -1,10 +1,10 @@
 <template>
     <view class="page">
-        <image class="icon" src="/static/images/student/wait-deal.png"></image>
+        <image class="icon" src="/static/images/audition/success.png"></image>
         <view class="tip">
             合同已发送，等待对方确认
         </view>
-        <button class="btn" @click="toAccount">我知道了</button>
+        <button class="btn" @click="back">我知道了</button>
     </view>
 </template>
 
@@ -25,8 +25,8 @@ export default {
         }
     },
     methods: {
-        toAccount() {
-            uni.redirectTo({ url: '/pages/audition/account/index' })
+        back() {
+            uni.navigateBack({ delta: 1 })
         }
     }
 }

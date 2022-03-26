@@ -51,7 +51,7 @@
                                     <view>
                                         <text class="name">{{ item.student.studentName }}</text>
                                         <image class="gender-icon"
-                                            :src="`/static/images/${item.student.gender || 'male'}_selected.png`"></image>
+                                            :src="`/static/images/student/${item.student.gender || 'male'}-selected.png`"></image>
                                         <text class="age">{{ `${item.student.age}岁` }}</text>
                                     </view>
                                     <view>

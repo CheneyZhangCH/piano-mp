@@ -23,7 +23,8 @@
                             </view>
                             <view
                                 v-if="['finish_course_discontinue', 'finish_course_continue'].includes(period.oneCourse.student.status)"
-                                class="period-status" :class="period.oneCourse.student.status">即将清退
+                                class="period-status" :class="period.oneCourse.student.status">
+                                {{ period.oneCourse.student.status === 'finish_course_discontinue' ? '即将清退' : '即将生效' }}
                             </view>
                             <view class="period-name">{{ period.periodName }}</view>
                             <view class="period-content">
@@ -32,9 +33,9 @@
                                         weekHaveFinish:
                                             period.oneCourse.weekHaveFinish,
                                     }">{{ period.oneCourse.student.studentName }}</text>
-                                    <image class="gender-icon" :src="`/static/images/${period.oneCourse.student.gender ||
+                                    <image class="gender-icon" :src="`/static/images/student/${period.oneCourse.student.gender ||
                                     'male'
-                                    }_selected.png`"></image>
+                                    }-selected.png`"></image>
                                     <text class="student-age">{{
                                         period.oneCourse.student.age + "岁"
                                     }}</text>
@@ -108,7 +109,7 @@
                                 </view>
                                 <view v-if="period.moreCourse.startClassDate" class="expire-date">{{
                                     '开班日期：' +
-                                    period.moreCourse.startClassDateStr
+                                        period.moreCourse.startClassDateStr
                                 }}</view>
                             </view>
                         </view>
@@ -142,7 +143,7 @@
         <Course ref="course" :detail="courseDetail" @student="(id) => (studentId = id)" />
 
         <!-- 学生详情 -->
-        <Student :student-id="studentId" @close="studentId = 0" />
+        <Student :student-id="studentId" @close="studentId = 0" @del="studentId = 0" />
 
         <!-- 备注 -->
         <Remark ref="remark" :detail="studentDetail" @confirm="handleSearch" />
@@ -213,7 +214,7 @@ export default {
         },
 
         async handleSearch(loading = true) {
-            if(loading) uni.showLoading({ title: '加载中' })
+            if (loading) uni.showLoading({ title: '加载中' })
             try {
                 const res = await this.$http.post(
                     `/mini/courseTimetable/getTeacherDayTimetable`,
@@ -240,7 +241,7 @@ export default {
                 }
                 this.periods = periods || [];
             } finally {
-                if(loading) uni.hideLoading()
+                if (loading) uni.hideLoading()
                 uni.stopPullDownRefresh();
             }
         },

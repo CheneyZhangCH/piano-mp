@@ -16,7 +16,8 @@
                                     coursePackage.packageName
                                 }}</text>
                             </view>
-                            <text v-if="!['AUDITION', 'ADMIN'].includes(accountType)" class="set-grade" @click="setGrade">设置级别</text>
+                            <text v-if="!['AUDITION', 'ADMIN'].includes(accountType)" class="set-grade"
+                                @click="setGrade">设置级别</text>
                             <uni-icons v-else type="closeempty" size="14" @click="close" />
                         </view>
                         <view class="center-popup-title-sub">
@@ -94,14 +95,14 @@
                                     <text class="name">
                                         ({{ chapter.bookName }}){{ chapter.chapterName }}
                                     </text>
-                                    <view v-if="['AUDITION', 'ADMIN'].includes(accountType) && course.courseType === 'more'" class="btn"
-                                        @click="toClass(course)">
+                                    <view
+                                        v-if="['AUDITION', 'ADMIN'].includes(accountType) && course.courseType === 'more'"
+                                        class="btn" @click="toClass(course)">
                                         班级详情
                                         <uni-icons type="right" color="#99A0AD" size="12" />
                                     </view>
                                 </view>
                             </view>
-
                         </view>
                     </view>
                     <!-- 试听端、管理端 -->
@@ -124,27 +125,40 @@
                     </template>
                 </scroll-view>
                 <view v-if="['AUDITION', 'ADMIN'].includes(accountType)" class="action">
-                    <view>
-                        <button class="btn cancel" @click="disContinue">
-                            不续课
-                        </button>
-                        <button class="btn confirm" @click="doContinue">
-                            续课
-                        </button>
+                    <view v-if="['finish_course_discontinue', 'finish_course_continue'].includes(student.status)"
+                        class="finish_course" :class="student.status">
+                        <text class="message">
+                            {{ student.status === 'finish_course_discontinue' ? '剩余课时结束后清退账户' : '剩余课时结束后生效课程' }}
+                        </text>
+                        <view class="undo" @click="undo(student.status)">
+                            <text>撤销</text>
+                            <image src="/static/images/teacher/refresh.png"></image>
+                        </view>
                     </view>
-                    <view>
-                        <button class="text" @click="refund">
-                            操作退费
-                        </button>
-                        <button class="text" @click="edit">
-                            修改信息
-                        </button>
-                    </view>
-                    <view v-if="accountType === 'ADMIN'">
-                        <button class="danger" @click="del">
-                            删除学员
-                        </button>
-                    </view>
+                    <template v-else>
+                        <view>
+                            <picker class="btn cancel picker" :value="disContinueIndex"
+                                :range="['剩余课时结束后清退账户', '立即清退账户']" @change="disContinue">
+                                不续课
+                            </picker>
+                            <button class="btn confirm" @click="doContinue">
+                                续课
+                            </button>
+                        </view>
+                        <view>
+                            <button class="text" @click="refund">
+                                操作退费
+                            </button>
+                            <button class="text" @click="edit">
+                                修改信息
+                            </button>
+                        </view>
+                        <view v-if="accountType === 'ADMIN'">
+                            <button class="danger" @click="del">
+                                删除学员
+                            </button>
+                        </view>
+                    </template>
                 </view>
                 <view v-else class="footer">
                     <button class="btn confirm" @click="close">
@@ -202,16 +216,20 @@
 
         <!-- 备注 -->
         <Remark ref="remark" :detail="student" @confirm="getStudent" />
+        <ConflictGroup ref="group" :groups="groups" @confirm="groupConfirm" />
     </view>
 </template>
 
 <script>
 import Remark from "@/components/Remark";
+import ConflictGroup from '@/components/ConflictGroup'
 import { WEEK_DAY, getExpiryDate } from '@/utils/format'
 import dayjs from 'dayjs'
+
 export default {
     components: {
-        Remark
+        Remark,
+        ConflictGroup
     },
     props: {
         studentId: [String, Number]
@@ -227,6 +245,9 @@ export default {
                 lastExamTime: "",
                 examSeason: "",
             },
+            disContinueIndex: 0,
+            groupId: null,
+            groups: []
         }
     },
     watch: {
@@ -338,24 +359,87 @@ export default {
             this.$refs.remark.open()
         },
 
-        disContinue() {
+        async disContinue(e) {
+            this.disContinueIndex = +e.detail.value
+            try {
+                const res = await this.$http.get('/mini/teacherGroup/listByStudentPackageId?studentPackageId=' + this.coursePackage.id)
+                if (res.data?.length) {
+                    this.groups = res.data
+                    this.$refs.group.open()
+                    return
+                }
+                this.disContinueConfirm()
+            } finally {
+                this.loading = false
+            }
+        },
 
+        groupConfirm(groupId) {
+            this.groupId = groupId
+            this.$refs.group.close()
+            this.disContinueConfirm()
+        },
+
+        async disContinueConfirm() {
+            const data = {
+                data: {
+                    groupId: this.groupId,
+                    immediately: this.disContinueIndex === 1,
+                    studentId: this.studentId,
+                }
+            }
+            try {
+                await this.$http.post('/mini/student/discontinueStudent', data)
+                this.$toast({ title: '不续课成功！', icon: 'success' })
+                uni.redirectTo({ url: '/pages/audition/disContinueSuccess/index' })
+            } finally {
+
+            }
         },
 
         doContinue() {
-
+            uni.navigateTo({ url: '/pages/audition/continue/index?studentId=' + this.studentId })
         },
 
         refund() {
-            uni.navigateTo({ url: '/pages/audition/refund/index?studentId=' + this.studentId})
+            uni.navigateTo({ url: '/pages/audition/refund/index?studentId=' + this.studentId })
         },
 
         edit() {
-
+            uni.navigateTo({ url: '/pages/audition/account/index?studentId=' + this.studentId })
         },
 
         del() {
+            uni.showModal({
+                content: '确认删除？',
+                confirmText: '确认',
+                success: async res => {
+                    if (res.confirm) {
+                        await this.$http.post('/mini/student/deleteStudent', {
+                            data: this.studentId
+                        })
+                        uni.showToast({ title: '删除成功！', icon: 'success' })
+                        this.$emit('del')
+                    }
+                }
+            })
+        },
 
+        // 撤销
+        async undo(type) {
+            if (this.loading) return
+            this.loading = true
+            try {
+                const data = {
+                    data: this.studentId
+                }
+                const apiName = type === 'finish_course_discontinue' ? 'cancelDiscontinueStudent' : 'cancelContinueStudent'
+                await this.$http.post(`'/mini/student/${apiName}'`, data)
+                this.$toast({ title: '撤销成功！', icon: 'success' })
+                this.getStudent()
+            } finally {
+                this.loading = false
+            }
         },
 
         toClass({ courseId, teacherId, timetablePeriodId }) {
@@ -584,9 +668,9 @@ export default {
         box-shadow: 0px -4rpx 8rpx 0px rgba(0, 0, 0, 0.05);
         .btn {
             height: 72rpx;
+            line-height: 72rpx;
             font-size: 32rpx;
             font-weight: 500;
-            line-height: 72rpx;
             color: #616b80;
             background-color: #fff;
             border: 1px solid #d3d7e0;
@@ -622,6 +706,10 @@ export default {
                     display: none;
                 }
             }
+            .picker {
+                flex: 1;
+                text-align: center;
+            }
         }
         .text {
             font-size: 28rpx;
@@ -632,6 +720,7 @@ export default {
         }
         .danger {
             height: 68rpx;
+            line-height: 68rpx;
             background: #f15e5e;
             border-radius: 12rpx;
 
@@ -639,6 +728,36 @@ export default {
             font-weight: 500;
             color: #fff;
             margin-top: 30rpx;
+        }
+        .finish_course {
+            display: flex;
+            align-items: center;
+            &.finish_course_discontinue {
+                color: #99a0ad;
+            }
+            &.finish_course_continue {
+                color: #44be5e;
+            }
+            .message {
+                flex: 1;
+                text-align: right;
+                font-size: 32rpx;
+                font-weight: 500;
+                line-height: 44rpx;
+                margin-right: 30rpx;
+            }
+            .undo {
+                display: flex;
+                align-items: center;
+                font-size: 28rpx;
+                color: #62bbec;
+                line-height: 40rpx;
+                image {
+                    width: 24rpx;
+                    height: 22rpx;
+                    margin-left: 8rpx;
+                }
+            }
         }
     }
 }

@@ -102,19 +102,85 @@
                     <view class="course expiry">
                         <view class="label">
                             <text>账户有效期</text>
-                            <text>
-                                {{ form.expiryMonths + '个月' }}
-                            </text>
-                            <view class="action" @click="dialogOpen('expiryMonth')">
-                                <text>修改</text>
-                                <image src="/static/images/teacher/edit.png" />
-                            </view>
+                            <template v-if="!studentId">
+                                <text>{{ form.expiryMonths + '个月' }}</text>
+                                <view class="action" @click="dialogOpen('expiryMonth')">
+                                    <text>修改</text>
+                                    <image src="/static/images/teacher/edit.png" />
+                                </view>
+                            </template>
+                            <template v-else>
+                                <text>剩余{{ form.expiry.expiryMonths }}个月{{ form.expiry.expiryDays }}天</text>
+                                <picker class="action" :value="expiryIndex" :range="['月数', '天数']"
+                                    @change="expiryChange">
+                                    <text>修改</text>
+                                    <image src="/static/images/teacher/edit.png" />
+                                </picker>
+                            </template>
                         </view>
                         <view class="value">
                             <text>账号有效期至：{{ form.expiryDate }}</text>
                         </view>
                     </view>
                 </view>
+                <template v-if="studentId">
+                    <view class="block form">
+                        <view class="form-item">
+                            <view class="label">当前级别</view>
+                            <view class="value">
+                                <input v-model.trim="form.grade" maxlength="2" placeholder="例“2”" />
+                                <text class="unit">级</text>
+                            </view>
+                        </view>
+                        <view class="form-item">
+                            <view class="label">上次考试时间</view>
+                            <view class="value">
+                                <input v-model.trim="form.lastExamTime" maxlength="4" placeholder="输入年份 例“2020”" />
+                            </view>
+                        </view>
+                        <view class="form-item">
+                            <view class="label">请选择考季</view>
+                            <view class="value">
+                                <van-radio-group v-model="form.examSeason" @change="(e) => (form.examSeason = e.detail)"
+                                    direction="horizontal">
+                                    <van-radio use-icon-slot name="夏季">
+                                        <image slot="icon" :src="`/static/images/student/icon-radio${form.examSeason === '夏季'
+                                        ? '-active'
+                                        : ''
+                                        }.png`" style="width: 28rpx; height: 28rpx" />
+                                        夏季
+                                    </van-radio>
+                                    <van-radio use-icon-slot name="冬季">
+                                        <image slot="icon" :src="`/static/images/student/icon-radio${form.examSeason === '冬季'
+                                        ? '-active'
+                                        : ''
+                                        }.png`" style="width: 28rpx; height: 28rpx" />
+                                        冬季
+                                    </van-radio>
+                                </van-radio-group>
+                            </view>
+                        </view>
+                    </view>
+                    <template v-if="trainTickets.length">
+                        <view v-for="(item, index) in trainTickets" :key="index" class="block ticket">
+                            <image class="del" src="/static/images/student/cha.png" @click="ticketDel(item, index)" />
+                            <view v-if="item.id" class="name">{{ item.ticketName }}</view>
+                            <picker v-else class="name" :value="ticketIndex" :range="tickets" range-key="ticketName"
+                                @change="ticketChange">
+                                {{ item.ticketName }}
+                                <image src="/static/images/audition/arrow_down.png" />
+                            </picker>
+                            <view class="action">
+                                <image class="btn minus" src="/static/images/audition/minus.png"
+                                    @click="ticketNum(index, 'minus')" />
+                                <input type="number" v-model.trim="item.num" maxlength="2" placeholder="1~99" />
+                                <image class="btn plus" src="/static/images/audition/plus.png"
+                                    @click="ticketNum(index, 'plus')" />
+                            </view>
+                        </view>
+                    </template>
+                    <view v-else class="empty" @click="addTrainTickets">添加课程陪练券 +</view>
+                </template>
             </template>
             <template v-else>
                 <view class="block">
@@ -144,21 +210,24 @@
             </template>
         </view>
         <view class="page-footer">
-            <button v-if="step === 0" class="btn " :class="{ confirm: !disabled, disabled }" :disabled="disabled"
-                @click="next">
-                下一步
-            </button>
-            <button v-else class="btn confirm" @click="confirm">
-                生成合同
-            </button>
-            <view class="link" @click="toRecord">
-                查看账号开通记录
-                <uni-icons type="right" color="#99A0AD" size="12" />
-            </view>
+            <template v-if="!studentId">
+                <button v-if="step === 0" class="btn " :class="{ confirm: !disabled, disabled }" :disabled="disabled"
+                    @click="next">
+                    下一步
+                </button>
+                <button v-else class="btn confirm" @click="confirm">
+                    生成合同
+                </button>
+                <view class="link" @click="toRecord">
+                    查看账号开通记录
+                    <uni-icons type="right" color="#99A0AD" size="12" />
+                </view>
+            </template>
+            <button v-else class="btn confirm" @click="edit">确认修改</button>
         </view>
 
-        <uni-popup ref="popup" type="dialog">
-            <uni-popup-dialog mode="input" :title="dialogTitle" :value="dialogInputValue" placeholder="最多15个字"
+        <uni-popup v-if="dialogVisible" ref="popup" type="dialog">
+            <uni-popup-dialog mode="input" :value="dialogInputValue" placeholder="最多15个字"
                 :maxlength="15" :before-close="true" @close="dialogClose" @confirm="dialogConfirm" />
         </uni-popup>
 
@@ -193,7 +262,7 @@
             </view>
         </uni-popup>
 
-        <customTabbar :active="1" />
+        <customTabbar v-if="!studentId" :active="1" />
     </view>
 </template>
 
@@ -204,6 +273,7 @@ import { gender } from '@/utils/dicts'
 export default {
     data() {
         return {
+            loading: false,
             WEEK_DAY,
             gender,
 
@@ -211,8 +281,6 @@ export default {
 
             packages: [],
             packageIndex: 0,
-            currentPackage: {},
-            currentCourses: [],
 
             form: {
                 basicStudyChapters: 0,
@@ -246,13 +314,21 @@ export default {
             },
             studentUsableTimetablePeriod: [], // 可选择上课时间
 
-            dialogTitle: '',
+            dialogVisible: false,
             dialogMode: '',
             dialogInputValue: '', // 修改课时输入框默认值
             dialogCourseIndex: 0, // 修改课时对应的课程index
+
+            studentId: 0,
+            student: {},
+            expiryIndex: 0,
+            deleteTicketIds: [],
+            trainTickets: [], // 已有陪练券
+            ticketIndex: 0,
+            tickets: [], // 可选陪练券
         }
     },
-    onLoad() {
+    onLoad(option) {
         const token = uni.getStorageSync('token')
 
         // 权限验证
@@ -263,6 +339,12 @@ export default {
             })
             return uni.navigateTo({
                 url: '/pages/login/index'
+            })
+        }
+        if (option?.studentId) {
+            this.studentId = option.studentId
+            uni.setNavigationBarTitle({
+                title: '修改信息'
             })
         }
         this.initOptions()
@@ -299,6 +381,7 @@ export default {
     methods: {
         dayjsFormat,
         async initOptions() {
+            uni.showLoading({ title: '加载中', mask: true })
             try {
                 const packageRes = await this.$http.get('/mini/coursePackage/listActive')
                 this.packages = packageRes.data ?? []
@@ -308,38 +391,110 @@ export default {
                         icon: 'none'
                     })
                 }
-                this.form.packageId = this.packages[0].id
-                this.getPackage()
-            } catch (error) {
-                console.log(error)
+                this.init()
+            } finally {
+                uni.hideLoading()
+            }
+        },
+
+        async init() {
+            uni.showLoading({ title: '加载中', mask: true })
+            try {
+                if (this.studentId) {
+                    const res = await this.$http.get('/mini/student/getStudentCurrentPackageAndTicket?studentId=' + this.studentId)
+                    const { student, coursePackage, phone, trainTickets } = res.data
+                    this.student = student
+                    const {
+                        studentName,
+                        gender,
+                        birthday,
+                        expiryDate,
+                        grade,
+                        examSeason,
+                        lastExamTime,
+                    } = student
+                    const {
+                        id,
+                        packageId,
+                        packageName,
+                        courses: currentCourses
+                    } = coursePackage
+                    this.form.studentName = studentName
+                    this.form.gender = gender
+                    this.form.birthday = dayjsFormat(birthday)
+                    this.form.phone = phone
+                    this.form.packageId = packageId
+                    this.$set(this.form, 'oldPackageId', packageId)
+                    this.$set(this.form, 'studentPackageId', id)
+
+                    this.form.packageName = packageName
+                    // this.form.expiryMonths = expiryMonths
+                    this.form.expiryDate = dayjs(expiryDate).format('YYYY年 MM月 DD日')
+                    // const diff = dayjs(expiryDate).diff(dayjs(),'day')
+                    const days = Math.ceil((expiryDate - new Date().getTime()) / (24 * 60 * 60 * 1000))
+                    this.$set(this.form, 'expiry', {
+                        expiryDays: days % 30,
+                        expiryMonths: Math.floor(days / 30)
+                    })
+                    this.$set(this.form, 'grade', grade)
+                    this.$set(this.form, 'examSeason', examSeason)
+                    this.$set(this.form, 'lastExamTime', lastExamTime)
+
+                    const courses = []
+                    for (let i = 0; i < currentCourses.length; i++) {
+                        const { courseId, courseNum, courseName, teacherId, teacherName, timetableId, timetablePeriodId, timetablePeriodName, dayOfWeek } = currentCourses[i]
+                        const teacherRes = await this.$http.get(`/mini/teacher/listByCourseId?courseId=${courseId}`)
+                        const teachers = teacherRes.data ?? []
+                        const teacherIndex = teachers.findIndex(_ => _.accountId === teacherId)
+                        courses.push({
+                            courseId, courseNum, courseName,
+                            teacherIndex, teacherId, teacherName, teachers,
+                            dayOfWeek,
+                            timetableId, timetablePeriodId, timetablePeriodName
+                        })
+                    }
+                    this.form.courses = courses
+                    this.trainTickets = trainTickets ?? []
+                } else {
+                    this.form.packageId = this.packages[0].id
+                    this.getPackage()
+                }
+            } finally {
+                uni.hideLoading()
             }
         },
 
         async getPackage() {
             try {
                 const res = await this.$http.get(`/mini/coursePackage/getCoursePackage?coursePackageId=${this.form.packageId}`)
-                this.currentPackage = res.data ?? {}
 
-                const { courses, coursePackage } = this.currentPackage
-                this.currentCourses = courses.filter(course => course.courseActive) ?? []
-                const teacherRes = await Promise.all(this.currentCourses.map(course => this.$http.get(`/mini/teacher/listByCourseId?courseId=${course.courseId}`)))
-                this.form.courses = this.currentCourses.map((course, index) => ({
-                    courseId: course.courseId,
-                    courseNum: course.num,
-                    courseName: course.courseName, // 后台不需要
-                    teacherIndex: undefined, // 后台不需要
-                    teacherId: '',
-                    teacherName: '',
-                    // "timetableId": 0,
-                    // "timetablePeriodId": 0
-                    teachers: teacherRes[index].data
-                }))
+                const { courses: tempCourses, coursePackage: { packageName, expiryMonths } } = res.data ?? {}
+                const currentCourses = tempCourses.filter(course => course.courseActive) ?? []
 
-                this.form.packageName = coursePackage.packageName
-                this.form.expiryMonths = coursePackage.expiryMonths
+                this.form.packageName = packageName
+                if (this.studentId) {
+                    this.$set(this.form, 'expiry', {
+                        expiryDays: 0,
+                        expiryMonths
+                    })
+                } else {
+                    this.form.expiryMonths = expiryMonths
+                }
+
                 // 账号有效期至：当天+课程包月份-1
-                this.form.expiryDate = dayjs().add(coursePackage.expiryMonths, 'month').subtract(1, 'days').format('YYYY年 MM月 DD日')
+                this.form.expiryDate = dayjs().add(expiryMonths, 'month').subtract(1, 'days').format('YYYY年 MM月 DD日')
 
+                const courses = []
+                for (let i = 0; i < currentCourses.length; i++) {
+                    const { courseId, num: courseNum, courseName } = currentCourses[i]
+                    const teacherRes = await this.$http.get(`/mini/teacher/listByCourseId?courseId=${courseId}`)
+                    courses.push({
+                        courseId, courseNum, courseName,
+                        teacherIndex: 0, teacherId: null, teacherName: null, teachers: teacherRes.data ?? [],
+                        timetableId: null, timetablePeriodId: null, timetablePeriodName: null
+                    })
+                }
+                this.form.courses = courses
             } catch (error) {
                 console.log(error)
             }
@@ -348,6 +503,7 @@ export default {
         packageChange(e) {
             const value = +e.detail.value
             this.packageIndex = value
+            if (this.form.packageId === this.packages[value].id) return
             this.form.packageId = this.packages[value].id
             this.getPackage()
         },
@@ -360,16 +516,14 @@ export default {
             this.$set(course, 'teacherIndex', +e.detail.value)
             this.$set(course, 'teacherName', teacherName)
             this.$set(course, 'teacherId', accountId)
-            this.$set(course, 'timetableId', '')
-            this.$set(course, 'timetablePeriodId', '')
-            this.$set(course, 'timetablePeriodName', '')
+            this.$set(course, 'timetableId', null)
+            this.$set(course, 'timetablePeriodId', null)
+            this.$set(course, 'timetablePeriodName', null)
 
             this.studentUsableTimetablePeriod = undefined
         },
 
         async timetableChange(courseIndex, dayOfWeek = 2) {
-            console.log('this.form.courses', this.form.courses)
-            console.log('courseIndex', courseIndex)
             this.timetableCourseIndex = courseIndex
             this.timetableCourse = this.form.courses[courseIndex]
             const teacherId = this.timetableCourse.teacherId
@@ -397,18 +551,13 @@ export default {
             const { timetableId, timetablePeriodId, dayOfWeek, periodName } = period
             this.$set(target, 'timetableId', timetableId)
             this.$set(target, 'timetablePeriodId', timetablePeriodId)
-            this.$set(target, 'dayOfWeek', dayOfWeek)
             this.$set(target, 'timetablePeriodName', periodName)
+            this.$set(target, 'dayOfWeek', dayOfWeek)
             this.$refs.timetablePopup.close()
         },
 
         dialogOpen(mode, index) {
             this.dialogMode = mode
-
-            if (mode === 'course') {
-                this.dialogCourseIndex = index
-                this.dialogInputValue = this.form.courses[index].courseNum
-            }
             switch (mode) {
                 case 'course':
                     this.dialogCourseIndex = index
@@ -417,6 +566,12 @@ export default {
                 case 'expiryMonth':
                     this.dialogInputValue = this.form.expiryMonths
                     break
+                case 'expiryExpiryMonths':
+                    this.dialogInputValue = this.form.expiry.expiryMonths
+                    break
+                case 'expiryDays':
+                    this.dialogInputValue = this.form.expiry.expiryDays
+                    break
                 case 'basicStudyDays':
                     this.dialogInputValue = this.form.basicStudyDays
                     break
@@ -424,19 +579,29 @@ export default {
                     this.dialogInputValue = this.form.basicStudyChapters
                     break
             }
+            this.dialogVisible = true
             this.$nextTick(() => {
                 this.$refs.popup.open()
             })
         },
 
         dialogClose() {
+            this.dialogVisible = false
             this.$refs.popup.close()
         },
 
         dialogConfirm(value) {
-            const regExp = this.dialogMode === 'basicStudyChapters'
-                ? /^(0|[1-9]{1}\d{0,4})$/
-                : /^([1-9]{1}\d{0,4})$/
+            let regExp = /^([1-9]{1}\d{0,4})$/
+            switch (this.dialogMode) {
+                case 'basicStudyChapters':
+                    regExp = /^(0|[1-9]{1}\d{0,4})$/
+                    break;
+                case 'expiryDays':
+                    regExp = /^(0|[1-9]{1}|[1-2]{1}\d|30)$/
+                    break;
+                default:
+                    break;
+            }
             if (!regExp.test(+value)) return uni.showToast({ title: '请输入正确的数字！', icon: 'none' })
             switch (this.dialogMode) {
                 case 'course':
@@ -445,6 +610,14 @@ export default {
                 case 'expiryMonth':
                     this.form.expiryMonths = +value
                     this.form.expiryDate = dayjs().add(+value, 'month').format('YYYY年 MM月 DD日')
+                    break
+                case 'expiryExpiryMonths':
+                    this.form.expiry.expiryMonths = +value
+                    this.form.expiryDate = dayjs(this.student.expiryDate).add(+value, 'month').add(+this.form.expiry.expiryDays, 'days').format('YYYY年 MM月 DD日')
+                    break
+                case 'expiryDays':
+                    this.form.expiry.expiryDays = +value
+                    this.form.expiryDate = dayjs(this.student.expiryDate).add(+this.form.expiry.expiryMonths, 'month').add(+value, 'days').format('YYYY年 MM月 DD日')
                     break
                 case 'basicStudyDays':
                     this.form.basicStudyDays = +value
@@ -475,6 +648,123 @@ export default {
         toRecord() {
             uni.navigateTo({ url: `/pages/audition/record/index` })
         },
+
+        async addTrainTickets() {
+            try {
+                const res = await this.$http.post('/mini/trainTicket/listActive')
+                if (res.data?.length) {
+                    this.tickets = res.data
+                    const { id, ticketName } = res.data[0]
+                    this.trainTickets = [{
+                        trainTicketId: id,
+                        ticketName,
+                        num: 1
+                    }]
+                } else {
+                    this.$toast({ title: '暂无可用陪练券！' })
+                }
+            } catch (error) {
+
+            }
+        },
+
+        ticketDel(item, index) {
+            if (item.id) this.deleteTicketIds.push(item.id)
+            this.trainTickets.splice(index, 1)
+        },
+
+        ticketChange(e) {
+            const value = +e.detail.value
+            if (this.ticketIndex === value) return
+            const { id, ticketName } = this.tickets[value]
+            this.trainTickets = [{
+                trainTicketId: id,
+                ticketName,
+                num: 1
+            }]
+        },
+
+        ticketNum(index, type) {
+            const num = this.trainTickets[index].num
+            if (type === 'minus') {
+                if (num === 1) return
+                this.trainTickets[index].num--
+            } else {
+                if (num === 99) return
+                this.trainTickets[index].num++
+            }
+        },
+
+        expiryChange(e) {
+            const value = +e.detail.value
+            this.expiryIndex = value
+            this.dialogOpen(value === 0 ? 'expiryExpiryMonths' : 'expiryDays')
+        },
+
+        async edit() {
+            const {
+                birthday,
+                courses,
+                examSeason,
+                expiry,
+                gender,
+                grade,
+                lastExamTime,
+                oldPackageId,
+                packageId,
+                phone,
+                studentName,
+                studentPackageId
+            } = this.form
+            const deleteTicketIds = this.deleteTicketIds
+            let ticketValid = true
+            const trainTickets = []
+            for (let i = 0; i < this.trainTickets.length; i++) {
+                const item = this.trainTickets[i]
+                if (!/^([1-9]{1}\d{0,1})$/.test(item.num)) {
+                    ticketValid = false
+                    break
+                }
+                trainTickets.push({
+                    num: item.num,
+                    trainTicketId: item.trainTicketId ?? item.id
+                })
+            }
+            if (!ticketValid) return this.$toast({ title: '请输入正确的优惠券个数！', icon: 'none' })
+            const data = {
+                data: {
+                    birthday,
+                    courses: courses.map(item => ({
+                        courseId: item.courseId,
+                        courseNum: item.courseNum,
+                        teacherId: item.teacherId,
+                        timetableId: item.timetableId,
+                        timetablePeriodId: item.timetablePeriodId
+                    })),
+                    deleteTicketIds,
+                    examSeason,
+                    expiry,
+                    gender,
+                    grade,
+                    lastExamTime,
+                    newPackageId: oldPackageId === packageId ? null : packageId,
+                    packageId: oldPackageId,
+                    phone,
+                    studentId: this.studentId,
+                    studentName,
+                    studentPackageId,
+                    trainTickets
+                }
+            }
+            uni.showLoading({ title: '保存中', mask: true })
+            try {
+                await this.$http.post('/mini/student/updateStudent', data)
+                this.$toast({ title: '修改成功！', icon: 'success' })
+                uni.redirectTo({ url: '/pages/audition/updateSuccess/index' })
+            } finally {
+                uni.hideLoading()
+            }
+        }
     }
 }
 </script>
@@ -681,7 +971,7 @@ export default {
                     line-height: 40rpx;
                     .teacher,
                     .timetable {
-                        border-bottom: 1px solid #f5f7fa;
+                        border-bottom: 2rpx solid #f5f7fa;
                         padding: 0 0 14rpx 6rpx;
                         color: #141f33;
                         line-height: 40rpx;
@@ -703,6 +993,93 @@ export default {
                     }
                 }
             }
+        }
+        .form {
+            &-item {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                + .form-item {
+                    margin-top: 32rpx;
+                }
+                .label {
+                    font-size: 28rpx;
+                    color: #99a0ad;
+                    line-height: 40rpx;
+                }
+                .value {
+                    position: relative;
+                    input {
+                        border-bottom: 1px solid #f3f3f3;
+                        text-align: center;
+
+                        font-size: 28rpx;
+                        color: #141f33;
+                        line-height: 20px;
+                    }
+                    .unit {
+                        position: absolute;
+                        right: 0;
+                        top: 6rpx;
+
+                        color: #525666;
+                        line-height: 20px;
+                    }
+                }
+            }
+        }
+        .ticket {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            .del {
+                position: absolute;
+                width: 28rpx;
+                height: 28rpx;
+                top: -14rpx;
+                right: -14rpx;
+            }
+            .name,
+            .action {
+                border-bottom: 2rpx solid #f5f7fa;
+                padding: 0 0 14rpx 6rpx;
+                color: #141f33;
+                line-height: 40rpx;
+            }
+            .name {
+                width: 264rpx;
+                font-size: 28rpx;
+                image {
+                    width: 20rpx;
+                    height: 20rpx;
+                    margin-left: 12rpx;
+                }
+            }
+            .action {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 300rpx;
+                input {
+                    width: 100rpx;
+                    text-align: center;
+                }
+                image {
+                    width: 28rpx;
+                    height: 28rpx;
+                    padding: 0 20rpx;
+                }
+            }
+        }
+        .empty {
+            margin-top: 36rpx;
+            border: 1px dashed #c9ced6;
+            font-size: 24rpx;
+            color: #99a0ad;
+            line-height: 34rpx;
+            padding: 18rpx 0;
+            text-align: center;
         }
     }
     &-footer {

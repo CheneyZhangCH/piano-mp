@@ -57,10 +57,10 @@
                                     >
                                     <image
                                         class="gender-icon"
-                                        :src="`/static/images/${
+                                        :src="`/static/images/student/${
                                             period.oneCourse.student.gender ||
                                             'male'
-                                        }_selected.png`"
+                                        }-selected.png`"
                                     ></image>
                                     <text class="student-age">{{
                                         period.oneCourse.student.age + "岁"

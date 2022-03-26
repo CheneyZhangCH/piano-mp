@@ -380,8 +380,8 @@ export default {
                         }
                         .del {
                             position: absolute;
-                            width: 34rpx;
-                            height: 34rpx;
+                            width: 28rpx;
+                            height: 28rpx;
                             top: -10rpx;
                             right: -10rpx;
                         }

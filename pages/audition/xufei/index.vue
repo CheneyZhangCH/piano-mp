@@ -26,7 +26,7 @@
                         <text class="studentName">{{ item.student.studentName }}</text>
                         <image
                             class="gender"
-                            :src="`/static/images/${item.student.gender || 'male'}_selected.png`"
+                            :src="`/static/images/student/${item.student.gender || 'male'}-selected.png`"
                         />
                         <text v-if="item.student.age" class="age">{{ item.student.age + '岁' }}</text>
                         <text class="packageName">{{ item.coursePackage.packageName }}</text>

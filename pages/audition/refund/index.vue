@@ -6,19 +6,25 @@
                 <text class="name">{{ student.studentName }}</text>
                 <image
                     class="gender-icon"
-                    :src="`/static/images/${student.gender || 'male'}_selected.png`"
+                    :src="`/static/images/student/${student.gender || 'male'}-selected.png`"
                 />
                 <text v-if="student.age" class="age">{{ student.age + '岁' }}</text>
             </view>
             <view class="btn" @click="dialogStudentId = studentId">
                 学员详情
-                <uni-icons type="right" color="#99A0AD" size="14" />
+                <uni-icons type="right" color="#99A0AD" size="12" />
             </view>
         </view>
         <view class="page-content">
             <view class="package">
-                <text class="title">当前课程：</text>
-                <text class="name">{{ coursePackage.packageName }}</text>
+                <text>
+                    <text class="title">当前课程：</text>
+                    <text class="name">{{ coursePackage.packageName }}</text>
+                </text>
+                <view class="btn" @click="toContract">
+                    合同详情
+                    <uni-icons type="right" color="#99A0AD" size="12" />
+                </view>
             </view>
             <view class="main">
                 <view v-for="course in coursePackage.courses" :key="course.id" class="course">
@@ -48,21 +54,25 @@
                 class="btn"
                 :class="{ confirm: !disabled, disabled }"
                 :disabled="disabled"
-                @click="confirm"
+                @click="valid"
             >确认</button>
         </view>
 
         <!-- 学生详情 -->
         <Student :student-id="dialogStudentId" @close="dialogStudentId = 0" />
+
+        <ConflictGroup ref="group" :groups="groups" @confirm="groupConfirm"/>
     </view>
 </template>
 
 <script>
 import Student from '@/components/Student'
+import ConflictGroup from '@/components/ConflictGroup'
 import { WEEK_DAY, dayjsFormat } from '@/utils/format'
 export default {
     components: {
-        Student
+        Student,
+        ConflictGroup
     },
     data() {
         return {
@@ -72,7 +82,10 @@ export default {
             studentId: 0,
             dialogStudentId: 0,
             refundAmount: null,
-            loading: false
+            loading: false,
+
+            groupId: null,
+            groups: []
         }
     },
     computed: {
@@ -109,12 +122,38 @@ export default {
             }
         },
 
+        toContract() {
+            uni.navigateTo({ url: '/pages/audition/contract/index?studentId=' + this.studentId })
+        },
+
+        async valid() {
+            if (this.loading) return
+            this.loading = true
+            try {
+                const res = await this.$http.get('/mini/teacherGroup/listByStudentPackageId?studentPackageId=' + this.coursePackage.id)
+                if(res.data?.length) {
+                    this.groups = res.data
+                    this.$refs.group.open()
+                    return
+                }
+                this.confirm()
+            } finally {
+                this.loading = false
+            }
+        },
+
+        groupConfirm(groupId) {
+            this.groupId = groupId
+            this.$refs.group.close()
+            this.confirm()
+        },
+
         async confirm() {
             if (this.loading) return
             this.loading = true
             const data = {
                 data: {
-                    // groupId,
+                    groupId: this.groupId,
                     studentId: this.studentId,
                     refundAmount: this.refundAmount,
                     studentPackageId: this.coursePackage.id
@@ -122,6 +161,8 @@ export default {
             }
             try {
                 await this.$http.post('/mini/student/studentRefund', data)
+                this.$toast({ title: '退费成功！', icon: 'success'})
+                uni.redirectTo({ url: '/pages/audition/refundSuccess/index' })
             } finally {
                 this.loading = false
             }
@@ -169,7 +210,7 @@ export default {
             }
         }
         .btn {
-            font-size: 28rpx;
+            font-size: 24rpx;
             color: #99a0ad;
         }
     }
@@ -211,6 +252,15 @@ export default {
                 view + view {
                     margin-top: 8rpx;
                 }
+            }
+        }
+        .package {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .btn {
+                font-size: 24rpx;
+                color: #99a0ad;
             }
         }
         .refund {
