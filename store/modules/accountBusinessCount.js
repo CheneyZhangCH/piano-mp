@@ -2,7 +2,7 @@ export default {
     namespaced: true,
     state: {
         tabBarInfo: {}, // tabbar info
-        tabbarDot: {} // tabbar dot
+        tabbarDot: {}, // tabbar dot
     },
     mutations: {
         SET_TABBAR_INFO: (state, {

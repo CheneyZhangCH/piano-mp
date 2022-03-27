@@ -1,4 +1,4 @@
-const complaintType = {
+export const complaintType = {
     finishLesson: '课时申诉',
     normal: '匿名投诉'
 }
@@ -9,9 +9,10 @@ const changeType = {
     refund: '退费'
 }
 
-const dealComplaint_status = {
+export const dealComplaint_status = {
     deal: '通过',
-    not_deal: '不通过'
+    not_deal: '不通过',
+    wait_deal: '待处理'
 }
 
 export const gender = {

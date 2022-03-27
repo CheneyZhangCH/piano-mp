@@ -228,12 +228,9 @@ export default {
         right: 0;
         top: 0;
         height: 500rpx;
-        background-image: url("https://static.gangqintonghua.com/img/beijing/bg1.png");
+        background-image: url("https://static.gangqintonghua.com/img/beijing/zhongxin.png?imageView2/0/w/375");
         background-size: 100%;
         background-repeat: no-repeat;
-        &.group {
-            background-image: url("https://static.gangqintonghua.com/img/beijing/bg2.png");
-        }
         .title {
             position: absolute;
             width: 100%;

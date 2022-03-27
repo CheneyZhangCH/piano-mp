@@ -177,6 +177,11 @@ export default {
             try {
                 const res = await this.$http.post('/mini/student/listNeedContinueStudent', param)
                 this.list = res.data ?? []
+
+                this.$store.dispatch('accountBusinessCount/setTabbarInfo', {
+                    key: 'xufei',
+                    count: res.data?.length ?? 0
+                })
             } finally {
                 uni.hideLoading()
                 uni.stopPullDownRefresh()

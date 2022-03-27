@@ -48,11 +48,11 @@ export default {
                 const res = await this.$http.get('/mini/teacherGroup/listTeachers')
                 this.teacherGroup = res.data ?? []
 
-                // const countWaitDealComplaintRes = await this.$http.post('/mini/studentComplaint/countWaitDealComplaint')
-                // this.$store.dispatch('accountBusinessCount/setTabbarInfo', {
-                //     key: 'xufei',
-                //     count: countWaitDealComplaintRes.data ?? 0
-                // })
+                const countNeedContinueStudentRes = await this.$http.post('/mini/student/countNeedContinueStudent')
+                this.$store.dispatch('accountBusinessCount/setTabbarInfo', {
+                    key: 'xufei',
+                    count: countNeedContinueStudentRes.data ?? 0
+                })
             } catch (error) {
                 console.log(error)
             }

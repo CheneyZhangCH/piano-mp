@@ -152,7 +152,7 @@
                             <text class="name">续课利润(元)</text>
                             <text class="times">{{ groupTimes }}</text>
                         </view>
-                        <view v-if="accountType === 'ADMIN' && group.totalAmount > 0" class="btn" @click="$refs.utnq.open()">
+                        <view v-if="['ADMIN', 'SUPER_ADMIN'].includes(accountType) && group.totalAmount > 0" class="btn" @click="$refs.utnq.open()">
                             更新至下一季度 <image class="refresh" src="/static/images/teacher/refresh.png" />
                         </view>
                     </view>
@@ -267,7 +267,7 @@ export default {
             headerHeight: 0,
             headerTop: 0,
 
-            accountType: '', // ADMIN - 更新续课利润至下个季度
+            accountType: '', // ADMIN、SUPER_ADMIN - 更新续课利润至下个季度
             userId: 0
         }
     },
@@ -461,11 +461,11 @@ export default {
         right: 0;
         top: 0;
         height: 500rpx;
-        background-image: url("https://static.gangqintonghua.com/img/beijing/bg1.png");
+        background-image: url("https://static.gangqintonghua.com/img/beijing/zhongxin.png?imageView2/0/w/375");
         background-size: 100%;
         background-repeat: no-repeat;
         &.group {
-            background-image: url("https://static.gangqintonghua.com/img/beijing/bg2.png");
+            background-image: url("https://static.gangqintonghua.com/img/beijing/zhongxin-group.png");
         }
         .title {
             position: absolute;

@@ -1,6 +1,6 @@
 <template>
     <view class="page">
-        <image class="icon" src="/static/images/audition/repel.png"></image>
+        <image class="icon" src="https://static.gangqintonghua.com/img/icon/repel.png"></image>
         <view class="tip">
             操作成功
         </view>

@@ -55,7 +55,7 @@
             <view v-for="chapter in detail.chapters" :key="chapter.id" class="chapter">
                 <view class="book">
                     <view class="name">
-                        <image src="/static/images/student/book.png" />
+                        <image src="https://static.gangqintonghua.com/img/icon/book.png" />
                         {{chapter.bookName}}
                     </view>
                     <view class="btn" @click="toVideo(chapter)">

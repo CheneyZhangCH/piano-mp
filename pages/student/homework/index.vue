@@ -149,7 +149,7 @@
                         </template>
                     </view>
                     <view v-if="item.courseType === 'one'" class="action">
-                        <text class="read" :class="{ unread }">{{ item.unread ? '未读' : '已读' }}</text>
+                        <text class="read" :class="{ haveRead: item.haveRead }">{{ item.haveRead ? '已读' : '未读' }}</text>
                         <view class="btn" @click="toDetail(item)">
                             查看课堂报告与作业详情
                             <uni-icons type="right" color="#99A0AD" size="12" />
@@ -184,14 +184,19 @@
             </view>
         </uni-popup>
 
+        <MessageNotify />
         <customTabbar :active="1" />
     </view>
 </template>
 
 <script lang="js">
+import MessageNotify from '../Components/MessageNotify'
 import { numToChinese } from '@/utils/dicts'
 import { weekOrDateTime } from '@/utils/format'
 export default {
+    components: {
+        MessageNotify
+    },
     data() {
         return {
             headerHeight: 0,
@@ -252,6 +257,12 @@ export default {
             try {
                 const res = await this.$http.get('/mini/student/getStudentScore?studentId=' + this.userId)
                 this.studentScore = res.data ?? {}
+
+                const countUnreadStudentWorkRes = await this.$http.get('/mini/finishiLesson/countUnreadStudentWork')
+                this.$store.dispatch('accountBusinessCount/setTabbarDot', {
+                    key: 'homework',
+                    dotFlag: countUnreadStudentWorkRes.data > 0
+                })
             } finally {
                 uni.hideLoading()
             }
@@ -312,12 +323,9 @@ export default {
         right: 0;
         top: 0;
         height: 500rpx;
-        background-image: url("https://static.gangqintonghua.com/img/beijing/bg1.png");
+        background-image: url("https://static.gangqintonghua.com/img/beijing/zhongxin.png?imageView2/0/w/375");
         background-size: 100%;
         background-repeat: no-repeat;
-        &.group {
-            background-image: url("https://static.gangqintonghua.com/img/beijing/bg2.png");
-        }
         .title {
             position: absolute;
             width: 100%;
@@ -490,10 +498,10 @@ export default {
                     justify-content: space-between;
                     .read {
                         font-size: 24rpx;
-                        color: #3eb156;
+                        color: #f15e5e;
                         line-height: 34rpx;
-                        &.unread {
-                            color: #f15e5e;
+                        &.haveRead {
+                            color: #3eb156;
                         }
                     }
                     .btn {

@@ -15,7 +15,7 @@
                         >{{ item.continueNum }}</text>
                         <text class="desc">续课人数</text>
                         <view
-                            v-if="accountType === 'ADMIN'"
+                            v-if="['ADMIN', 'SUPER_ADMIN'].includes(accountType)"
                             class="edit"
                             @click="update(item, 'continueNum')"
                         >
@@ -27,7 +27,7 @@
                         <text class="num">{{ item.discontinueNum }}</text>
                         <text class="desc">未续人数</text>
                         <view
-                            v-if="accountType === 'ADMIN'"
+                            v-if="['ADMIN', 'SUPER_ADMIN'].includes(accountType)"
                             class="edit"
                             @click="update(item, 'discontinueNum')"
                         >
@@ -42,7 +42,7 @@
                         >{{ item.refundNum }}</text>
                         <text class="desc">退费人数</text>
                         <view
-                            v-if="accountType === 'ADMIN'"
+                            v-if="['ADMIN', 'SUPER_ADMIN'].includes(accountType)"
                             class="edit"
                             @click="update(item, 'refundNum')"
                         >

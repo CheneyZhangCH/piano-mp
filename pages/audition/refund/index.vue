@@ -61,7 +61,7 @@
         <!-- 学生详情 -->
         <Student :student-id="dialogStudentId" @close="dialogStudentId = 0" />
 
-        <ConflictGroup ref="group" :groups="groups" @confirm="groupConfirm"/>
+        <ConflictGroup ref="group" :groups="groups" @confirm="groupConfirm" />
     </view>
 </template>
 
@@ -115,7 +115,7 @@ export default {
         async init() {
             uni.showLoading({ title: '加载中', mask: true })
             try {
-                const res = await this.$http.get('/mini/student/getStudentCurrentPackage?studentId=' + this.studentId)
+                const res = await this.$http.get('/mini/student/getStudentCurrentPackageAndTicket?studentId=' + this.studentId)
                 this.detail = res.data ?? {}
             } finally {
                 uni.hideLoading()
@@ -123,7 +123,19 @@ export default {
         },
 
         toContract() {
-            uni.navigateTo({ url: '/pages/audition/contract/index?studentId=' + this.studentId })
+            const { packageName, courses  } = this.coursePackage
+            const { studentName, expiryDate } = this.student
+            const { phone } = this.detail
+            const days = Math.ceil((expiryDate - new Date().getTime()) / (24 * 60 * 60 * 1000))
+            const data = {
+                packageName,
+                courses,
+                expiryMonths: Math.floor(days / 30),
+                studentName,
+                phone
+            }
+            uni.setStorageSync('contract', JSON.stringify(data))
+            uni.navigateTo({ url: '/pages/audition/contract/index?from=refund' })
         },
 
         async valid() {
@@ -131,7 +143,7 @@ export default {
             this.loading = true
             try {
                 const res = await this.$http.get('/mini/teacherGroup/listByStudentPackageId?studentPackageId=' + this.coursePackage.id)
-                if(res.data?.length) {
+                if (res.data?.length) {
                     this.groups = res.data
                     this.$refs.group.open()
                     return
@@ -161,7 +173,7 @@ export default {
             }
             try {
                 await this.$http.post('/mini/student/studentRefund', data)
-                this.$toast({ title: '退费成功！', icon: 'success'})
+                this.$toast({ title: '退费成功！', icon: 'success' })
                 uni.redirectTo({ url: '/pages/audition/refundSuccess/index' })
             } finally {
                 this.loading = false

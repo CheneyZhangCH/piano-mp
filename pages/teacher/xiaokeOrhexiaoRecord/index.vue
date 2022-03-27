@@ -3,12 +3,12 @@
         <view class="page-search">
             <view class="mode" @click="toggleSearchMode">{{ mode === 'month' ? '自定义时间' : '按月份筛选' }}</view>
             <view
-                v-if="['ADMIN', 'STUDENT'].includes(accountType) && courseId"
+                v-if="['ADMIN', 'SUPER_ADMIN', 'STUDENT'].includes(accountType) && courseId"
                 class="switch"
                 :class="{ selectAble }"
                 @click="toggleSelectAble"
             >
-                <template v-if="accountType === 'ADMIN'">
+                <template v-if="['ADMIN', 'SUPER_ADMIN'].includes(accountType)">
                     <image class="refresh" src="/static/images/teacher/refresh.png" />恢复课时
                 </template>
                 <template v-else>
@@ -115,10 +115,10 @@
             </view>
         </view>
         <view
-            v-if="['ADMIN', 'STUDENT'].includes(accountType) && courseId && selectAble"
+            v-if="['ADMIN', 'SUPER_ADMIN', 'STUDENT'].includes(accountType) && courseId && selectAble"
             class="page-footer"
         >
-            <template v-if="accountType === 'ADMIN'">
+            <template v-if="['ADMIN', 'SUPER_ADMIN'].includes(accountType)">
                 <!-- 一对一、一对多但只有一个学生 -->
                 <button
                     v-if="courseType === 'one' || (courseType === 'more' && (!selectedFinishLesson || selectedFinishLesson && selectedFinishLesson.students.length === 1))"

@@ -3,7 +3,7 @@
         <view class="login-image-wrap">
             <image
                 class="login-image"
-                src="https://static.gangqintonghua.com/mp/login.png"
+                src="https://static.gangqintonghua.com/img/beijing/login.png"
             />
         </view>
         <view class="login-btn-wrap">

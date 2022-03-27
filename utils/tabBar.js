@@ -57,6 +57,7 @@ const STUDENT = [
         selectedIconPath: '/static/images/tabBar/video_selected.png'
     },
     {
+        key: 'homework',
         pagePath: "/pages/student/homework/index",
         text: "课后作业",
         iconPath: "/static/images/tabBar/homework.png",
@@ -71,6 +72,7 @@ const STUDENT = [
 ]
 
 export default {
+    SUPER_ADMIN: ADMIN,
     ADMIN,
     STUDENT,
     TEACHER,

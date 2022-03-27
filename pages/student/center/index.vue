@@ -64,24 +64,30 @@
                         <text>匿名投诉</text>
                     </view>
                     <view class="tool" @click="toTrainTickets">
-                        <image src="/static/images/student/peilianquan.png"
+                        <view class="box">
+                            <image src="/static/images/student/peilianquan.png"
                             style="width: 44rpx; height: 26rpx; margin-bottom: 16rpx;" />
+                            <text v-if="detail.trainTicketNum" class="num">{{ detail.trainTicketNum }}</text>
+                        </view>
                         <text>课程陪练券</text>
                     </view>
                 </view>
             </view>
         </scroll-view>
 
+        <MessageNotify />
         <customTabbar v-if="!studentId" :active="2" />
     </view>
 </template>
 
 <script lang="js">
+import MessageNotify from '../Components/MessageNotify'
 import dayjs from "dayjs"
-import { weekOrDateTime } from '@/utils/format'
-
-const WEEK_DAY = ['', '一', '二', '三', '四', '五', '六', '日']
+import { WEEK_DAY, weekOrDateTime } from '@/utils/format'
 export default {
+    components: {
+        MessageNotify
+    },
     data() {
         return {
             defaultCover: 'https://static.gangqintonghua.com/img/touxiang/pic1.webp',
@@ -193,12 +199,9 @@ export default {
         right: 0;
         top: 0;
         height: 500rpx;
-        background-image: url("https://static.gangqintonghua.com/img/beijing/bg1.png");
+        background-image: url("https://static.gangqintonghua.com/img/beijing/zhongxin.png?imageView2/0/w/375");
         background-size: 100%;
         background-repeat: no-repeat;
-        &.group {
-            background-image: url("https://static.gangqintonghua.com/img/beijing/bg2.png");
-        }
         .title {
             position: absolute;
             width: 100%;
@@ -355,6 +358,23 @@ export default {
                     text {
                         font-size: 24rpx;
                         color: #616b80;
+                    }
+                    .box {
+                        position: relative;
+                    }
+                    .num {
+                        position: absolute;
+                        top: -10rpx;
+
+                        height: 22rpx;
+                        line-height: 22rpx;
+                        background: #F15E5E;
+                        border-radius: 6rpx;
+
+                        font-size: 16rpx;
+                        font-weight: 600;
+                        color: #FFFFFF;
+                        padding: 0 4rpx;
                     }
                 }
             }

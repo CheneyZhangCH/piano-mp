@@ -1,6 +1,6 @@
 <template>
     <view class="page">
-        <image class="icon" src="/static/images/audition/refund.png"></image>
+        <image class="icon" src="https://static.gangqintonghua.com/img/icon/refund.png"></image>
         <view class="tip">
             请加强教学管理，勿忘初心
         </view>

@@ -1,6 +1,6 @@
 <template>
     <view class="page">
-        <image class="icon" src="/static/images/audition/success.png"></image>
+        <image class="icon" src="https://static.gangqintonghua.com/img/icon/success.png"></image>
         <view class="tip">
             学员续费操作成功
         </view>

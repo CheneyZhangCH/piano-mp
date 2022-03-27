@@ -30,17 +30,18 @@
                 <image :src="item.coverUrl" />
             </view>
         </view>
-        <view class="notify">
-            <image src="/static/images/student/notify.png" />
-            <view class="count">8</view>
-        </view>
 
+        <MessageNotify />
         <customTabbar v-if="showTabBar" :active="0" />
     </view>
 </template>
 
 <script lang="js">
+import MessageNotify from '../Components/MessageNotify'
 export default {
+    components: {
+        MessageNotify
+    },
     data() {
         return {
             showTabBar: true,
@@ -75,6 +76,12 @@ export default {
                 this.packageList = res.data ?? []
                 this.packageId = this.packageList.length ? this.packageList[0].id : ''
                 this._listByPackageId()
+
+                const countUnreadStudentWorkRes = await this.$http.get('/mini/finishiLesson/countUnreadStudentWork')
+                this.$store.dispatch('accountBusinessCount/setTabbarDot', {
+                    key: 'homework',
+                    dotFlag: countUnreadStudentWorkRes.data > 0
+                })
             } finally {
                 uni.hideLoading()
             }
@@ -89,8 +96,8 @@ export default {
         async _listByPackageId() {
             uni.showLoading({ title: '加载中', mask: true })
             try {
-               const res = await this.$http.get('/mini/teachingBook/listByPackageId?packageId=' + this.packageId)
-               this.courses = res.data ?? []
+                const res = await this.$http.get('/mini/teachingBook/listByPackageId?packageId=' + this.packageId)
+                this.courses = res.data ?? []
             } finally {
                 uni.hideLoading()
             }
@@ -162,32 +169,6 @@ export default {
                 width: 100%;
                 height: 100%;
             }
-        }
-    }
-    .notify {
-        position: fixed;
-        right: 20rpx;
-        bottom: 200rpx;
-        image {
-            width: 96rpx;
-            height: 96rpx;
-        }
-        .count {
-            position: absolute;
-            top: 20rpx;
-            right: 20rpx;
-
-            width: 24rpx;
-            height: 24rpx;
-            background: #f15e5e;
-            border: 1px solid #ffffff;
-            border-radius: 50%;
-            text-align: center;
-
-            font-size: 16rpx;
-            font-weight: 600;
-            color: #ffffff;
-            line-height: 24rpx;
         }
     }
 }

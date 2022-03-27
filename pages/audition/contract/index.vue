@@ -1,5 +1,5 @@
 <template>
-    <view class="page">
+    <view class="page" :class="{ hasBtn }">
         <view class="page-content">
             <view class="block">
                 <view class="title">一、合同双方信息</view>
@@ -71,8 +71,13 @@
                     >开课后，乙方因个人原因退学，可向甲方提出申请解除本合同，经甲方同意后，甲方有权扣除剩余课程费用的30%作为违约金，甲方扣除乙方违约金和已完成的课程费用后，在15个工作日内将剩余费用退还给乙方，如乙方已领取的教材和资料等其他用品可归还甲方或按照原价等价扣除。</view>
                 </view>
             </view>
+            <view v-if="['message', 'refund'].includes(from)" class="message">
+                <view class="explain">* 最终解释权归甲方所有</view>
+                <view class="divider"></view>
+                <view class="hasRead">监护人已阅读并同意此协议</view>
+            </view>
         </view>
-        <view class="page-footer">
+        <view v-if="hasBtn" class="page-footer">
             <button class="btn-primary" type="primary" @click="handleSubmit">确认无误，发送合同</button>
         </view>
     </view>
@@ -80,14 +85,17 @@
 
 <script>
 import { WEEK_DAY } from '@/utils/format'
-import template from '../../index/template.vue'
 export default {
-    components: { template },
     data() {
         return {
             WEEK_DAY,
             form: {},
             from: ''
+        }
+    },
+    computed: {
+        hasBtn() {
+            return !this.from || this.from === 'continue'
         }
     },
     onLoad(option) {
@@ -101,7 +109,7 @@ export default {
         }
         if (!contract) {
             uni.showToast({ title: '合同不存在请重新录入！', icon: 'none' })
-            return uni.navigateTo({ url: '/pages/audition/account/index' })
+            return uni.navigateBack({ delta: 1 })
         }
         if (option?.from) {
             this.from = option.from
@@ -112,9 +120,9 @@ export default {
         async handleSubmit() {
             if (this.loading) return
             this.loading = true
-            uni.showLoading({ title: '保存中', mask: true})
+            uni.showLoading({ title: '保存中', mask: true })
 
-            if(this.from === 'continue') {
+            if (this.from === 'continue') {
                 this.continue()
             } else {
                 this.create()
@@ -149,7 +157,6 @@ export default {
             try {
                 await this.$http.post('/mini/student/addStudent', data)
                 this.$toast({ title: '账号开通成功！', icon: 'success' })
-                uni.removeStorageSync('contract')
                 uni.redirectTo({ url: '/pages/audition/createSuccess/index' })
             } finally {
                 this.loading = false
@@ -189,20 +196,24 @@ export default {
             try {
                 await this.$http.post('/mini/student/continueStudent', data)
                 this.$toast({ title: '续费成功！', icon: 'success' })
-                uni.removeStorageSync('contract')
                 uni.redirectTo({ url: '/pages/audition/continueSuccess/index' })
             } finally {
                 this.loading = false
                 uni.hideLoading()
             }
         }
+    },
+    onUnload() {
+        uni.removeStorageSync('contract')
     }
 }
 </script>
 
 <style lang="scss" scoped>
 .page {
-    padding-bottom: 184rpx;
+    &.hasBtn {
+        padding-bottom: 184rpx;
+    }
     &-content {
         padding: 28rpx 52rpx;
         .block {
@@ -237,6 +248,28 @@ export default {
                         min-width: 68rpx;
                     }
                 }
+            }
+        }
+        .message {
+            .explain {
+                font-size: 16rpx;
+                font-weight: 300;
+                color: #141f33;
+                line-height: 22rpx;
+                margin-bottom: 4rpx;
+                text-align: right;
+            }
+            .divider {
+                border-top: 2rpx dashed #99a0ad;
+                margin: 10rpx 0;
+            }
+            .hasRead {
+                font-size: 20rpx;
+                font-weight: 600;
+                color: #141f33;
+                line-height: 28rpx;
+                margin-top: 28rpx;
+                text-align: right;
             }
         }
     }

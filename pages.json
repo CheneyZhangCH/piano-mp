@@ -177,6 +177,30 @@
                     "style": {
                         "navigationBarTitleText": "" // 申/投诉提交成功
                     }
+                },
+                {
+                    "path": "message/index",
+                    "style": {
+                        "navigationBarTitleText": "消息通知"
+                    }
+                },
+                {
+                    "path": "messageContract/index",
+                    "style": {
+                        "navigationBarTitleText": "签约信息"
+                    }
+                },
+                {
+                    "path": "messageCourse/index",
+                    "style": {
+                        "navigationBarTitleText": "课程信息"
+                    }
+                },
+                {
+                    "path": "messageComplaint/index",
+                    "style": {
+                        "navigationBarTitleText": "申/投诉处理"
+                    }
                 }
             ]
         },

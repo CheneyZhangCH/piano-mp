@@ -1,0 +1,63 @@
+<template>
+    <view class="notify" @click="toMessage">
+        <image src="/static/images/student/notify.png" />
+        <view v-if="msgCount > 0" class="count">{{ msgCount }}</view>
+    </view>
+</template>
+
+<script>
+export default {
+    data() {
+        return {
+            msgCount: 0
+        }
+    },
+    created() {
+        this.getMsgCount()
+    },
+    methods: {
+        async getMsgCount() {
+            try {
+                const res = await this.$http.get('/mini/studentMsg/countUnread')
+                this.msgCount = res.data ?? 0
+            } catch (error) {
+                console.log(error)
+            }
+        },
+
+        toMessage() {
+            uni.navigateTo({ url: '/pages/student/message/index' })
+        }
+    },
+}
+</script>
+
+<style lang="scss" scoped>
+.notify {
+    position: fixed;
+    right: 20rpx;
+    bottom: 200rpx;
+    z-index: 999;
+    image {
+        width: 96rpx;
+        height: 96rpx;
+    }
+    .count {
+        position: absolute;
+        top: 20rpx;
+        right: 20rpx;
+
+        width: 24rpx;
+        height: 24rpx;
+        background: #f15e5e;
+        border: 1px solid #ffffff;
+        border-radius: 50%;
+        text-align: center;
+
+        font-size: 16rpx;
+        font-weight: 600;
+        color: #ffffff;
+        line-height: 24rpx;
+    }
+}
+</style>

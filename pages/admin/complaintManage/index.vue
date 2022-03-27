@@ -27,7 +27,7 @@
                                     <text>学习态度:{{ item.finishLesson.attitudeScore || 0 }}分</text>
                                 </view>
                             </template>
-                            <view v-else class="content-2">投诉原因：{{ item.complaintReason }}</view>
+                            <view v-else class="content-2 mb-16">投诉原因：{{ item.complaintReason }}</view>
 
                             <view class="content">投诉详情：{{ item.content }}</view>
                         </view>

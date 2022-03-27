@@ -16,7 +16,7 @@
                                     coursePackage.packageName
                                 }}</text>
                             </view>
-                            <text v-if="!['AUDITION', 'ADMIN'].includes(accountType)" class="set-grade"
+                            <text v-if="!['AUDITION', 'ADMIN', 'SUPER_ADMIN'].includes(accountType)" class="set-grade"
                                 @click="setGrade">设置级别</text>
                             <uni-icons v-else type="closeempty" size="14" @click="close" />
                         </view>
@@ -96,7 +96,7 @@
                                         ({{ chapter.bookName }}){{ chapter.chapterName }}
                                     </text>
                                     <view
-                                        v-if="['AUDITION', 'ADMIN'].includes(accountType) && course.courseType === 'more'"
+                                        v-if="['AUDITION', 'ADMIN', 'SUPER_ADMIN'].includes(accountType) && course.courseType === 'more'"
                                         class="btn" @click="toClass(course)">
                                         班级详情
                                         <uni-icons type="right" color="#99A0AD" size="12" />
@@ -124,7 +124,7 @@
                         </view>
                     </template>
                 </scroll-view>
-                <view v-if="['AUDITION', 'ADMIN'].includes(accountType)" class="action">
+                <view v-if="['AUDITION', 'ADMIN', 'SUPER_ADMIN'].includes(accountType)" class="action">
                     <view v-if="['finish_course_discontinue', 'finish_course_continue'].includes(student.status)"
                         class="finish_course" :class="student.status">
                         <text class="message">
@@ -153,7 +153,7 @@
                                 修改信息
                             </button>
                         </view>
-                        <view v-if="accountType === 'ADMIN'">
+                        <view v-if="['ADMIN', 'SUPER_ADMIN'].includes(accountType)">
                             <button class="danger" @click="del">
                                 删除学员
                             </button>
@@ -168,7 +168,7 @@
             </view>
         </uni-popup>
 
-        <uni-popup v-if="!['AUDITION', 'ADMIN'].includes(accountType)" ref="grade" type="bottom" class="grade">
+        <uni-popup v-if="!['AUDITION', 'ADMIN', 'SUPER_ADMIN'].includes(accountType)" ref="grade" type="bottom" class="grade">
             <view class="grade-main">
                 <view class="grade-main-title">
                     <text class="btn" @click="$refs.grade.close()">取消</text>
@@ -290,6 +290,7 @@ export default {
                     h = 55
                     break;
                 case 'ADMIN':
+                case 'SUPER_ADMIN':
                     h = 50
                     break;
                 default:
@@ -434,7 +435,7 @@ export default {
                     data: this.studentId
                 }
                 const apiName = type === 'finish_course_discontinue' ? 'cancelDiscontinueStudent' : 'cancelContinueStudent'
-                await this.$http.post(`'/mini/student/${apiName}'`, data)
+                await this.$http.post(`/mini/student/${apiName}`, data)
                 this.$toast({ title: '撤销成功！', icon: 'success' })
                 this.getStudent()
             } finally {

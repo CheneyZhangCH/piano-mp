@@ -1,6 +1,6 @@
 <template>
     <view class="page">
-        <image class="icon" src="/static/images/student/wait-deal.png"></image>
+        <image class="icon" src="https://static.gangqintonghua.com/img/icon/wait-deal.png"></image>
         <view class="tip">
             我们已经收到您的反馈，将尽快进行审核
         </view>
