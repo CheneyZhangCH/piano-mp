@@ -34,7 +34,6 @@ export default {
         }
         return new Promise(async (resolve, reject) => {
             const responses = await this.request(options)
-            //   console.log('res ------------', responses);
             if (responses[0]) {
                 uni.showToast({
                     title: '网络超时',
@@ -45,12 +44,8 @@ export default {
                 });
             } else {
                 const response = responses[1].data; // 如果返回的结果是data.data的，嫌麻烦可以用这个，return res,这样只返回一个data
-                if (response.code === 401 || response.code === 403) {
-                    uni.setStorageSync('accountType', '')
-                    uni.setStorageSync('token', '')
-                    uni.setStorageSync('phone', '')
-                    uni.setStorageSync('userId', '')
-
+                if (response.code === 401) {
+                    uni.clearStorageSync()
                     uni.showToast({
                         title: '请先登录',
                         icon: 'none'
@@ -86,7 +81,6 @@ export default {
         }
         return new Promise(async (resolve, reject) => {
             const responses = await this.request(options)
-            //   console.log('res ------------', responses);
             if (responses[0]) {
                 uni.showToast({
                     title: '网络超时',
@@ -97,13 +91,8 @@ export default {
                 });
             } else {
                 const response = responses[1].data; // 如果返回的结果是data.data的，嫌麻烦可以用这个，return res,这样只返回一个data
-                // console.log('response', response);
-                if (response.code === 401 || response.code === 403) {
-                    uni.setStorageSync('accountType', '')
-                    uni.setStorageSync('token', '')
-                    uni.setStorageSync('phone', '')
-                    uni.setStorageSync('userId', '')
-
+                if (response.code === 401) {
+                    uni.clearStorageSync()
                     uni.showToast({
                         title: '请先登录',
                         icon: 'none'

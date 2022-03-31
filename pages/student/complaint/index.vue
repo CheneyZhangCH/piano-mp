@@ -231,7 +231,7 @@ export default {
                     title: this.finishLessonId ? '申诉成功！' : '投诉成功！',
                     icon: 'success'
                 })
-                uni.redirectTo({ url: '/pages/student/complaintSuccess/index?isFinishLesson=' + (this.finishLessonId ? 1 : 0) })
+                uni.redirectTo({ url: '/pages/success/index?from=complaint' })
             } catch (error) {
                 console.log(error)
             }

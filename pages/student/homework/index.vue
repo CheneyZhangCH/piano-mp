@@ -223,7 +223,7 @@ export default {
         },
 
         lastExamTime() {
-            return [this.student?.lastExamTime, this.student?.examSeason].filter(Boolean).join(' | ') || '-'
+            return [this.studentScore?.lastExamTime, this.studentScore?.examSeason].filter(Boolean).join(' | ') || '-'
         },
     },
     onLoad() {
@@ -295,8 +295,8 @@ export default {
             this.handleSearch()
         },
 
-        toVideo({ id }) {
-            uni.navigateTo({ url: `/pages/student/videos/chapter?id=${id}` })
+        toVideo({ chapterId }) {
+            uni.navigateTo({ url: `/pages/student/videos/chapter?id=${chapterId}` })
         },
 
         toDetail({ id }) {

@@ -31,7 +31,7 @@
                     </view>
                     <view class="row">{{ '账户有效期：' + form.expiryMonths + '个月' }}</view>
 
-                    <template v-if="from === 'continue'">
+                    <template v-if="['messageCONTINUE', 'continue'].includes(from)">
                         <view v-if="form.trainTicket" class="row">
                             {{
                                 form.trainTicket.ticketName + ' ' + form.trainTicket.num + '张'
@@ -71,7 +71,10 @@
                     >开课后，乙方因个人原因退学，可向甲方提出申请解除本合同，经甲方同意后，甲方有权扣除剩余课程费用的30%作为违约金，甲方扣除乙方违约金和已完成的课程费用后，在15个工作日内将剩余费用退还给乙方，如乙方已领取的教材和资料等其他用品可归还甲方或按照原价等价扣除。</view>
                 </view>
             </view>
-            <view v-if="['message', 'refund'].includes(from)" class="message">
+            <view
+                v-if="['messageACCOUNT', 'messageCONTINUE', 'refund'].includes(from)"
+                class="message"
+            >
                 <view class="explain">* 最终解释权归甲方所有</view>
                 <view class="divider"></view>
                 <view class="hasRead">监护人已阅读并同意此协议</view>
@@ -157,7 +160,7 @@ export default {
             try {
                 await this.$http.post('/mini/student/addStudent', data)
                 this.$toast({ title: '账号开通成功！', icon: 'success' })
-                uni.redirectTo({ url: '/pages/audition/createSuccess/index' })
+                uni.redirectTo({ url: '/pages/success/index?from=create' })
             } finally {
                 this.loading = false
                 uni.hideLoading()
@@ -196,7 +199,7 @@ export default {
             try {
                 await this.$http.post('/mini/student/continueStudent', data)
                 this.$toast({ title: '续费成功！', icon: 'success' })
-                uni.redirectTo({ url: '/pages/audition/continueSuccess/index' })
+                uni.redirectTo({ url: '/pages/success/index?from=continue' })
             } finally {
                 this.loading = false
                 uni.hideLoading()

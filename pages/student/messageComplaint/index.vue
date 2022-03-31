@@ -75,7 +75,14 @@ export default {
             } catch (error) {
 
             }
-        }
+        },
+
+        preview(current, urls) {
+            wx.previewImage({
+                current,
+                urls
+            })
+        },
     },
 }
 </script>

@@ -97,7 +97,7 @@ export default {
             return uni.navigateTo({ url: '/pages/login/index' })
         }
         const contractInfo = JSON.parse(contract)
-        this.form = contractInfo.accountContract
+        this.form = contractInfo.contractType === 'ACCOUNT' ? contractInfo.accountContract : contractInfo.continueContract
         this.contractId = contractInfo.id
     },
     methods: {
@@ -117,7 +117,7 @@ export default {
                     }
                     try {
                         await that.$http.post('/mini/studentContract/confirmContract', data)
-                        this.$toast({ title: '确认成功！', icon: 'success'})
+                        this.$toast({ title: '确认成功！', icon: 'success' })
                         uni.redirectTo({ url: '/pages/student/videos/index' })
                     } finally {
                         that.loading = false

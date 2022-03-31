@@ -16,23 +16,27 @@
             </view>
         </view>
         <view class="page-content">
-            <view class="package">
-                <text>
-                    <text class="title">当前课程：</text>
-                    <text class="name">{{ coursePackage.packageName }}</text>
-                </text>
-            </view>
-            <view class="main">
-                <view v-for="course in coursePackage.courses" :key="course.id" class="course">
-                    <view>{{ course.courseName }}</view>
-                    <view>
-                        <text>{{ course.teacherName }}</text>
-                        <text>周{{ WEEK_DAY[course.dayOfWeek] }} {{ course.timetablePeriodName }}</text>
-                        <text>剩余{{ course.courseNum }}节</text>
-                    </view>
+            <template v-if="coursePackage.packageId">
+                <view class="package">
+                    <text>
+                        <text class="title">当前课程：</text>
+                        <text class="name">{{ coursePackage.packageName }}</text>
+                    </text>
                 </view>
-                <view class="expiryDate">账户有效期至： {{ dayjsFormat(student.expiryDate) }}</view>
-            </view>
+                <view class="main">
+                    <view v-for="course in coursePackage.courses" :key="course.id" class="course">
+                        <view>{{ course.courseName }}</view>
+                        <view>
+                            <text>{{ course.teacherName }}</text>
+                            <text>周{{ WEEK_DAY[course.dayOfWeek] }} {{ course.timetablePeriodName }}</text>
+                            <text>剩余{{ course.remainCourseNum }}节</text>
+                        </view>
+                    </view>
+                    <view
+                        class="expiryDate"
+                    >账户有效期至： {{ dayjsFormat(student.expiryDate, 'YYYY年 MM月 DD日') }}</view>
+                </view>
+            </template>
 
             <view class="package">
                 <text class="title">选择课程：</text>
@@ -47,7 +51,7 @@
                     <image src="/static/images/audition/arrow_down.png" />
                 </picker>
             </view>
-            <view class="package-info">
+            <view v-if="form.packageId" class="package-info">
                 <template v-if="form.courses.length">
                     <view
                         v-for="(course, index) in form.courses"
@@ -278,6 +282,7 @@ export default {
             groups: [],
 
             immediately: true,
+            packageCoursesEqual: false, // 当前课程包和选的课程包 - 课程完全一致
             effectiveWayIndex: 0
         }
     },
@@ -304,7 +309,7 @@ export default {
         },
 
         immediatelyConfirm() {
-            return !this.coursePackage?.packageId || this.coursePackage?.packageId === this.form.packageId
+            return !this.coursePackage?.packageId || this.packageCoursesEqual
         }
     },
     onLoad(option) {
@@ -329,14 +334,23 @@ export default {
                 this.trainTickets = res.data?.trainTickets ?? []
 
                 const packageRes = await this.$http.get('/mini/coursePackage/listActive')
-                this.packages = packageRes.data ?? []
+                this.packages = packageRes.data?.filter(_ => _.id !== this.detail.coursePackage.packageId) ?? []
                 if (!this.packages.length) {
                     return uni.showToast({
                         title: '没有找到课程包，请联系管理员',
                         icon: 'none'
                     })
                 }
-                this.form.packageId = this.packages[0].id
+                const nextPackageRes = await this.$http.get('/mini/coursePackage/getStudentNextCoursePackage?studentId=' + this.studentId)
+                if (!nextPackageRes.data) {
+                    return uni.showToast({
+                        title: '没有找到下一个课程包，请联系管理员',
+                        icon: 'none'
+                    })
+                }
+                const { id: packageId } = nextPackageRes.data
+                this.packageIndex = this.packages.findIndex(_ => _.id === packageId)
+                this.form.packageId = packageId
                 this.getPackage()
             } finally {
                 uni.hideLoading()
@@ -346,26 +360,44 @@ export default {
         async getPackage() {
             try {
                 const res = await this.$http.get(`/mini/coursePackage/getCoursePackage?coursePackageId=${this.form.packageId}`)
-
-                const { courses: tempCourses, coursePackage: { packageName, expiryMonths } } = res.data ?? {}
-                const currentCourses = tempCourses.filter(course => course.courseActive) ?? []
+                const { courses, coursePackage: { packageName, expiryMonths } } = res.data ?? {}
 
                 this.form.packageName = packageName
                 this.form.expiryMonths = expiryMonths
-                // 账号有效期至：当天+课程包月份-1
-                this.form.expiryDate = dayjs().add(expiryMonths, 'month').subtract(1, 'days').format('YYYY年 MM月 DD日')
+                const { expiryDate } = this.student
+                // 账号有效期至：学生有效期+课程包月份-1
+                this.form.expiryDate = dayjs(expiryDate).add(expiryMonths, 'month').subtract(1, 'days').format('YYYY年 MM月 DD日')
 
-                const courses = []
-                for (let i = 0; i < currentCourses.length; i++) {
-                    const { courseId, num: courseNum, courseName } = currentCourses[i]
-                    const teacherRes = await this.$http.get(`/mini/teacher/listByCourseId?courseId=${courseId}`)
-                    courses.push({
-                        courseId, courseNum, courseName,
-                        teacherIndex: 0, teacherId: null, teacherName: null, teachers: teacherRes.data ?? [],
-                        timetableId: null, timetablePeriodId: null, timetablePeriodName: null
-                    })
+                const filterCourses = courses.filter(course => course.courseActive) ?? []
+                const { courses: currentCourses } = this.coursePackage
+                const result = []
+                if (currentCourses.length === filterCourses.length && !currentCourses.filter(x => !filterCourses.some(y => x.courseId === y.courseId)).length) {
+                    this.packageCoursesEqual = true
+                    for (let i = 0; i < currentCourses.length; i++) {
+                        const { courseId, remainCourseNum, courseName, teacherId, teacherName, timetableId, timetablePeriodId, timetablePeriodName, dayOfWeek } = currentCourses[i]
+                        const { num } = filterCourses.filter(x => x.courseId === courseId)[0]
+                        const teacherRes = await this.$http.get(`/mini/teacher/listByCourseId?courseId=${courseId}`)
+                        const teachers = teacherRes.data ?? []
+                        const teacherIndex = teachers.findIndex(_ => _.accountId === teacherId)
+                        result.push({
+                            courseId, courseNum: remainCourseNum + num, courseName,
+                            teacherIndex, teacherId, teacherName, teachers,
+                            dayOfWeek,
+                            timetableId, timetablePeriodId, timetablePeriodName
+                        })
+                    }
+                } else {
+                    for (let i = 0; i < filterCourses.length; i++) {
+                        const { courseId, num: courseNum, courseName } = filterCourses[i]
+                        const teacherRes = await this.$http.get(`/mini/teacher/listByCourseId?courseId=${courseId}`)
+                        result.push({
+                            courseId, courseNum, courseName,
+                            teacherIndex: 0, teacherId: null, teacherName: null, teachers: teacherRes.data ?? [],
+                            timetableId: null, timetablePeriodId: null, timetablePeriodName: null
+                        })
+                    }
                 }
-                this.form.courses = courses
+                this.form.courses = result
             } catch (error) {
                 console.log(error)
             }
@@ -403,7 +435,11 @@ export default {
                 return uni.showToast({ title: '请先选择老师', icon: 'none' })
             }
             if (!Array.isArray(this.studentUsableTimetablePeriod) || this.studentUsableTimetablePeriod.length === 0) {
-                const timetableRes = await this.$http.post('/mini/courseTimetable/listStudentUsableTimetablePeriod', { data: { courseId, teacherId } })
+                const data = {
+                    courseId, teacherId
+                }
+                if (this.studentId) data.excludeStudentId = this.studentId
+                const timetableRes = await this.$http.post('/mini/courseTimetable/listStudentUsableTimetablePeriod', { data })
                 this.studentUsableTimetablePeriod = timetableRes.data
             }
             this.timetablePeriods = (this.studentUsableTimetablePeriod.find(item => item.dayOfWeek === dayOfWeek) || {}).periods || []
@@ -458,7 +494,9 @@ export default {
                     break
                 case 'expiryMonths':
                     this.form.expiryMonths = +value
-                    this.form.expiryDate = dayjs().add(+value, 'month').format('YYYY年 MM月 DD日')
+                    this.form.expiryDate = this.coursePackage.packageId === this.form.packageId
+                        ? dayjs().add(+value, 'month').subtract(1, 'days').format('YYYY年 MM月 DD日')
+                        : dayjs(this.student.expiryDate).add(+value, 'month').subtract(1, 'days').format('YYYY年 MM月 DD日')
                     break
             }
             this.dialogClose()
@@ -554,7 +592,11 @@ export default {
                     ticketValid = false
                     break
                 }
-                trainTickets.push(item)
+                trainTickets.push({
+                    num: item.num,
+                    trainTicketId: item.id,
+                    ticketName: item.ticketName
+                })
             }
             if (!ticketValid) return this.$toast({ title: '请输入正确的优惠券个数！', icon: 'none' })
             const { phone } = this.detail
@@ -664,16 +706,21 @@ export default {
             .expiryDate {
                 font-size: 28rpx;
                 color: #99a0ad;
-                line-height: 40rpx;
                 text + text {
                     margin-left: 16rpx;
                 }
             }
             .course {
                 margin-bottom: 32rpx;
-                view + view {
-                    margin-top: 8rpx;
+                view {
+                    line-height: 40rpx;
+                    + view {
+                        margin-top: 8rpx;
+                    }
                 }
+            }
+            .expiryDate {
+                line-height: 40rpx;
             }
         }
 

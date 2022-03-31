@@ -2,7 +2,7 @@ import dayjs from "dayjs"
 export const WEEK_DAY = ['', '一', '二', '三', '四', '五', '六', '日']
 
 export const dayjsFormat = (date, y = 'YYYY-MM-DD') => {
-    if(!date) return dayjs().format(y)
+    if (!date) return dayjs().format(y)
     return dayjs(date).format(y)
 }
 
@@ -35,20 +35,10 @@ export const dayWeekTime = date => {
 
 // 账户有效期
 export const getExpiryDate = expiryDate => {
-    const [expireYear, expireMonth, expireDay] = dayjs(expiryDate).format('YYYY-MM-DD').split('-')
-    const [curYear, curMonth, curDay] = dayjs().format('YYYY-MM-DD').split('-')
-    let year = expireYear - curYear
-    let month = expireMonth - curMonth
-    let day = expireDay - curDay
-    if (day < 0) {
-        day += 30
-        month -= 1
-    }
-    if (month < 0) {
-        month += 12
-        year -= 1
-    }
-    return [(year * 2 + month) ? (year * 2 + month) + '月' : '', day ? day + '天' : ''].filter(Boolean).join('') || '-'
+    // （有效期-当前日期+1）/30=x月xx日
+    if (!expiryDate) return '-'
+    const days = Math.ceil((expiryDate - new Date().getTime()) / (24 * 60 * 60 * 1000)) + 1
+    return [Math.floor(days / 30) ? Math.floor(days / 30) + '个月' : '', days % 30 ? days % 30 + '日' : ''].filter(Boolean).join('')
 }
 
 // n天到期

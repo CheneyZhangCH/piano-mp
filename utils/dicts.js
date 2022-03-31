@@ -11,13 +11,18 @@ const changeType = {
 
 export const dealComplaint_status = {
     deal: '通过',
-    not_deal: '不通过',
-    wait_deal: '待处理'
+    not_deal: '不通过'
 }
 
 export const gender = {
     male: '男',
     female: '女'
+}
+
+export const msgType = {
+    accountExpiry: '账号有效时间',
+    courseRemain: '剩余课时',
+    useTrainTicket: '消券信息'
 }
 
 export const numToChinese = {

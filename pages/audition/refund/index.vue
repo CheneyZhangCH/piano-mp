@@ -32,10 +32,12 @@
                     <view>
                         <text>{{ course.teacherName }}</text>
                         <text>周{{ WEEK_DAY[course.dayOfWeek] }} {{ course.timetablePeriodName }}</text>
-                        <text>剩余{{ course.courseNum }}节</text>
+                        <text>剩余{{ course.remainCourseNum }}节</text>
                     </view>
                 </view>
-                <view class="expiryDate">账户有效期至： {{ dayjsFormat(student.expiryDate) }}</view>
+                <view
+                    class="expiryDate"
+                >账户有效期至： {{ dayjsFormat(student.expiryDate, 'YYYY年 MM月 DD日') }}</view>
             </view>
             <view class="refund">
                 <text class="title">退费金额：</text>
@@ -123,7 +125,7 @@ export default {
         },
 
         toContract() {
-            const { packageName, courses  } = this.coursePackage
+            const { packageName, courses } = this.coursePackage
             const { studentName, expiryDate } = this.student
             const { phone } = this.detail
             const days = Math.ceil((expiryDate - new Date().getTime()) / (24 * 60 * 60 * 1000))
@@ -139,8 +141,6 @@ export default {
         },
 
         async valid() {
-            if (this.loading) return
-            this.loading = true
             try {
                 const res = await this.$http.get('/mini/teacherGroup/listByStudentPackageId?studentPackageId=' + this.coursePackage.id)
                 if (res.data?.length) {
@@ -149,8 +149,8 @@ export default {
                     return
                 }
                 this.confirm()
-            } finally {
-                this.loading = false
+            } catch (err) {
+                console.log(err)
             }
         },
 
@@ -174,7 +174,7 @@ export default {
             try {
                 await this.$http.post('/mini/student/studentRefund', data)
                 this.$toast({ title: '退费成功！', icon: 'success' })
-                uni.redirectTo({ url: '/pages/audition/refundSuccess/index' })
+                uni.redirectTo({ url: '/pages/success/index?from=refund' })
             } finally {
                 this.loading = false
             }
@@ -254,16 +254,21 @@ export default {
             .expiryDate {
                 font-size: 28rpx;
                 color: #99a0ad;
-                line-height: 40rpx;
                 text + text {
                     margin-left: 16rpx;
                 }
             }
             .course {
                 margin-bottom: 32rpx;
-                view + view {
-                    margin-top: 8rpx;
+                view {
+                    line-height: 40rpx;
+                    + view {
+                        margin-top: 8rpx;
+                    }
                 }
+            }
+            .expiryDate {
+                line-height: 40rpx;
             }
         }
         .package {

@@ -1,6 +1,6 @@
 <template>
     <view class="notify" @click="toMessage">
-        <image src="/static/images/student/notify.png" />
+        <image src="https://static.gangqintonghua.com/img/icon/notify.png" />
         <view v-if="msgCount > 0" class="count">{{ msgCount }}</view>
     </view>
 </template>

@@ -37,7 +37,9 @@
                     </view>
                     <view class="info">
                         <text>班级人数</text>
-                        <text class="value">{{ detail.studentNum }}</text>
+                        <text
+                            class="value"
+                        >{{ detail.students.length === detail.studentNum ? '满班' : detail.students.length }}</text>
                     </view>
                     <view class="info">
                         <text>当前进度</text>
@@ -50,10 +52,7 @@
             </view>
             <view class="students">
                 <view v-for="item in detail.students" :key="item.student.studentId" class="student">
-                    <image
-                        class="cover"
-                        :src="item.student.coverUrl || defaultCover"
-                    />
+                    <image class="cover" :src="item.student.coverUrl || defaultCover" />
                     <view class="info">
                         <view class="msg">
                             <text class="studentName">{{ item.student.studentName }}</text>

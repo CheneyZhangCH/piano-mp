@@ -108,8 +108,8 @@
                     <!-- 试听端、管理端 -->
                     <template v-if="['AUDITION', 'ADMIN'].includes(accountType)">
                         <view class="section-divider"></view>
-                        <view class="expire-date px-28" :class="{ 'warning': expiryDateWarning }">
-                            {{ '账户有效期：剩余' + expiryDate }}
+                        <view class="expire-date px-28" :class="{ 'warning': getExpiryDateWarning(student.expiryDate) }">
+                            {{ '账户有效期：剩余' + getExpiryDate(student.expiryDate) }}
                         </view>
                         <view class="section-divider"></view>
                         <view class="remark" :class="{ 'exist': student.remark }" @click="openRemark(student)">
@@ -223,8 +223,7 @@
 <script>
 import Remark from "@/components/Remark";
 import ConflictGroup from '@/components/ConflictGroup'
-import { WEEK_DAY, getExpiryDate } from '@/utils/format'
-import dayjs from 'dayjs'
+import { WEEK_DAY, getExpiryDate, getExpiryDateWarning } from '@/utils/format'
 
 export default {
     components: {
@@ -275,12 +274,6 @@ export default {
         lastExamTime() {
             return [this.student.lastExamTime, this.student.examSeason].filter(Boolean).join(' | ') || '-'
         },
-        expiryDate() {
-            return getExpiryDate(this.student.expiryDate)
-        },
-        expiryDateWarning() {
-            return this.student.expiryDate - dayjs() < 30 * 24 * 60 * 60 * 1000
-        },
         contentStyle() {
             let h = 60
             // 管理端有删除按钮
@@ -304,6 +297,8 @@ export default {
         this.accountType = accountType
     },
     methods: {
+        getExpiryDate,
+        getExpiryDateWarning,
         async getStudent() {
             const res = await this.$http.get(
                 `/mini/student/getStudentDetail?studentId=${this.studentId}`
@@ -392,7 +387,7 @@ export default {
             try {
                 await this.$http.post('/mini/student/discontinueStudent', data)
                 this.$toast({ title: '不续课成功！', icon: 'success' })
-                uni.redirectTo({ url: '/pages/audition/disContinueSuccess/index' })
+                uni.navigateTo({ url: '/pages/success/index?from=disContinue' })
             } finally {
 
             }

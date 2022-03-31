@@ -10,13 +10,23 @@
                     <text class="date">{{ weekOrDateTime(item.createTime) }}</text>
                 </view>
                 <view class="main">
-                    <view class="info ellipsis">签约课程：{{ item.accountContract.packageName }}</view>
+                    <view
+                        class="info ellipsis"
+                    >签约课程：{{ item.contractType === 'ACCOUNT' ? item.accountContract.packageName : item.continueContract.packageName }}</view>
                     <view class="info">
                         课时详情：
-                        <text
-                            v-for="course in item.accountContract.courses"
-                            :key="course.courseId"
-                        >{{ course.courseName }}；</text>
+                        <template v-if="item.contractType === 'ACCOUNT'">
+                            <text
+                                v-for="course in item.accountContract.courses"
+                                :key="course.courseId"
+                            >{{ course.courseName }}；</text>
+                        </template>
+                        <template v-else>
+                            <text
+                                v-for="course in item.continueContract.courses"
+                                :key="course.courseId"
+                            >{{ course.courseName }}；</text>
+                        </template>
                     </view>
                 </view>
             </view>
@@ -25,9 +35,7 @@
                     class="confirmFlag"
                     :class="{ confirm: item.confirmFlag }"
                 >{{ item.confirmFlag ? '已开通' : '待确认' }}</text>
-                <view class="btn" @click="toContract(item)">
-                    查看详情
-                </view>
+                <view class="btn" @click="toContract(item)">查看详情</view>
             </view>
         </view>
     </view>
@@ -62,8 +70,9 @@ export default {
         },
 
         toContract(item) {
-            uni.setStorageSync('contract', JSON.stringify(item.accountContract))
-            uni.navigateTo({ url: '/pages/audition/contract/index?from=message' })
+            const contract = item.contractType === 'ACCOUNT' ? item.accountContract : item.continueContract
+            uni.setStorageSync('contract', JSON.stringify(contract))
+            uni.navigateTo({ url: '/pages/audition/contract/index?from=message' + item.contractType })
         }
     },
 }
@@ -72,18 +81,18 @@ export default {
 <style lang="scss" scoped>
 .page {
     min-height: 100vh;
-    background: #F5F7FA;
+    background: #f5f7fa;
     padding-top: 48rpx;
     .record {
-        background: #FFFFFF;
+        background: #ffffff;
         border-radius: 20rpx;
         margin: 0 30rpx;
-        +.record {
+        + .record {
             margin-top: 48rpx;
         }
         .content {
             padding: 14rpx 30rpx;
-            border-bottom: 2rpx solid #F5F7FA;
+            border-bottom: 2rpx solid #f5f7fa;
         }
         .title {
             display: flex;
@@ -94,27 +103,27 @@ export default {
                 display: inline-block;
                 width: 16rpx;
                 height: 16rpx;
-                background: #F15E5E;
+                background: #f15e5e;
                 border-radius: 50%;
                 margin-right: 16rpx;
             }
             .name {
                 font-size: 28rpx;
                 font-weight: 500;
-                color: #141F33;
+                color: #141f33;
                 line-height: 40rpx;
             }
             .date {
                 font-size: 24rpx;
-                color: #99A0AD;
+                color: #99a0ad;
             }
         }
         .main {
             .info {
                 font-size: 24rpx;
-                color: #99A0AD;
+                color: #99a0ad;
                 line-height: 34rpx;
-                +.info {
+                + .info {
                     margin-top: 16rpx;
                 }
             }
@@ -126,18 +135,18 @@ export default {
             padding: 10rpx 30rpx;
             .confirmFlag {
                 font-size: 24rpx;
-                color: #F15E5E;
+                color: #f15e5e;
                 line-height: 34rpx;
                 &.confirm {
-                    color: #3EB156;
+                    color: #3eb156;
                 }
             }
-            .btn  {
+            .btn {
                 border-radius: 8rpx;
-                border: 2rpx solid #61BAEC;
+                border: 2rpx solid #61baec;
                 padding: 6rpx 16rpx;
                 font-size: 22rpx;
-                color: #62BBEC;
+                color: #62bbec;
                 line-height: 32rpx;
             }
         }

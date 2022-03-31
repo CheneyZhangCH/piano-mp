@@ -17,7 +17,13 @@
 			"style": {
 				"navigationStyle": "custom"
 			}
-		}
+		},
+        {
+            "path": "pages/success/index",
+            "style": {
+                "navigationBarTitleText": ""
+            }
+        }
 	],
 	"subPackages": [
 		{
@@ -39,12 +45,6 @@
 					"path": "refund/index",
 					"style": {
 						"navigationBarTitleText": "退费操作"
-					}
-				},
-				{
-					"path": "refundSuccess/index",
-					"style": {
-						"navigationBarTitleText": ""
 					}
 				},
 				{
@@ -72,30 +72,6 @@
 					"path": "account/index",
 					"style": {
 						"navigationBarTitleText": "账号开通"
-					}
-				},
-				{
-					"path": "createSuccess/index",
-					"style": {
-						"navigationBarTitleText": ""
-					}
-				},
-				{
-					"path": "updateSuccess/index",
-					"style": {
-						"navigationBarTitleText": ""
-					}
-				},
-				{
-					"path": "disContinueSuccess/index",
-					"style": {
-						"navigationBarTitleText": ""
-					}
-				},
-				{
-					"path": "continueSuccess/index",
-					"style": {
-						"navigationBarTitleText": ""
 					}
 				},
 				{
@@ -170,12 +146,6 @@
                     "path": "complaint/index",
                     "style": {
                         "navigationBarTitleText": "我要投诉" // 课时申诉
-                    }
-                },
-                {
-                    "path": "complaintSuccess/index",
-                    "style": {
-                        "navigationBarTitleText": "" // 申/投诉提交成功
                     }
                 },
                 {

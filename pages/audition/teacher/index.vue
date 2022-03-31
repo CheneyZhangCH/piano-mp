@@ -143,7 +143,7 @@
         <Course ref="course" :detail="courseDetail" @student="(id) => (studentId = id)" />
 
         <!-- 学生详情 -->
-        <Student :student-id="studentId" @close="studentId = 0" @del="studentId = 0" />
+        <Student ref="student" :student-id="studentId" @close="studentId = 0" @del="studentId = 0" />
 
         <!-- 备注 -->
         <Remark ref="remark" :detail="studentDetail" @confirm="handleSearch" />
@@ -204,8 +204,11 @@ export default {
         }
 
         const week = new Date().getDay()
-        this.dayOfWeek = 2// week === 1 ? 2 : week;
+        this.dayOfWeek = week === 1 ? 2 : week;
         this.handleSearch();
+    },
+    onShow() {
+        if(this.studentId) this.$refs.student.getStudent()
     },
     methods: {
         handleToggleDayOfWeek(day) {
@@ -235,7 +238,7 @@ export default {
                         }
                         if (period.periodType === 'work' && period.moreCourse) {
                             const { startClassDate } = period.moreCourse || {}
-                            period.moreCourse.startClassDateStr = startClassDate ? dayjs(startClassDate).format('YYYY-MM-DD') : ''
+                            period.moreCourse.startClassDateStr = startClassDate ? dayjs(startClassDate).format('YYYY年 MM月 DD日') : ''
                         }
                     })
                 }

@@ -2,7 +2,8 @@
     <view class="page" :style="pageStyle">
         <view class="custom-header" :class="{ group: !!groupId }">
             <view class="title" :style="customTitleStyle">
-                <uni-icons v-if="!datacenterFlag" type="left" color="#FFF" size="16" @click="back" style="float: left; padding: 0 30rpx;"/>
+                <uni-icons v-if="!datacenterFlag" type="left" color="#FFF" size="16" @click="back"
+                    style="float: left; padding: 0 30rpx;" />
                 数据中心
             </view>
         </view>
@@ -12,8 +13,10 @@
                 <view class="info">
                     <view class="msg">
                         <text class="name ellipsis">{{ teacher.teacherName }}</text>
-                        <view v-if="groups.length" class="groups" >
-                            <text v-for="g in groups.slice(0, 2)" :key="g.id" class="group ellipsis">{{ g.groupName }}</text>
+                        <view v-if="groups.length" class="groups">
+                            <text v-for="g in groups.slice(0, 2)" :key="g.id" class="group ellipsis">{{
+                                g.groupName
+                            }}</text>
                         </view>
                     </view>
                     <view class="yanquan" @click="handleYanQuan">
@@ -21,7 +24,8 @@
                         <image src="/static/images/teacher/yanquan.png"></image>
                     </view>
                     <template v-if="groups.length">
-                        <picker v-if="groups.length > 1" class="switch" :value="groupValue" range-key="groupName" :range="groups" @change="onGroupChange">
+                        <picker v-if="groups.length > 1" class="switch" :value="groupValue" range-key="groupName"
+                            :range="groups" @change="onGroupChange">
                             切换至组内数据
                         </picker>
                         <view v-else class="switch" @click="onGroupChange({ detail: { value: 0 } })">切换至组内数据</view>
@@ -43,12 +47,15 @@
                         <text class="times">{{ times }}</text>
                         <text class="num">
                             总计
-                            <text class="sal" :class="{ 'plus': courseSalary > 0, 'minus': courseSalary < 0 }">{{ courseSalary > 0 ? '+' : '' }}{{ courseSalary || '-' }}</text>元
+                            <text class="sal" :class="{ 'plus': courseSalary > 0, 'minus': courseSalary < 0 }">{{
+                                courseSalary > 0 ? '+' : ''
+                            }}{{ courseSalary || '-' }}</text>元
                         </text>
                     </view>
                     <view class="wrap">
                         <template v-if="detail.courses.length">
-                            <view v-for="item in detail.courses" class="item" :key="item.courseId" @click="toFinishLesson(item)">
+                            <view v-for="item in detail.courses" class="item" :key="item.courseId"
+                                @click="toFinishLesson(item)">
                                 <view class="name ellipsis">{{ item.courseName }}</view>
                                 <view class="right">
                                     <text class="num">{{ item.num }}{{ item.courseType === 'one' ? '节' : '人' }}</text>
@@ -68,12 +75,16 @@
                         <text class="times">{{ times }}</text>
                         <text class="num">
                             总计
-                            <text class="sal" :class="{ 'plus': trainTicketSalary > 0, 'minus': trainTicketSalary < 0 }">{{ trainTicketSalary > 0 ? '+' : '' }}{{ trainTicketSalary || '-' }}</text>元
+                            <text class="sal"
+                                :class="{ 'plus': trainTicketSalary > 0, 'minus': trainTicketSalary < 0 }">{{
+                                    trainTicketSalary > 0 ? '+' : ''
+                                }}{{ trainTicketSalary || '-' }}</text>元
                         </text>
                     </view>
                     <view class="wrap">
                         <template v-if="detail.trainTickets.length">
-                            <view v-for="item in detail.trainTickets" class="item" :key="item.ticketId" @click="toTrainTickets(item)">
+                            <view v-for="item in detail.trainTickets" class="item" :key="item.ticketId"
+                                @click="toTrainTickets(item)">
                                 <text class="name ellipsis">{{ item.ticketName }}</text>
                                 <view class="right">
                                     <text class="num">{{ item.num }}张</text>
@@ -93,7 +104,10 @@
                         <text class="times">{{ times }}</text>
                         <text class="num">
                             总计
-                            <text class="sal" :class="{ 'plus': disciplineAmount > 0, 'minus': disciplineAmount < 0 }">{{ disciplineAmount > 0 ? '+' : '' }}{{ disciplineAmount || '-' }}</text>元
+                            <text class="sal"
+                                :class="{ 'plus': disciplineAmount > 0, 'minus': disciplineAmount < 0 }">{{
+                                    disciplineAmount > 0 ? '+' : ''
+                                }}{{ disciplineAmount || '-' }}</text>元
                         </text>
                     </view>
                     <view class="wrap">
@@ -123,24 +137,29 @@
             <view class="teachers">
                 <view v-if="memberTeachers.length" class="member">
                     <text>启蒙组成员：</text>
-                    <image v-for="item in memberTeachers" :key="item.accountId"  :src="item.coverUrl" />
+                    <image v-for="item in memberTeachers" :key="item.accountId" :src="item.coverUrl" />
                 </view>
                 <view v-if="leaderTeachers.length" class="leader">
                     <text>组长：</text>
-                    <image v-for="item in leaderTeachers" :key="item.accountId"  :src="item.coverUrl" />
+                    <image v-for="item in leaderTeachers" :key="item.accountId" :src="item.coverUrl" />
                 </view>
-                <view v-if="datacenterFlag" class="switch" @click="() => { groupId = null; group = null }">切换至个人数据</view>
+                <view v-if="datacenterFlag" class="switch" @click="() => { groupId = null; group = null }">切换至个人数据
+                </view>
             </view>
             <view class="xukelirun block">
                 <view class="block-title">
                     <text class="name">续课率考核</text>
                     <view class="btn" @click="toContinueData">
-                        查看详情 <uni-icons type="right" color="#99A0AD" size="12" />
+                        查看详情
+                        <uni-icons type="right" color="#99A0AD" size="12" />
                     </view>
                 </view>
                 <view class="content">
                     <view v-for="item in group.packageRatios" :key="item.id" class="item">
-                        <text class="rate" :class="{ 'reach': item.actualRatio >= item.ratio, 'unreach': item.actualRatio < item.ratio, empty: !item.actualRatio }">{{ item.actualRatio ? `${item.actualRatio}%` : '-' }}</text>
+                        <text class="rate"
+                            :class="{ 'reach': item.actualRatio >= item.ratio, 'unreach': item.actualRatio < item.ratio, empty: !item.actualRatio }">{{
+                                item.actualRatio ? `${item.actualRatio}%` : '-'
+                            }}</text>
                         <text class="name ellipsis">{{ item.packageName }}({{ item.ratio }}%)</text>
                     </view>
                 </view>
@@ -152,8 +171,10 @@
                             <text class="name">续课利润(元)</text>
                             <text class="times">{{ groupTimes }}</text>
                         </view>
-                        <view v-if="['ADMIN', 'SUPER_ADMIN'].includes(accountType) && group.totalAmount > 0" class="btn" @click="$refs.utnq.open()">
-                            更新至下一季度 <image class="refresh" src="/static/images/teacher/refresh.png" />
+                        <view v-if="['ADMIN', 'SUPER_ADMIN'].includes(accountType)" class="btn"
+                            @click="$refs.utnq.open()">
+                            更新至下一季度
+                            <image class="refresh" src="/static/images/teacher/refresh.png" />
                         </view>
                     </view>
                     <view class="total" :class="{ empty: !group.totalAmount }">{{ group.totalAmount || '-' }}</view>
@@ -161,11 +182,16 @@
                 <view class="container amonut">
                     <view class="amonut-item">
                         <text>续课收入</text>
-                        <text  class="num" :class="{ empty: !group.continueAmount }">{{ group.continueAmount ? `+${group.continueAmount}` : '-' }}</text>
+                        <text class="num" :class="{ empty: !group.continueAmount }">{{
+                            group.continueAmount ?
+                                `+${group.continueAmount}元` : '-'
+                        }}</text>
                     </view>
                     <view class="amonut-item">
                         <text>退费支出</text>
-                        <text class="num refund" :class="{ empty: !group.refundAmount }">{{ group.refundAmount || '-' }}</text>
+                        <text class="num refund" :class="{ empty: !group.refundAmount }">{{
+                            group.refundAmount ? `${group.refundAmount}元` : '-'
+                        }}</text>
                     </view>
                 </view>
                 <view class="container fenhong">
@@ -178,13 +204,19 @@
                     <view class="content">
                         <view v-for="item in group.teacherAmounts" :key="item.id" class="fenhong-item">
                             <view class="info">
-                                <image :src="item.coverUrl || ''"/>
-                                <text class="name ellipsis">{{ item.teacherName }}<template v-if="item.groupTeacherType === 'leader'">(组长)</template></text>
-                                <text v-if="leaderFlag && item.accountId !== userId" class="btn" @click="toTeacher(item)">查看课表</text>
+                                <image :src="item.coverUrl || ''" />
+                                <text class="name ellipsis">{{ item.teacherName }}<template
+                                        v-if="item.groupTeacherType === 'leader'">(组长)</template></text>
+                                <text v-if="leaderFlag && item.accountId !== userId" class="btn"
+                                    @click="toTeacher(item)">查看课表</text>
                             </view>
                             <view class="num">
-                                <text class="ratio">{{ item.ratio }}%</text>
-                                <text class="amount" :class="{ empty: !item.amount }">{{ item.amount ? `${item.amount > 0 ? `+${item.amount}` : item.amount}` : '-' }}</text>
+                                <text class="ratio">{{ item.ratio }}%/{{ item.refundRatio }}%</text>
+                                <text class="amount" :class="{ empty: !item.amount, positive: item.amount >
+                                        0 }">{{
+                                    item.amount ? `${item.amount >
+                                        0 ? `+${item.amount}` : item.amount}元` : '-'
+                                }}</text>
                             </view>
                         </view>
                     </view>
@@ -203,7 +235,9 @@
                                 <view class="l">
                                     <text class="student-name">{{ item.student.studentName }}-</text>
                                     <text class="package-name">{{ item.packageName }}</text>
-                                    <text class="status" :class="item.changeType">{{ dicts.changeType[item.changeType] }}</text>
+                                    <text class="status" :class="item.changeType">{{
+                                        dicts.changeType[item.changeType]
+                                    }}</text>
                                 </view>
                                 <view class="r">
                                     {{ weekOrDateTime(item.createTime) }}
@@ -212,10 +246,12 @@
                             <view class="teacher">
                                 <view class="l">
                                     <text>老师：</text>
-                                    <image v-for="teacher in item.teachers" :key="teacher.accountId" :src="teacher.coverUrl" />
+                                    <image v-for="teacher in item.teachers" :key="teacher.accountId"
+                                        :src="teacher.coverUrl" />
                                 </view>
-                                <view v-if="['studentContinue', 'refund'].includes(item.changeType)" class="r" :class="item.changeType">
-                                    {{ item.amount > 0 ? `+${item.amount}` : item.amount }}
+                                <view v-if="['studentContinue', 'refund'].includes(item.changeType)" class="r"
+                                    :class="item.changeType">
+                                    {{ item.amount > 0 ? `+${item.amount}` : item.amount }}元
                                 </view>
                             </view>
                         </view>
@@ -224,14 +260,10 @@
             </view>
         </scroll-view>
 
-        <YanQuan ref="yanquan" @success="init"/>
+        <YanQuan ref="yanquan" @success="init" />
 
-        <pianoMessageBox
-            ref="utnq"
-            message="更新至下一季度后续课利润将为初始状态 请问是否确认更新"
-            showCancelButton
-            @confirm="updateToNextQuarterConfirm"
-        />
+        <pianoMessageBox ref="utnq" message="更新至下一季度后续课利润将为初始状态 请问是否确认更新" showCancelButton
+            @confirm="updateToNextQuarterConfirm" />
 
         <customTabbar v-if="datacenterFlag" :active="1" />
     </view>
@@ -417,6 +449,7 @@ export default {
                     icon: 'success',
                 })
                 this.$refs.utnq.close()
+                this._getGroupSalary()
             } catch (error) {
                 console.log(error)
             }
@@ -863,9 +896,12 @@ export default {
                             }
                             .amount {
                                 float: right;
-                                color: #f15e5e;
+                                color: #44be5e;
                                 &.empty {
                                     color: #99a0ad;
+                                }
+                                &.positive {
+                                    color: #f15e5e;
                                 }
                             }
                         }
@@ -907,9 +943,6 @@ export default {
                         .studentContinue {
                             color: #f15e5e;
                         }
-                        .discontinue {
-                            color: #99a0ad;
-                        }
                         .refund {
                             color: #44be5e;
                         }
@@ -950,7 +983,6 @@ export default {
                         .r {
                             font-size: 28rpx;
                             font-weight: 500;
-                            color: #44be5e;
                         }
                     }
                 }

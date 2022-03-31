@@ -58,7 +58,7 @@
                         <image src="https://static.gangqintonghua.com/img/icon/book.png" />
                         {{chapter.bookName}}
                     </view>
-                    <view class="btn" @click="toVideo(chapter)">
+                    <view v-if="chapter.chapterId" class="btn" @click="toVideo(chapter)">
                         配套视频
                         <image src="/static/images/student/play.png" />
                     </view>
@@ -129,8 +129,8 @@ export default {
             }
         },
 
-        toVideo({ id }) {
-            uni.navigateTo({ url: `/pages/student/videos/chapter?id=${id}` })
+        toVideo({ chapterId }) {
+            uni.navigateTo({ url: `/pages/student/videos/chapter?id=${chapterId}` })
         }
     }
 }

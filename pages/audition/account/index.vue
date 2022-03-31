@@ -110,7 +110,7 @@
                                 </view>
                             </template>
                             <template v-else>
-                                <text>剩余{{ form.expiry.expiryMonths }}个月{{ form.expiry.expiryDays }}天</text>
+                                <text>剩余{{ form.expiry.expiryMonths }}个月{{ form.expiry.expiryDays }}日</text>
                                 <picker class="action" :value="expiryIndex" :range="['月数', '天数']"
                                     @change="expiryChange">
                                     <text>修改</text>
@@ -227,8 +227,8 @@
         </view>
 
         <uni-popup v-if="dialogVisible" ref="popup" type="dialog">
-            <uni-popup-dialog mode="input" :value="dialogInputValue" placeholder="最多15个字"
-                :maxlength="15" :before-close="true" @close="dialogClose" @confirm="dialogConfirm" />
+            <uni-popup-dialog mode="input" :value="dialogInputValue" placeholder="最多15个字" :maxlength="15"
+                :before-close="true" @close="dialogClose" @confirm="dialogConfirm" />
         </uni-popup>
 
         <uni-popup ref="timetablePopup" type="bottom">
@@ -431,7 +431,7 @@ export default {
                     // this.form.expiryMonths = expiryMonths
                     this.form.expiryDate = dayjs(expiryDate).format('YYYY年 MM月 DD日')
                     // const diff = dayjs(expiryDate).diff(dayjs(),'day')
-                    const days = Math.ceil((expiryDate - new Date().getTime()) / (24 * 60 * 60 * 1000))
+                    const days = Math.ceil((expiryDate - new Date().getTime()) / (24 * 60 * 60 * 1000)) + 1
                     this.$set(this.form, 'expiry', {
                         expiryDays: days % 30,
                         expiryMonths: Math.floor(days / 30)
@@ -442,12 +442,12 @@ export default {
 
                     const courses = []
                     for (let i = 0; i < currentCourses.length; i++) {
-                        const { courseId, courseNum, courseName, teacherId, teacherName, timetableId, timetablePeriodId, timetablePeriodName, dayOfWeek } = currentCourses[i]
+                        const { courseId, remainCourseNum, courseName, teacherId, teacherName, timetableId, timetablePeriodId, timetablePeriodName, dayOfWeek } = currentCourses[i]
                         const teacherRes = await this.$http.get(`/mini/teacher/listByCourseId?courseId=${courseId}`)
                         const teachers = teacherRes.data ?? []
                         const teacherIndex = teachers.findIndex(_ => _.accountId === teacherId)
                         courses.push({
-                            courseId, courseNum, courseName,
+                            courseId, courseNum: remainCourseNum, courseName,
                             teacherIndex, teacherId, teacherName, teachers,
                             dayOfWeek,
                             timetableId, timetablePeriodId, timetablePeriodName
@@ -472,17 +472,30 @@ export default {
                 const currentCourses = tempCourses.filter(course => course.courseActive) ?? []
 
                 this.form.packageName = packageName
+                // 账号有效期至：
+                // 新增时 - 当天+课程包月份-1
+                // 修改时 - 新课程包: 学生有效期上+课程包月份-1 原课程包：学生有效期（还原）
                 if (this.studentId) {
-                    this.$set(this.form, 'expiry', {
-                        expiryDays: 0,
-                        expiryMonths
-                    })
+                    const { expiryDate } = this.student
+                    if (this.form.packageId === this.form.oldPackageId) {
+                        const days = Math.ceil((expiryDate - new Date().getTime()) / (24 * 60 * 60 * 1000))
+                        this.$set(this.form, 'expiry', {
+                            expiryDays: days % 30,
+                            expiryMonths: Math.floor(days / 30)
+                        })
+                        this.form.expiryDate = dayjs(expiryDate).format('YYYY年 MM月 DD日')
+                    } else {
+                        this.$set(this.form, 'expiry', {
+                            expiryDays: 0,
+                            expiryMonths
+                        })
+                        this.form.expiryDate = dayjs(expiryDate).add(expiryMonths, 'month').subtract(1, 'days').format('YYYY年 MM月 DD日')
+                    }
                 } else {
                     this.form.expiryMonths = expiryMonths
+                    this.form.expiryDate = dayjs().add(expiryMonths, 'month').subtract(1, 'days').format('YYYY年 MM月 DD日')
                 }
 
-                // 账号有效期至：当天+课程包月份-1
-                this.form.expiryDate = dayjs().add(expiryMonths, 'month').subtract(1, 'days').format('YYYY年 MM月 DD日')
 
                 const courses = []
                 for (let i = 0; i < currentCourses.length; i++) {
@@ -532,7 +545,11 @@ export default {
                 return uni.showToast({ title: '请先选择老师', icon: 'none' })
             }
             if (!Array.isArray(this.studentUsableTimetablePeriod) || this.studentUsableTimetablePeriod.length === 0) {
-                const timetableRes = await this.$http.post('/mini/courseTimetable/listStudentUsableTimetablePeriod', { data: { courseId, teacherId } })
+                const data = {
+                    courseId, teacherId
+                }
+                if(this.studentId) data.excludeStudentId = this.studentId
+                const timetableRes = await this.$http.post('/mini/courseTimetable/listStudentUsableTimetablePeriod', { data })
                 this.studentUsableTimetablePeriod = timetableRes.data
             }
             this.timetablePeriods = (this.studentUsableTimetablePeriod.find(item => item.dayOfWeek === dayOfWeek) || {}).periods || []
@@ -613,11 +630,15 @@ export default {
                     break
                 case 'expiryExpiryMonths':
                     this.form.expiry.expiryMonths = +value
-                    this.form.expiryDate = dayjs(this.student.expiryDate).add(+value, 'month').add(+this.form.expiry.expiryDays, 'days').format('YYYY年 MM月 DD日')
+                    this.form.expiryDate = this.form.packageId === this.form.oldPackageId
+                        ? dayjs().add(+value, 'month').add(+this.form.expiry.expiryDays - 1, 'days').format('YYYY年 MM月 DD日')
+                        : dayjs(this.student.expiryDate).add(+value, 'month').add(+this.form.expiry.expiryDays - 1, 'days').format('YYYY年 MM月 DD日')
                     break
                 case 'expiryDays':
                     this.form.expiry.expiryDays = +value
-                    this.form.expiryDate = dayjs(this.student.expiryDate).add(+this.form.expiry.expiryMonths, 'month').add(+value, 'days').format('YYYY年 MM月 DD日')
+                    this.form.expiryDate = this.form.packageId === this.form.oldPackageId
+                        ? dayjs().add(+this.form.expiry.expiryMonths, 'month').add(+value - 1, 'days').format('YYYY年 MM月 DD日')
+                        : dayjs(this.student.expiryDate).add(+this.form.expiry.expiryMonths, 'month').add(+value - 1, 'days').format('YYYY年 MM月 DD日')
                     break
                 case 'basicStudyDays':
                     this.form.basicStudyDays = +value
@@ -760,7 +781,7 @@ export default {
             try {
                 await this.$http.post('/mini/student/updateStudent', data)
                 this.$toast({ title: '修改成功！', icon: 'success' })
-                uni.redirectTo({ url: '/pages/audition/updateSuccess/index' })
+                uni.redirectTo({ url: '/pages/success/index?from=update' })
             } finally {
                 uni.hideLoading()
             }

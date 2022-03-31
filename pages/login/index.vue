@@ -56,6 +56,7 @@ export default {
                                 uni.setStorageSync('token', token)
                                 uni.setStorageSync('phone', phone)
                                 uni.setStorageSync('userId', id)
+                                console.log(token)
 
                                 vm.$store.dispatch('tabBar/setTabbar', accountType) // 手动更新store
 
