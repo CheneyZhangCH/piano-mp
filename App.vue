@@ -16,9 +16,6 @@
 	/* 每个页面公共css */
 	@import "./common/uni.css";
 
-	/* 动画库 */
-	@import "./common/animate.css";
-
 	/* 自定义样式库 */
 	@import "./common/free.css";
 
