@@ -73,7 +73,7 @@
                 class="btn"
                 :class="{ confirm: !disabled, disabled }"
                 :disabled="disabled"
-                @click="handleSubmit"
+                @click="submit"
             >确认</button>
         </view>
     </view>
@@ -101,35 +101,40 @@ export default {
         this.contractId = contractInfo.id
     },
     methods: {
-        async handleSubmit() {
-            if (this.loading) return
-            this.loading = true
+        submit() {
             const that = this
+            const coverUrl = uni.getStorageSync('coverUrl')
+            if (coverUrl) {
+                return this.confirm(coverUrl)
+            }
             wx.getUserProfile({
                 desc: '完善用户信息',
-                success: async res => {
+                success: res => {
                     const { avatarUrl } = res.userInfo
-                    const data = {
-                        data: {
-                            contractId: that.contractId,
-                            coverUrl: avatarUrl
-                        }
-                    }
-                    try {
-                        await that.$http.post('/mini/studentContract/confirmContract', data)
-                        this.$toast({ title: '确认成功！', icon: 'success' })
-                        uni.redirectTo({ url: '/pages/student/videos/index' })
-                    } finally {
-                        that.loading = false
-                    }
+                    that.confirm(avatarUrl)
                 },
                 fail: (err) => {
                     console.log(err)
-                },
-                complete: () => {
-                    that.loading = false
                 }
             })
+        },
+
+        async confirm(coverUrl) {
+            if (this.loading) return
+            this.loading = true
+            const data = {
+                data: {
+                    contractId: this.contractId,
+                    coverUrl
+                }
+            }
+            try {
+                await this.$http.post('/mini/studentContract/confirmContract', data)
+                this.$toast({ title: '确认成功！', icon: 'success' })
+                uni.redirectTo({ url: '/pages/student/videos/index' })
+            } finally {
+                this.loading = false
+            }
         }
     }
 }

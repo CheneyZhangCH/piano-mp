@@ -53,15 +53,11 @@
             </view>
             <view v-if="form.packageId" class="package-info">
                 <template v-if="form.courses.length">
-                    <view
-                        v-for="(course, index) in form.courses"
-                        :key="course.courseId"
-                        class="course"
-                    >
+                    <view v-for="course in form.courses" :key="course.courseId" class="course">
                         <view class="label">
                             <text>{{ course.courseName }}</text>
                             <text>{{ course.courseNum + ' ' + '节' }}</text>
-                            <view class="action" @click="dialogOpen('course', index)">
+                            <view class="action" @click="dialogOpen('course', course.subscript)">
                                 <text>修改课时</text>
                                 <image src="/static/images/teacher/edit.png" />
                             </view>
@@ -72,9 +68,8 @@
                                 :class="{ 'placeholder': !course.teacherName }"
                                 :value="course.teacherIndex"
                                 :range="course.teachers"
-                                :data-index="index"
                                 range-key="teacherName"
-                                @change="teacherChange"
+                                @change="teacherChange($event, course.subscript)"
                             >
                                 <text>{{ course.teacherName || '选择老师' }}</text>
                                 <image src="/static/images/audition/arrow_down.png" />
@@ -82,7 +77,7 @@
                             <view
                                 class="timetable"
                                 :class="{ 'placeholder': !course.timetablePeriodId }"
-                                @click="timetableChange(index)"
+                                @click="timetableChange(course.subscript)"
                             >
                                 <text>
                                     {{
@@ -190,7 +185,7 @@
                         <view
                             v-for="dayOfWeek in dayOfWeekArr"
                             :key="dayOfWeek.value"
-                            :class="{ 'active': dayOfWeek.value === timetableForm.dayOfWeek }"
+                            :class="{ 'active': dayOfWeek.value === timetableDayOfWeek }"
                             class="bottom-popup-content-left-item inline-flex align-center justify-center"
                             @click="toggleDayOfWeek(dayOfWeek.value)"
                         >{{ dayOfWeek.label }}</view>
@@ -204,7 +199,10 @@
                             @click="selectPeriod(period)"
                         >
                             <text>{{ period.periodName }}</text>
-                            <text v-if="period.remainStudentNum > 1" class="num">
+                            <text
+                                v-if="period.courseType === 'one' ? period.remainStudentNum > 1 : period.remainStudentNum > 0"
+                                class="num"
+                            >
                                 {{
                                     period.remainStudentNum + '人'
                                 }}
@@ -215,9 +213,7 @@
             </view>
         </uni-popup>
 
-        <!-- 学生详情 -->
         <Student :student-id="dialogStudentId" @close="dialogStudentId = 0" />
-
         <ConflictGroup ref="group" :groups="groups" @confirm="groupConfirm" />
     </view>
 </template>
@@ -259,15 +255,11 @@ export default {
                 { label: '周日', value: 7 },
             ],
 
-            timetablePeriods: [],
-            timetableCourse: {},
-            timetableCourseIndex: 0,
-
-            timetableForm: {
-                dayOfWeek: 2,
-                timetablePeriodId: 1
-            },
             studentUsableTimetablePeriod: [], // 可选择上课时间
+            timetablePeriods: [], // 周x可选择课程
+            timetableCourse: {}, // 课程+老师
+            timetableCourseIndex: 0,
+            timetableDayOfWeek: 2,// 当前选择周x
 
             dialogVisible: false,
             dialogMode: '',
@@ -331,7 +323,8 @@ export default {
                 const res = await this.$http.get('/mini/student/getStudentCurrentPackageAndTicket?studentId=' + this.studentId)
 
                 this.detail = res.data ?? {}
-                this.trainTickets = res.data?.trainTickets ?? []
+                // 续课时，已有的陪练券是不带出来
+                this.trainTickets = []
 
                 const packageRes = await this.$http.get('/mini/coursePackage/listActive')
                 this.packages = packageRes.data?.filter(_ => _.id !== this.detail.coursePackage.packageId) ?? []
@@ -382,18 +375,21 @@ export default {
                         result.push({
                             courseId, courseNum: remainCourseNum + num, courseName,
                             teacherIndex, teacherId, teacherName, teachers,
+                            timetableId, timetablePeriodId, timetablePeriodName,
                             dayOfWeek,
-                            timetableId, timetablePeriodId, timetablePeriodName
+                            subscript: i // dom里循环生成的index有问题，待解决
                         })
                     }
                 } else {
+                    this.packageCoursesEqual = false
                     for (let i = 0; i < filterCourses.length; i++) {
                         const { courseId, num: courseNum, courseName } = filterCourses[i]
                         const teacherRes = await this.$http.get(`/mini/teacher/listByCourseId?courseId=${courseId}`)
                         result.push({
                             courseId, courseNum, courseName,
                             teacherIndex: 0, teacherId: null, teacherName: null, teachers: teacherRes.data ?? [],
-                            timetableId: null, timetablePeriodId: null, timetablePeriodName: null
+                            timetableId: null, timetablePeriodId: null, timetablePeriodName: null,
+                            subscript: i
                         })
                     }
                 }
@@ -411,8 +407,7 @@ export default {
             this.getPackage()
         },
 
-        teacherChange(e) {
-            const courseIndex = e.target.dataset.index
+        teacherChange(e, courseIndex) {
             const course = this.form.courses[courseIndex]
             const { teacherName, accountId } = course.teachers[+e.detail.value]
 
@@ -422,11 +417,9 @@ export default {
             this.$set(course, 'timetableId', null)
             this.$set(course, 'timetablePeriodId', null)
             this.$set(course, 'timetablePeriodName', null)
-
-            this.studentUsableTimetablePeriod = undefined
         },
 
-        async timetableChange(courseIndex, dayOfWeek = 2) {
+        async timetableChange(courseIndex) {
             this.timetableCourseIndex = courseIndex
             this.timetableCourse = this.form.courses[courseIndex]
             const teacherId = this.timetableCourse.teacherId
@@ -434,22 +427,21 @@ export default {
             if (!teacherId) {
                 return uni.showToast({ title: '请先选择老师', icon: 'none' })
             }
-            if (!Array.isArray(this.studentUsableTimetablePeriod) || this.studentUsableTimetablePeriod.length === 0) {
-                const data = {
-                    courseId, teacherId
-                }
-                if (this.studentId) data.excludeStudentId = this.studentId
-                const timetableRes = await this.$http.post('/mini/courseTimetable/listStudentUsableTimetablePeriod', { data })
-                this.studentUsableTimetablePeriod = timetableRes.data
+            // 每次重新请求
+            const data = {
+                courseId, teacherId
             }
-            this.timetablePeriods = (this.studentUsableTimetablePeriod.find(item => item.dayOfWeek === dayOfWeek) || {}).periods || []
+            if (this.studentId) data.excludeStudentId = this.studentId
+            const timetableRes = await this.$http.post('/mini/courseTimetable/listStudentUsableTimetablePeriod', { data })
+            this.studentUsableTimetablePeriod = timetableRes.data
+            this.toggleDayOfWeek()
             this.$nextTick(() => {
                 this.$refs.timetablePopup.open()
             })
         },
 
-        toggleDayOfWeek(dayOfWeek) {
-            this.timetableForm.dayOfWeek = dayOfWeek
+        toggleDayOfWeek(dayOfWeek = 2) {
+            this.timetableDayOfWeek = dayOfWeek
             this.timetablePeriods = (this.studentUsableTimetablePeriod.find(item => item.dayOfWeek === dayOfWeek) || {}).periods || []
         },
 
@@ -561,9 +553,12 @@ export default {
             try {
                 const res = await this.$http.get('/mini/teacherGroup/listByStudentPackageId?studentPackageId=' + this.coursePackage.id)
                 if (res.data?.length) {
-                    this.groups = res.data
-                    this.$refs.group.open()
-                    return
+                    if (res.data.length > 1) {
+                        this.groups = res.data
+                        this.$refs.group.open()
+                        return
+                    }
+                    this.groupId = res.data[0].id
                 }
                 this.confirm()
             } finally {
@@ -592,11 +587,7 @@ export default {
                     ticketValid = false
                     break
                 }
-                trainTickets.push({
-                    num: item.num,
-                    trainTicketId: item.id,
-                    ticketName: item.ticketName
-                })
+                trainTickets.push(item)
             }
             if (!ticketValid) return this.$toast({ title: '请输入正确的优惠券个数！', icon: 'none' })
             const { phone } = this.detail

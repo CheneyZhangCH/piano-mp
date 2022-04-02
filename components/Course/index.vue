@@ -11,7 +11,7 @@
                                 class="gender"
                                 :src="`/static/images/${student.gender || 'male'}_selected.png`"
                             />
-                            <text v-if="student.age" class="age">{{ student.age }}岁</text>
+                            <text class="age">{{ student.age }}岁</text>
                             <text v-if="student.packageName" class="packageName ellipsis">{{ student.packageName }}</text>
                         </view>
                         <view class="detail" @click="$emit('student', student.studentId)">查看详情</view>

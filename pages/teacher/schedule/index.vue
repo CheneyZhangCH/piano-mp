@@ -1,103 +1,56 @@
 <template>
     <view class="page">
         <view class="page-title">
-            <text
-                v-for="day in dayOfWeekArr"
-                :key="day.value"
-                class="day-of-week"
-                :class="{ active: dayOfWeek === day.value }"
-                @click="handleToggleDayOfWeek(day)"
-            >
+            <text v-for="day in dayOfWeekArr" :key="day.value" class="day-of-week"
+                :class="{ active: dayOfWeek === day.value }" @click="handleToggleDayOfWeek(day)">
                 {{ day.label }}
             </text>
         </view>
         <view class="page-content">
             <template v-if="periods.length">
                 <!-- v-if="['work', 'rest'].includes(period.periodType)" -->
-                <view
-                    v-for="period in periods"
-                    :key="period.timetablePeriodId"
-                    class="period-item"
-                >
+                <view v-for="period in periods" :key="period.timetablePeriodId" class="period-item">
                     <template v-if="period.periodType === 'work'">
                         <!-- 1表示一对一生效,2表示一对多生效,3表示无安排,4表示一对一待生效 -->
-                        <view
-                            v-if="
-                                period.periodStatus === '1' && period.oneCourse
-                            "
-                            class="period-main"
-                        >
-                            <image
-                                class="avatar"
-                                :src="
-                                    period.oneCourse.student.coverUrl ||
-                                    defaultCover
-                                "
-                                @click="openStudent(period)"
-                            />
-                            <view
-                                v-if="period.oneCourse.newStudent"
-                                class="period-status new"
-                                >新学员
+                        <view v-if="
+                            period.periodStatus === '1' && period.oneCourse
+                        " class="period-main">
+                            <image class="avatar" :src="
+                                period.oneCourse.student.coverUrl ||
+                                defaultCover
+                            " @click="openStudent(period)" />
+                            <view v-if="period.oneCourse.newStudent" class="period-status new">新学员
                             </view>
                             <view class="period-name">{{
                                 period.periodName
                             }}</view>
                             <view class="period-content">
                                 <view class="period-content-title">
-                                    <text
-                                        class="student-name"
-                                        :class="{
-                                            weekHaveFinish:
-                                                period.oneCourse.weekHaveFinish,
-                                        }"
-                                        >{{
-                                            period.oneCourse.student.studentName
-                                        }}</text
-                                    >
-                                    <image
-                                        class="gender-icon"
-                                        :src="`/static/images/student/${
-                                            period.oneCourse.student.gender ||
-                                            'male'
-                                        }-selected.png`"
-                                    ></image>
+                                    <text class="student-name" :class="{
+                                        weekHaveFinish:
+                                            period.oneCourse.weekHaveFinish
+                                    }">{{ period.oneCourse.student.studentName }}</text>
+                                    <image class="gender-icon" :src="`/static/images/student/${period.oneCourse.student.gender ||
+                                    'male'
+                                    }-selected.png`"></image>
                                     <text class="student-age">{{
                                         period.oneCourse.student.age + "岁"
                                     }}</text>
                                 </view>
-                                <view
-                                    v-if="period.oneCourse.chapters.length"
-                                    class="chapter"
-                                >
-                                    <view
-                                        v-for="chapter in period.oneCourse
-                                            .chapters"
-                                        :key="chapter.id"
-                                        class="chapter-item ellipsis"
-                                    >
-                                        {{ chapter.chapterName }}
+                                <view v-if="period.oneCourse.chapters.length" class="chapter">
+                                    <view v-for="chapter in period.oneCourse
+                                    .chapters" :key="chapter.id" class="chapter-item ellipsis">
+                                        ({{ chapter.bookName }}){{ chapter.chapterName }}
                                     </view>
                                 </view>
                             </view>
-                            <view
-                                v-if="!teacherId"
-                                class="finish-lesson"
-                                @click="handleFinishLesson(period)"
-                                >消课</view
-                            >
+                            <view v-if="!teacherId" class="finish-lesson" @click="handleFinishLesson(period)">消课</view>
                         </view>
-                        <view
-                            v-else-if="
-                                period.periodStatus === '2' && period.moreCourse
-                            "
-                            class="period-main"
-                        >
-                            <image
-                                class="avatar"
-                                src="/static/images/teacher/course_type_more.png"
-                                @click="openCourse(period)"
-                            />
+                        <view v-else-if="
+                            period.periodStatus === '2' && period.moreCourse
+                        " class="period-main">
+                            <image class="avatar" src="/static/images/teacher/course_type_more.png"
+                                @click="openCourse(period)" />
                             <view class="period-name">{{
                                 period.periodName
                             }}</view>
@@ -106,65 +59,37 @@
                                     <text class="course-name">
                                         {{
                                             period.moreCourse.course
-                                                .courseName +
-                                            (period.remainStudentNum === 0
-                                                ? "(满班)"
-                                                : "")
+                                                .courseName
                                         }}
                                     </text>
                                 </view>
-                                <view
-                                    v-if="
-                                        Array.isArray(
-                                            period.moreCourse.students
-                                        )
-                                    "
-                                    class="student ellipsis"
-                                >
-                                    <text
-                                        v-for="student in period.moreCourse
-                                            .students"
-                                        :key="student.studentId"
-                                        :class="{
-                                            weekHaveFinish:
-                                                student.weekHaveFinish,
-                                        }"
-                                        class="student-item"
-                                    >
+                                <view v-if="
+                                    Array.isArray(
+                                        period.moreCourse.students
+                                    )
+                                " class="student ellipsis">
+                                    <text v-for="student in period.moreCourse
+                                    .students" :key="student.studentId"
+                                        :class="{ weekHaveFinish: student.weekHaveFinish }" class="student-item">
                                         {{ student.studentName }}
                                     </text>
                                 </view>
-                                <view
-                                    v-if="period.moreCourse.chapter"
-                                    class="chapter ellipsis"
-                                >
-                                    <view class="chapter-item">
-                                        {{
-                                            period.moreCourse.chapter
-                                                .chapterName
-                                        }}
+                                <view v-if="period.moreCourse.chapter" class="chapter">
+                                    <view class="chapter-item ellipsis">
+                                        ({{
+                                            period.moreCourse.chapter.bookName
+                                        }}){{ period.moreCourse.chapter.chapterName }}
                                     </view>
                                 </view>
                             </view>
-                            <view
-                                v-if="!teacherId"
-                                class="finish-lesson"
-                                @click="handleFinishLesson(period)"
-                                >消课</view
-                            >
+                            <view v-if="!teacherId" class="finish-lesson" @click="handleFinishLesson(period)">消课</view>
                         </view>
-                        <view
-                            v-else-if="period.periodStatus === '3'"
-                            class="period-main"
-                        >
+                        <view v-else-if="period.periodStatus === '3'" class="period-main">
                             <view class="period-name">{{
                                 period.periodName
                             }}</view>
                         </view>
-                        <view
-                            v-else-if="period.periodStatus === '4'"
-                            class="period-main lock"
-                        >
+                        <view v-else-if="period.periodStatus === '4'" class="period-main lock">
                             <view class="period-name">{{
                                 period.periodName
                             }}</view>
@@ -174,10 +99,7 @@
                         </view>
                     </template>
 
-                    <view
-                        v-if="period.periodType === 'rest'"
-                        class="period-rest"
-                    >
+                    <view v-if="period.periodType === 'rest'" class="period-rest">
                         <view class="period-rest-divider"></view>
                         <view class="period-rest-name">
                             {{ period.periodName }} 休息
@@ -191,27 +113,15 @@
         <customTabbar v-if="!teacherId" :active="0" />
 
         <!-- 一对多详情（课程）| 对学生详情组件先后顺序有要求 -->
-        <Course
-            ref="course"
-            :detail="courseDetail"
-            @student="(id) => (studentId = id)"
-        />
+        <Course ref="course" :detail="courseDetail" @student="(id) => (studentId = id)" />
 
         <!-- 学生详情 -->
         <Student :student-id="studentId" @close="studentId = 0" />
 
         <!-- 消课 - 一对一 -->
-        <FinishLessonOne
-            ref="finishLessonOne"
-            :detail="finishLessonDetail"
-            @success="handleSearch"
-        />
+        <FinishLessonOne ref="finishLessonOne" :detail="finishLessonDetail" @success="handleSearch" />
         <!-- 消课 - 一对多 -->
-        <FinishLessonMore
-            ref="finishLessonMore"
-            :detail="finishLessonDetail"
-            @success="handleSearch"
-        />
+        <FinishLessonMore ref="finishLessonMore" :detail="finishLessonDetail" @success="handleSearch" />
     </view>
 </template>
 
@@ -230,7 +140,8 @@ export default {
     },
     data() {
         return {
-            defaultCover: "https://static.gangqintonghua.com/img/touxiang/pic1.webp",
+            defaultCover:
+                "https://static.gangqintonghua.com/img/touxiang/pic1.webp",
             userId: 0,
             // teacherId 存在表示具体老师，否则表示老师端-登录人课表
             teacherId: 0,
@@ -267,7 +178,7 @@ export default {
             });
         }
 
-        const week = new Date().getDay()
+        const week = new Date().getDay();
         this.dayOfWeek = week === 1 ? 2 : week;
         this.handleSearch();
     },
@@ -278,7 +189,7 @@ export default {
         },
 
         async handleSearch(loading = true) {
-            if(loading) uni.showLoading({ title: '加载中' })
+            if (loading) uni.showLoading({ title: "加载中" });
             try {
                 const res = await this.$http.post(
                     `/mini/courseTimetable/getTeacherDayTimetable`,
@@ -292,7 +203,7 @@ export default {
                 const { periods } = res.data ?? {};
                 this.periods = periods || [];
             } finally {
-                if(loading) uni.hideLoading()
+                if (loading) uni.hideLoading();
                 uni.stopPullDownRefresh();
             }
         },

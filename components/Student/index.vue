@@ -72,7 +72,7 @@
                     <view class="section-divider"></view>
                     <view v-if="Array.isArray(coursePackage.courses)" class="course px-28">
                         <view v-for="course in coursePackage.courses" :key="course.courseId" class="course-item">
-                            <view class="course-item-title ellipsis" :class="{ warning: course.remainCourseNum < 6 }">
+                            <view class="course-item-title ellipsis" :class="{ warning: course.remainCourseNum <= 6 }">
                                 <text>{{
                                     course.courseName +
                                         '(' +
@@ -108,7 +108,8 @@
                     <!-- 试听端、管理端 -->
                     <template v-if="['AUDITION', 'ADMIN'].includes(accountType)">
                         <view class="section-divider"></view>
-                        <view class="expire-date px-28" :class="{ 'warning': getExpiryDateWarning(student.expiryDate) }">
+                        <view class="expire-date px-28"
+                            :class="{ 'warning': getExpiryDateWarning(student.expiryDate) }">
                             {{ '账户有效期：剩余' + getExpiryDate(student.expiryDate) }}
                         </view>
                         <view class="section-divider"></view>
@@ -168,7 +169,8 @@
             </view>
         </uni-popup>
 
-        <uni-popup v-if="!['AUDITION', 'ADMIN', 'SUPER_ADMIN'].includes(accountType)" ref="grade" type="bottom" class="grade">
+        <uni-popup v-if="!['AUDITION', 'ADMIN', 'SUPER_ADMIN'].includes(accountType)" ref="grade" type="bottom"
+            class="grade">
             <view class="grade-main">
                 <view class="grade-main-title">
                     <text class="btn" @click="$refs.grade.close()">取消</text>
@@ -360,9 +362,12 @@ export default {
             try {
                 const res = await this.$http.get('/mini/teacherGroup/listByStudentPackageId?studentPackageId=' + this.coursePackage.id)
                 if (res.data?.length) {
-                    this.groups = res.data
-                    this.$refs.group.open()
-                    return
+                    if (res.data.length > 1) {
+                        this.groups = res.data
+                        this.$refs.group.open()
+                        return
+                    }
+                    this.groupId = res.data[0].id
                 }
                 this.disContinueConfirm()
             } finally {
@@ -388,8 +393,8 @@ export default {
                 await this.$http.post('/mini/student/discontinueStudent', data)
                 this.$toast({ title: '不续课成功！', icon: 'success' })
                 uni.navigateTo({ url: '/pages/success/index?from=disContinue' })
-            } finally {
-
+            } catch (err) {
+                console.log(err)
             }
         },
 

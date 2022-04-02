@@ -60,7 +60,7 @@
                                 class="gender"
                                 :src="`/static/images/student/${item.student.gender || 'male'}-selected.png`"
                             />
-                            <text v-if="item.student.age" class="age">{{ item.student.age + '岁' }}</text>
+                            <text class="age">{{ item.student.age + '岁' }}</text>
                             <text class="packageName">{{ item.coursePackage.packageName }}</text>
                             <text class="trainTicketNum">{{ '课程陪练券' + item.trainTicketNum + '张' }}</text>
                         </view>
@@ -104,6 +104,7 @@
                 </view>
             </view>
         </scroll-view>
+
         <Student :student-id="studentId" @close="studentId = 0" />
         <Remark ref="remark" :detail="studentDetail" @confirm="init" />
     </view>

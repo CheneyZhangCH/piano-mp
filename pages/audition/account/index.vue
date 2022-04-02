@@ -241,7 +241,7 @@
                 <view class="bottom-popup-content flex">
                     <view class="bottom-popup-content-left inline-flex flex-column">
                         <view v-for="dayOfWeek in dayOfWeekArr" :key="dayOfWeek.value"
-                            :class="{ 'active': dayOfWeek.value === timetableForm.dayOfWeek }"
+                            :class="{ 'active': dayOfWeek.value === timetableDayOfWeek }"
                             class="bottom-popup-content-left-item inline-flex align-center justify-center"
                             @click="toggleDayOfWeek(dayOfWeek.value)">
                             {{ dayOfWeek.label }}
@@ -253,9 +253,11 @@
                             class="bottom-popup-content-right-item flex align-center justify-between"
                             @click="selectPeriod(period)">
                             <text>{{ period.periodName }}</text>
-                            <text v-if="period.remainStudentNum > 1" class="num">{{
-                                period.remainStudentNum + '人'
-                            }}</text>
+                            <text
+                                v-if="period.courseType === 'one' ? period.remainStudentNum > 1 : period.remainStudentNum > 0"
+                                class="num">{{
+                                    period.remainStudentNum + '人'
+                                }}</text>
                         </view>
                     </view>
                 </view>
@@ -304,28 +306,26 @@ export default {
                 { label: '周六', value: 6 },
                 { label: '周日', value: 7 },
             ],
-            timetablePeriods: [],
-            timetableCourse: {},
-            timetableCourseIndex: 0,
 
-            timetableForm: {
-                dayOfWeek: 2,
-                timetablePeriodId: 1
-            },
             studentUsableTimetablePeriod: [], // 可选择上课时间
+            timetablePeriods: [], // 周x可选择课程
+            timetableCourse: {},// 课程+老师
+            timetableCourseIndex: 0,
+            timetableDayOfWeek: 2,// 当前选择周x
 
             dialogVisible: false,
             dialogMode: '',
             dialogInputValue: '', // 修改课时输入框默认值
             dialogCourseIndex: 0, // 修改课时对应的课程index
 
-            studentId: 0,
-            student: {},
-            expiryIndex: 0,
-            deleteTicketIds: [],
             trainTickets: [], // 已有陪练券
             ticketIndex: 0,
             tickets: [], // 可选陪练券
+            deleteTicketIds: [],
+
+            studentId: 0,
+            student: {},
+            expiryIndex: 0,
         }
     },
     onLoad(option) {
@@ -372,7 +372,7 @@ export default {
             let age = curYear - birthYear
             if (curMonth > birthMonth) {
                 age += 1
-            } else if (curMonth === birthMonth && curDay >= birthDay) {
+            } else if (curMonth === birthMonth && curDay > birthDay) {
                 age += 1
             }
             this.form.age = age
@@ -544,22 +544,21 @@ export default {
             if (!teacherId) {
                 return uni.showToast({ title: '请先选择老师', icon: 'none' })
             }
-            if (!Array.isArray(this.studentUsableTimetablePeriod) || this.studentUsableTimetablePeriod.length === 0) {
-                const data = {
-                    courseId, teacherId
-                }
-                if(this.studentId) data.excludeStudentId = this.studentId
-                const timetableRes = await this.$http.post('/mini/courseTimetable/listStudentUsableTimetablePeriod', { data })
-                this.studentUsableTimetablePeriod = timetableRes.data
+            // 每次重新请求
+            const data = {
+                courseId, teacherId
             }
-            this.timetablePeriods = (this.studentUsableTimetablePeriod.find(item => item.dayOfWeek === dayOfWeek) || {}).periods || []
+            if (this.studentId) data.excludeStudentId = this.studentId
+            const timetableRes = await this.$http.post('/mini/courseTimetable/listStudentUsableTimetablePeriod', { data })
+            this.studentUsableTimetablePeriod = timetableRes.data
+            this.toggleDayOfWeek()
             this.$nextTick(() => {
                 this.$refs.timetablePopup.open()
             })
         },
 
-        toggleDayOfWeek(dayOfWeek) {
-            this.timetableForm.dayOfWeek = dayOfWeek
+        toggleDayOfWeek(dayOfWeek = 2) {
+            this.timetableDayOfWeek = dayOfWeek
             this.timetablePeriods = (this.studentUsableTimetablePeriod.find(item => item.dayOfWeek === dayOfWeek) || {}).periods || []
         },
 

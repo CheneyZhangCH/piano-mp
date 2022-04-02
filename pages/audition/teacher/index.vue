@@ -46,7 +46,7 @@
                                 <view v-if="Array.isArray(period.oneCourse.coursePackage.courses)" class="course">
                                     <text v-for="course in period.oneCourse.coursePackage.courses"
                                         :key="course.courseId" class="course-item"
-                                        :class="{ 'warning': course.remainCourseNum < 6 }">
+                                        :class="{ 'warning': course.remainCourseNum <= 6 }">
                                         {{ course.courseName + '：' + course.remainCourseNum + '节' }}
                                     </text>
                                 </view>
@@ -83,7 +83,7 @@
                                         {{
                                             period.moreCourse.course
                                                 .courseName +
-                                                (period.moreCourse.students.length >= period.remainStudentNum
+                                                (period.remainStudentNum === 0
                                                     ? "(满班)"
                                                     : "")
                                         }}
@@ -142,10 +142,7 @@
         <!-- 一对多详情（课程）| 对学生详情组件先后顺序有要求 -->
         <Course ref="course" :detail="courseDetail" @student="(id) => (studentId = id)" />
 
-        <!-- 学生详情 -->
         <Student ref="student" :student-id="studentId" @close="studentId = 0" @del="studentId = 0" />
-
-        <!-- 备注 -->
         <Remark ref="remark" :detail="studentDetail" @confirm="handleSearch" />
     </view>
 </template>
@@ -208,7 +205,7 @@ export default {
         this.handleSearch();
     },
     onShow() {
-        if(this.studentId) this.$refs.student.getStudent()
+        if (this.studentId) this.$refs.student.getStudent()
     },
     methods: {
         handleToggleDayOfWeek(day) {

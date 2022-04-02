@@ -111,11 +111,12 @@ export default {
                                 verifyCode: vm.verifyCode,
                             }
                         }).then(async res => {
-                            const { accountType, token, phone, id } = res.data
+                            const { accountType, token, phone, id, coverUrl } = res.data
                             uni.setStorageSync('accountType', accountType)
                             uni.setStorageSync('token', token)
                             uni.setStorageSync('phone', phone)
                             uni.setStorageSync('userId', id)
+                            uni.setStorageSync('coverUrl', coverUrl)
                             console.log(token)
 
                             vm.$store.dispatch('tabBar/setTabbar', accountType) // 手动更新store

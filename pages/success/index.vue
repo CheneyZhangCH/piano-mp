@@ -1,6 +1,10 @@
 <template>
     <view class="page" :class="from">
-        <image v-if="icon[from]" class="icon" :src="`https://static.gangqintonghua.com/img/icon/${icon[from]}.png`" />
+        <image
+            v-if="icon[from]"
+            class="icon"
+            :src="`https://static.gangqintonghua.com/img/icon/${icon[from]}.png`"
+        />
         <view class="title">{{ title[from] }}</view>
         <view v-if="subTitle[from]" class="sub-title">{{ subTitle[from] }}</view>
         <button class="btn" @click="back">我知道了</button>
@@ -54,6 +58,20 @@ export default {
     },
     methods: {
         back() {
+            // 退费成功后需刷新页面（现重启-可能有问题）
+            if (this.from === 'refund') {
+                const curPages = getCurrentPages()
+                const { options, route } = curPages[1]
+                let url = '/' + route
+                let urlParams = []
+                Object.entries(options).forEach(([k,v]) => {
+                    urlParams.push(`${k}=${v}`)
+                })
+                if (urlParams.length) {
+                    url += `?${urlParams.join('&')}`
+                }
+                return uni.reLaunch({ url })
+            }
             uni.navigateBack({ delta: 1 })
         }
     }

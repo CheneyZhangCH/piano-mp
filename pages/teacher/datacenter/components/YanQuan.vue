@@ -62,9 +62,6 @@ export default {
     methods: {
         open() {
             this.step = 0
-            // AFAADKSLIJ
-            // AFFFDAFDA3
-            // AFFFD3AFDA
             this.code = ''
             this.ticketInfo = null
             this.loading = false
@@ -94,7 +91,7 @@ export default {
         async checkConfirm() {
             if (this.loading) return
             const param = {
-                data: this.ticketInfo.ticketId
+                data: this.ticketInfo.id
             }
             this.loading = true
             try {

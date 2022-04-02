@@ -1,6 +1,5 @@
 
 <template>
-    <view class="page"></view>
 </template>
 
 <script lang="js">
@@ -18,6 +17,7 @@ export default {
                 url: '/pages/login/index'
             })
         }
+        console.log(token)
         this.redirect()
     },
     methods: {

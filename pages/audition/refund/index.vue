@@ -60,9 +60,7 @@
             >确认</button>
         </view>
 
-        <!-- 学生详情 -->
         <Student :student-id="dialogStudentId" @close="dialogStudentId = 0" />
-
         <ConflictGroup ref="group" :groups="groups" @confirm="groupConfirm" />
     </view>
 </template>
@@ -144,9 +142,12 @@ export default {
             try {
                 const res = await this.$http.get('/mini/teacherGroup/listByStudentPackageId?studentPackageId=' + this.coursePackage.id)
                 if (res.data?.length) {
-                    this.groups = res.data
-                    this.$refs.group.open()
-                    return
+                    if (res.data.length > 1) {
+                        this.groups = res.data
+                        this.$refs.group.open()
+                        return
+                    }
+                    this.groupId = res.data[0].id
                 }
                 this.confirm()
             } catch (err) {
