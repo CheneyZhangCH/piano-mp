@@ -1,25 +1,23 @@
 <template>
     <view class="login-all-wrap">
-        <view class="login-image-wrap">
-            <image
-                class="login-image"
-                src="https://static.gangqintonghua.com/img/beijing/login.png"
-            />
-        </view>
+        <image
+            class="login-image"
+            src="https://static.gangqintonghua.com/img/beijing/login.png"
+        />
         <view class="login-btn-wrap">
-            <button
-                class="login-btn-text self-login"
-                open-type="getPhoneNumber"
-                @getphonenumber="getUserPhoneNumber"
-            >
-                本机号码一键登录
+            <button open-type="getPhoneNumber" @getphonenumber="getUserPhoneNumber">
+                <image src="https://static.gangqintonghua.com/img/icon/login-btn.png" />
             </button>
             <button @click="navToLogin">
-                <view class="login-btn-text other-login">
-                    <text>其他手机号码登录</text>
-                </view>
+                <image src="https://static.gangqintonghua.com/img/icon/other-login-btn.png" />
             </button>
         </view>
+
+        <pianoMessageBox
+            ref="error"
+            message="仅对内部学员开放 请使用已开通的手机号登录"
+            @confirm="errorConfirm"
+        />
     </view>
 </template>
 
@@ -30,19 +28,24 @@ export default {
             loading: false,
         }
     },
-    onReady() {},
-    onLoad() {},
+    onReady() { },
+    onLoad() { },
     methods: {
         async getUserPhoneNumber(e) {
             if (this.loading) return
             this.loading = true
-            const vm = this
 
+            if (!e.detail?.code) {
+                this.loading = false
+                this.$toast({ title: '用户拒绝！', icon: 'none' })
+                return
+            }
+
+            const vm = this
             wx.login({
                 success(res) {
                     if (res.code) {
-                        if(!e.detail?.code) return
-                        uni.showLoading({ title: '登录中',  mask: true })
+                        uni.showLoading({ title: '登录中', mask: true })
                         vm.$http
                             .post('/login/wechatPhoneLoginMini', {
                                 data: {
@@ -74,7 +77,7 @@ export default {
                                 if (accountType === 'STUDENT') {
                                     try {
                                         const res = await vm.$http.get('/mini/studentContract/getUnconfirmContract')
-                                        if(res.data) {
+                                        if (res.data) {
                                             uni.setStorageSync('contract', JSON.stringify(res.data))
                                             return uni.redirectTo({ url: '/pages/student/contract/index' })
                                         }
@@ -87,6 +90,12 @@ export default {
                                     return uni.redirectTo({ url: '/pages/teacher/schedule/index' })
                                 }
                             })
+                            .catch((err) => {
+                                // console.log(err, 'catch')
+                                if(err.code === 4014) {
+                                    vm.$refs.error.open()
+                                }
+                            })
                             .finally(() => {
                                 vm.loading = false
                                 uni.hideLoading()
@@ -95,107 +104,52 @@ export default {
                         this.loading = false
                         console.log('登录失败！' + res.errMsg)
                     }
-                },
+                }
             })
         },
 
         navToLogin() {
             uni.navigateTo({ url: '/pages/login/login' })
         },
+
+        errorConfirm() {
+            this.$refs.error.close()
+            uni.navigateTo({ url: '/pages/login/login' })
+        }
     },
 }
 </script>
 
 <style lang="scss" scoped>
-page {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-}
-
-.back-image {
-    float: left;
-    width: 40rpx;
-    height: 40rpx;
-    margin-top: 20rpx;
-    margin-left: 20rpx;
-}
-
 .login-all-wrap {
-    position: relative;
-    padding: 0;
-}
-
-.login-image-wrap {
     height: 100vh;
     width: 100vw;
-
-    .login-image {
-        height: 100vh;
-        width: 100vw;
-    }
+    overflow: hidden;
 }
-
+.login-image {
+    height: 100%;
+    width: 100%;
+}
 .login-btn-wrap {
-    position: absolute;
+    position: fixed;
     top: 900rpx;
-    z-index: 1;
-    width: 100vw;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
+    left: 50%;
+    transform: translateX(-50%);
     button {
-        position: relative;
-        height: 88rpx;
-        width: 350rpx;
-        border-radius: 44rpx;
         padding: 0;
-        background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
-        color: #e3e5e9;
-
-        & + button {
-            margin-top: 60rpx;
-            //color: #E3E5E9;
-            color: rgba(227, 229, 233, 0.15);
-            background-color: rgba(0, 0, 0, 0.15);
+        background: transparent;
+        border: 0;
+        line-height: 1;
+        + button {
+            margin-top: 58rpx;
+        }
+        &::after {
+            display: none;
+        }
+        image {
+            width: 350rpx;
+            height: 88rpx;
         }
     }
-
-    .login-btn-text {
-        width: 350rpx;
-        height: 88rpx;
-        border-radius: 44rpx;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 28rpx;
-        font-family: PingFangSC-Medium, PingFang SC;
-        font-weight: 500;
-    }
-
-    .self-login {
-        color: #e3e5e9;
-        background-color: linear-gradient(90deg, #61baec 0%, #84daee 100%);
-    }
-
-    .other-login {
-        color: #e3e5e9;
-        background-color: rgba(0, 0, 0, 0.15);
-    }
-
-    .login-btn-bg {
-        position: absolute;
-        left: 0;
-        top: 0;
-        border-radius: 44rpx;
-        display: inline-block;
-        width: 350rpx;
-        height: 88rpx;
-    }
-}
-
-button::after {
-    border: none;
 }
 </style>

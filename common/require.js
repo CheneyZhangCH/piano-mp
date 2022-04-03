@@ -44,6 +44,21 @@ export default {
                 });
             } else {
                 const response = responses[1].data; // 如果返回的结果是data.data的，嫌麻烦可以用这个，return res,这样只返回一个data
+                if (response.code === 4014) {
+                    uni.clearStorageSync()
+                    uni.showToast({
+                        title: '账户异常，请联系管理员！',
+                        icon: 'none'
+                    })
+                    setTimeout(() => {
+                        uni.navigateTo({
+                            url: '/pages/login/index'
+                        })
+                    }, 2000);
+                    return reject({
+                        message: "账户不存在！"
+                    })
+                }
                 if (response.code === 401) {
                     uni.clearStorageSync()
                     uni.showToast({
@@ -91,6 +106,24 @@ export default {
                 });
             } else {
                 const response = responses[1].data; // 如果返回的结果是data.data的，嫌麻烦可以用这个，return res,这样只返回一个data
+                if (response.code === 4014) {
+                    if (url.indexOf('wechatPhoneLoginMini') > -1) {
+                        return reject(response)
+                    }
+                    uni.clearStorageSync()
+                    uni.showToast({
+                        title: '账户异常，请联系管理员！',
+                        icon: 'none'
+                    })
+                    setTimeout(() => {
+                        uni.navigateTo({
+                            url: '/pages/login/index'
+                        })
+                    }, 2000);
+                    return reject({
+                        message: "账户不存在！"
+                    })
+                }
                 if (response.code === 401) {
                     uni.clearStorageSync()
                     uni.showToast({
@@ -116,5 +149,4 @@ export default {
             }
         })
     },
-
 }

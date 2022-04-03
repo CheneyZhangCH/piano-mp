@@ -1,7 +1,12 @@
 <template>
-    <view class="page">
-        <image class="back" src="../../static/images/login/login_exit.png" @click="back" />
-        <view class="title">其他手机号码登录</view>
+    <view class="page" :style="pageStyle">
+        <view class="custom-header">
+            <view class="title" :style="customTitleStyle">
+                <image class="back" src="../../static/images/login/cha.png" @click="back" />
+            </view>
+        </view>
+
+        <view class="page-title">其他手机号码登录</view>
         <view class="form">
             <view class="form-item">
                 <input
@@ -10,16 +15,24 @@
                     maxlength="11"
                     placeholder="请输入已开通的手机号码"
                     placeholder-style="color: #99A0AD; font-size: 32rpx;"
+                    @focus="e => phoneFocus = true"
+                    @blur="e => phoneFocus = false"
                 />
+                <image v-if="phoneClearVisible" class="clear" src="/static/images/login/login_exit.png" @click="phone = ''"/>
             </view>
             <view v-if="phone !== '13381796225'" class="form-item verify-code">
-                <input
-                    v-model="verifyCode"
-                    type="number"
-                    maxlength="6"
-                    placeholder="验证码"
-                    placeholder-style="color: #99A0AD; font-size: 32rpx;"
-                />
+                <view class="input">
+                    <input
+                        v-model="verifyCode"
+                        type="number"
+                        maxlength="6"
+                        placeholder="验证码"
+                        placeholder-style="color: #99A0AD; font-size: 32rpx;"
+                        @focus="e => codeFocus = true"
+                        @blur="e => codeFocus = false"
+                    />
+                    <image v-if="codeClearVisible" class="clear" src="/static/images/login/login_exit.png" @click="verifyCode = ''"/>
+                </view>
                 <button
                     class="send"
                     :class="{ confirm: sendCodeEnabled }"
@@ -52,16 +65,40 @@ export default {
             verifyCode: '',
             duration: undefined,
 
-            loading: false
+            loading: false,
+            headerHeight: 0,
+            headerTop: 0,
+            phoneFocus: false,
+            codeFocus: false
         }
     },
     computed: {
+        pageStyle() {
+            return `padding-top: ${(this.headerHeight + this.headerTop + 20) * 2}rpx;`
+        },
+        customTitleStyle() {
+            return `top: ${this.headerTop}px; height: ${this.headerHeight}px; line-height: ${this.headerHeight}px`
+        },
+
         loginEnabled: function () {
             return this.phone.length === 11 && (this.verifyCode.length === 6 || this.phone === '13381796225')
         },
         sendCodeEnabled: function () {
             return this.phone.length === 11 && this.duration === undefined
         },
+
+        phoneClearVisible() {
+            return this.phone && this.phoneFocus
+        },
+        codeClearVisible() {
+            return this.verifyCode && this.codeFocus
+        }
+    },
+    onLoad() {
+        let rect = wx.getMenuButtonBoundingClientRect();
+
+        this.headerHeight = rect.height
+        this.headerTop = rect.top
     },
     methods: {
         // 获取验证码
@@ -171,22 +208,37 @@ export default {
     padding: 0 50rpx;
     background-color: #fff;
     height: 100vh;
-    .back {
-        width: 36rpx;
-        height: 36rpx;
-        margin-top: 60rpx;
+    .custom-header {
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        .title {
+            position: absolute;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+        .back {
+            width: 36rpx;
+            height: 36rpx;
+            margin-left: 52rpx;
+        }
     }
-    .title {
+    &-title {
         height: 80rpx;
         line-height: 80rpx;
         font-size: 56rpx;
         font-weight: 500;
         color: #141f33;
-        margin-top: 80rpx;
+        margin-top: 52rpx;
         margin-bottom: 48rpx;
     }
     .form {
         &-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             border-bottom: 2rpx solid #f5f7fa;
             padding: 32rpx 0;
             input {
@@ -195,14 +247,21 @@ export default {
                 font-size: 32rpx;
                 line-height: 44rpx;
             }
+            .clear {
+                width: 28rpx;
+                height: 28rpx;
+                padding: 8rpx 0 8rpx 20rpx;
+            }
         }
         .verify-code {
-            display: flex;
-            align-items: center;
-            input {
+            .input {
                 flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
             }
             .send {
+                margin-left: 20rpx;
                 border-radius: 30rpx;
                 border: 2rpx solid #f5f7fa;
                 background-color: #fff;

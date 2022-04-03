@@ -16,6 +16,7 @@ export default {
     data() {
         return {
             from: '',
+            immediately: false,
             icon: {
                 complaint: 'wait-deal',
                 create: 'success',
@@ -55,6 +56,7 @@ export default {
             })
         }
         this.from = option?.from ?? ''
+        this.immediately = option?.immediately ?? false
     },
     methods: {
         back() {
@@ -64,13 +66,20 @@ export default {
                 const { options, route } = curPages[1]
                 let url = '/' + route
                 let urlParams = []
-                Object.entries(options).forEach(([k,v]) => {
+                Object.entries(options).forEach(([k, v]) => {
                     urlParams.push(`${k}=${v}`)
                 })
                 if (urlParams.length) {
                     url += `?${urlParams.join('&')}`
                 }
                 return uni.reLaunch({ url })
+            }
+            // 不续课（立即清退账户）直接返回首页（现重启-可能有问题）
+            if (this.immediately) {
+                return uni.reLaunch({ url: '/pages/index/index' })
+            }
+            if (this.from === 'create') {
+                return uni.redirectTo({ url: '/pages/audition/account/index' })
             }
             uni.navigateBack({ delta: 1 })
         }

@@ -2,7 +2,7 @@
     <view class="page common">
         <view class="page-header">
             <view class="student">
-                <image class="cover" :src="student.coverUrl || defaultCover" />
+                <image class="cover" :src="getStudentCoverUrl(student)" />
                 <text class="name">{{ student.studentName }}</text>
             </view>
             <view class="btn" @click="openStudent">
@@ -120,7 +120,6 @@ export default {
     data() {
         return {
             dicts,
-            defaultCover: 'https://static.gangqintonghua.com/img/touxiang/pic1.webp',
             complaintId: 0,
             detail: {},
             form: {

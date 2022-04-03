@@ -1,5 +1,5 @@
 <template>
-    <view class="page">
+    <view class="page" @touchstart="touchstart" @touchend="touchend">
         <view class="page-title">
             <text v-for="day in dayOfWeekArr" :key="day.value" class="day-of-week"
                 :class="{ active: dayOfWeek === day.value }" @click="handleToggleDayOfWeek(day)">
@@ -15,10 +15,7 @@
                         <view v-if="
                             period.periodStatus === '1' && period.oneCourse
                         " class="period-main">
-                            <image class="avatar" :src="
-                                period.oneCourse.student.coverUrl ||
-                                defaultCover
-                            " @click="openStudent(period)" />
+                            <image class="avatar" :src="getStudentCoverUrl(period.oneCourse.student)" @click="openStudent(period)" />
                             <view v-if="period.oneCourse.newStudent" class="period-status new">新学员
                             </view>
                             <view class="period-name">{{
@@ -140,8 +137,6 @@ export default {
     },
     data() {
         return {
-            defaultCover:
-                "https://static.gangqintonghua.com/img/touxiang/pic1.webp",
             userId: 0,
             // teacherId 存在表示具体老师，否则表示老师端-登录人课表
             teacherId: 0,
@@ -159,6 +154,8 @@ export default {
             studentId: 0,
             finishLessonDetail: {}, // 消课详情
             courseDetail: {},
+
+            startX: 0
         };
     },
     onLoad(option) {
@@ -179,10 +176,27 @@ export default {
         }
 
         const week = new Date().getDay();
-        this.dayOfWeek = week === 1 ? 2 : week;
+        this.dayOfWeek = week === 1 ? 2 : (week === 0 ? 7 : week);
         this.handleSearch();
     },
     methods: {
+        touchstart(e) {
+            this.startX = e.changedTouches[0].pageX
+        },
+
+        touchend(e) {
+            const moveX = e.changedTouches[0].pageX - this.startX
+            if (Math.abs(moveX) < 50) return
+            if (moveX > 0) {
+                if (this.dayOfWeek === 2) return
+                this.dayOfWeek--
+            } else {
+                if (this.dayOfWeek === 7) return
+                this.dayOfWeek++
+            }
+            this.handleSearch();
+        },
+
         handleToggleDayOfWeek(day) {
             this.dayOfWeek = day.value;
             this.handleSearch();

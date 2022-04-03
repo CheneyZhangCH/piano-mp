@@ -89,7 +89,7 @@
                                 <view v-if="courseType === 'one'" class="touxiang one">
                                     <image
                                         class="cover"
-                                        :src="item.students[0].coverUrl || defaultCover"
+                                        :src="getStudentCoverUrl(item.students[0])"
                                     />
                                     <text class="name ellipsis">{{ item.students[0].studentName }}</text>
                                 </view>
@@ -98,7 +98,7 @@
                                         v-for="s in item.students"
                                         :key="s.studentId"
                                         class="cover"
-                                        :src="s.coverUrl || defaultCover"
+                                        :src="getStudentCoverUrl(s)"
                                     />
                                 </view>
                             </template>
@@ -180,7 +180,6 @@ export default {
     },
     data() {
         return {
-            defaultCover: 'https://static.gangqintonghua.com/img/touxiang/pic1.webp',
             mode: 'month',
             month: CUR_MONTH,
             dateRange: [],
@@ -189,6 +188,7 @@ export default {
             courseId: 0,
             ticketId: 0,
             teacherId: 0,
+            studentId: 0,
 
             records: [],
 
@@ -223,7 +223,8 @@ export default {
         this.courseType = option.courseType ?? ''
         this.courseId = option.courseId ?? 0
         this.ticketId = option.ticketId ?? 0
-        this.teacherId = option.teacherId
+        this.teacherId = option?.teacherId ?? 0
+        this.studentId = option?.studentId ?? 0
 
         uni.setNavigationBarTitle({
             title: this.courseId ? '消课记录' : '核销记录'
@@ -249,7 +250,7 @@ export default {
         },
 
         async handleSearch() {
-            const { month, dateRange, courseId, ticketId, teacherId } = this
+            const { month, dateRange, courseId, ticketId, teacherId, studentId } = this
 
             const param = {
                 data: {
@@ -265,7 +266,11 @@ export default {
                         minDate: dateRange[0],
                         maxDate: dateRange[1]
                     }),
-                    teacherId
+                    ...(teacherId ? {
+                        teacherId
+                    } : {
+                        studentId
+                    })
                 }
             }
             uni.showLoading({ title: '加载中' })

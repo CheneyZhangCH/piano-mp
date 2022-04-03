@@ -5,7 +5,7 @@
                 <uni-icons
                     type="left"
                     color="#FFF"
-                    size="16"
+                    size="20"
                     @click="back"
                     style="float: left; padding: 0 30rpx"
                 />班级详情
@@ -52,7 +52,7 @@
             </view>
             <view class="students">
                 <view v-for="item in detail.students" :key="item.student.studentId" class="student">
-                    <image class="cover" :src="item.student.coverUrl || defaultCover" />
+                    <image class="cover" :src="getStudentCoverUrl(item.student)" />
                     <view class="info">
                         <view class="msg">
                             <text class="studentName">{{ item.student.studentName }}</text>
@@ -105,7 +105,7 @@
             </view>
         </scroll-view>
 
-        <Student :student-id="studentId" @close="studentId = 0" />
+        <Student :student-id="studentId" is-banji @close="studentId = 0" />
         <Remark ref="remark" :detail="studentDetail" @confirm="init" />
     </view>
 </template>
@@ -122,8 +122,6 @@ export default {
     },
     data() {
         return {
-            defaultCover: 'https://static.gangqintonghua.com/img/touxiang/pic1.webp',
-
             headerHeight: 0,
             headerTop: 0,
             WEEK_DAY,
@@ -140,7 +138,7 @@ export default {
             return `padding-top: ${(this.headerHeight + this.headerTop + 20) * 2}rpx; padding-bottom: ${this.datacenterFlag ? '100rpx' : 0};`
         },
         customTitleStyle() {
-            return `top: ${this.headerTop * 2}rpx; height: ${this.headerHeight * 2}rpx; line-height: ${this.headerHeight * 2}rpx`
+            return `top: ${this.headerTop}px; height: ${this.headerHeight}px; line-height: ${this.headerHeight}px`
         },
 
         startClassDate() {

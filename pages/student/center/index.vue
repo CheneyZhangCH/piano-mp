@@ -2,14 +2,14 @@
     <view class="page" :style="pageStyle">
         <view class="custom-header">
             <view class="title" :style="customTitleStyle">
-                <uni-icons v-if="studentId" type="left" color="#FFF" size="16" @click="back"
+                <uni-icons v-if="studentId" type="left" color="#FFF" size="20" @click="back"
                     style="float: left; padding: 0 30rpx" />
                 学员中心
             </view>
         </view>
         <scroll-view scroll-y="true" class="page-content">
             <view class="user">
-                <image :src="student.coverUrl || defaultCover" class="cover" />
+                <image :src="getStudentCoverUrl(student)" class="cover" />
                 <view class="info">
                     <view class="name">
                         <text class="student">{{ student.studentName }}</text>
@@ -66,7 +66,7 @@
                     <view class="tool" @click="toTrainTickets">
                         <view class="box">
                             <image src="/static/images/student/peilianquan.png"
-                            style="width: 44rpx; height: 26rpx; margin-bottom: 16rpx;" />
+                                style="width: 44rpx; height: 26rpx; margin-bottom: 16rpx;" />
                             <text v-if="detail.trainTicketNum" class="num">{{ detail.trainTicketNum }}</text>
                         </view>
                         <text>课程陪练券</text>
@@ -90,7 +90,6 @@ export default {
     },
     data() {
         return {
-            defaultCover: 'https://static.gangqintonghua.com/img/touxiang/pic1.webp',
             detail: null,
 
             datacenterFlag: true,
@@ -111,7 +110,7 @@ export default {
             return `padding-top: ${(this.headerHeight + this.headerTop + 20) * 2}rpx; padding-bottom: ${this.datacenterFlag ? '100rpx' : 0};`
         },
         customTitleStyle() {
-            return `top: ${this.headerTop * 2}rpx; height: ${this.headerHeight * 2}rpx; line-height: ${this.headerHeight * 2}rpx`
+            return `top: ${this.headerTop}px; height: ${this.headerHeight}px; line-height: ${this.headerHeight}px`
         },
 
         coursePackage() {
@@ -169,7 +168,7 @@ export default {
         },
 
         toFinishLesson({ courseType, courseId, teacherId }) {
-            uni.navigateTo({ url: '/pages/teacher/xiaokeOrhexiaoRecord/index?courseType=' + courseType + '&courseId=' + courseId + '&teacherId=' + teacherId })
+            uni.navigateTo({ url: '/pages/teacher/xiaokeOrhexiaoRecord/index?courseType=' + courseType + '&courseId=' + courseId + '&studentId=' + (this.studentId || this.userId) })
         },
 
         toComplaint() {
@@ -368,12 +367,12 @@ export default {
 
                         height: 22rpx;
                         line-height: 22rpx;
-                        background: #F15E5E;
+                        background: #f15e5e;
                         border-radius: 6rpx;
 
                         font-size: 16rpx;
                         font-weight: 600;
-                        color: #FFFFFF;
+                        color: #ffffff;
                         padding: 0 4rpx;
                     }
                 }

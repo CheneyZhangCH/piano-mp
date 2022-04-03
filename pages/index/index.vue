@@ -4,7 +4,23 @@
 
 <script lang="js">
 export default {
-    onLoad() {
+    // onLoad() {
+    //     const token = uni.getStorageSync('token')
+
+    //     // 权限验证
+    //     if (!token) {
+    //         uni.showToast({
+    //             title: '请先登录',
+    //             icon: 'none'
+    //         })
+    //         return uni.navigateTo({
+    //             url: '/pages/login/index'
+    //         })
+    //     }
+    //     console.log(token)
+    //     this.redirect()
+    // },
+    onShow() {
         const token = uni.getStorageSync('token')
 
         // 权限验证

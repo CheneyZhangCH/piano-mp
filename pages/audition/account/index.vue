@@ -110,7 +110,7 @@
                                 </view>
                             </template>
                             <template v-else>
-                                <text>剩余{{ form.expiry.expiryMonths }}个月{{ form.expiry.expiryDays }}日</text>
+                                <text>剩余{{ form.expiry.expiryMonths }}个月{{ form.expiry.expiryDays }}天</text>
                                 <picker class="action" :value="expiryIndex" :range="['月数', '天数']"
                                     @change="expiryChange">
                                     <text>修改</text>
@@ -256,8 +256,8 @@
                             <text
                                 v-if="period.courseType === 'one' ? period.remainStudentNum > 1 : period.remainStudentNum > 0"
                                 class="num">{{
-                                    period.remainStudentNum + '人'
-                                }}</text>
+                                    period.studentNum - period.remainStudentNum
+                                }}人</text>
                         </view>
                     </view>
                 </view>
@@ -608,17 +608,24 @@ export default {
 
         dialogConfirm(value) {
             let regExp = /^([1-9]{1}\d{0,4})$/
+            let errorMessage = '请输入正确的数字！'
             switch (this.dialogMode) {
                 case 'basicStudyChapters':
                     regExp = /^(0|[1-9]{1}\d{0,4})$/
                     break;
+                // 0~999
+                case 'expiryExpiryMonths':
+                    regExp = /^(0|[1-9]{1}\d{0,2})$/
+                    break;
+                // 1~30
                 case 'expiryDays':
-                    regExp = /^(0|[1-9]{1}|[1-2]{1}\d|30)$/
+                    regExp = /^([1-9]{1}|[1-2]{1}\d|30)$/
+                    errorMessage = '请输入1~30的数字！'
                     break;
                 default:
                     break;
             }
-            if (!regExp.test(+value)) return uni.showToast({ title: '请输入正确的数字！', icon: 'none' })
+            if (!regExp.test(+value)) return uni.showToast({ title: errorMessage, icon: 'none' })
             switch (this.dialogMode) {
                 case 'course':
                     this.form.courses[this.dialogCourseIndex].courseNum = +value

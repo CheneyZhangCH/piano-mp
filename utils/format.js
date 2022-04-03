@@ -38,7 +38,7 @@ export const getExpiryDate = expiryDate => {
     // （有效期-当前日期+1）/30=x月xx日
     if (!expiryDate) return '-'
     const days = Math.ceil((expiryDate - new Date().getTime()) / (24 * 60 * 60 * 1000)) + 1
-    return [Math.floor(days / 30) ? Math.floor(days / 30) + '个月' : '', days % 30 ? days % 30 + '日' : ''].filter(Boolean).join('')
+    return [Math.floor(days / 30) ? Math.floor(days / 30) + '个月' : '', days % 30 ? days % 30 + '天' : ''].filter(Boolean).join('')
 }
 
 // n天到期

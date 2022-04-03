@@ -1,5 +1,5 @@
 <template>
-    <view class="page">
+    <view class="page" @touchstart="touchstart" @touchend="touchend">
         <view class="page-title">
             <text v-for="day in dayOfWeekArr" :key="day.value" class="day-of-week"
                 :class="{ active: dayOfWeek === day.value }" @click="handleToggleDayOfWeek(day)">
@@ -15,10 +15,8 @@
                         <view v-if="
                             period.periodStatus === '1' && period.oneCourse
                         " class="period-main">
-                            <image class="avatar" :src="
-                                period.oneCourse.student.coverUrl ||
-                                defaultCover
-                            " @click="openStudent(period)" />
+                            <image class="avatar" :src="getStudentCoverUrl(period.oneCourse.student)"
+                                @click="openStudent(period)" />
                             <view v-if="period.oneCourse.newStudent" class="period-status new">新学员
                             </view>
                             <view
@@ -29,10 +27,9 @@
                             <view class="period-name">{{ period.periodName }}</view>
                             <view class="period-content">
                                 <view class="period-content-title">
-                                    <text class="student-name" :class="{
-                                        weekHaveFinish:
-                                            period.oneCourse.weekHaveFinish,
-                                    }">{{ period.oneCourse.student.studentName }}</text>
+                                    <text class="student-name" :class="{ warning: period.oneCourse.warn }">{{
+                                        period.oneCourse.student.studentName
+                                    }}</text>
                                     <image class="gender-icon" :src="`/static/images/student/${period.oneCourse.student.gender ||
                                     'male'
                                     }-selected.png`"></image>
@@ -73,7 +70,7 @@
                             period.periodStatus === '2' && period.moreCourse
                         " class="period-main">
                             <image class="avatar" src="/static/images/teacher/course_type_more.png"
-                                @click="openCourse(period)" />
+                                @click="toClass(period)" />
                             <view class="period-name">{{
                                 period.periodName
                             }}</view>
@@ -85,18 +82,13 @@
                                                 .courseName +
                                                 (period.remainStudentNum === 0
                                                     ? "(满班)"
-                                                    : "")
+                                                    : `(${period.moreCourse.students.length}人)`)
                                         }}
                                     </text>
                                 </view>
-                                <view v-if="
-                                    Array.isArray(
-                                        period.moreCourse.students
-                                    )
-                                " class="student">
-                                    <text v-for="student in period.moreCourse
-                                    .students" :key="student.studentId" :class="{ warning: student.warn }"
-                                        class="student-item">
+                                <view v-if="period.moreCourse.students.length" class="student">
+                                    <text v-for="student in period.moreCourse.students" :key="student.studentId"
+                                        :class="{ warning: student.warn }" class="student-item">
                                         {{ student.studentName }}
                                     </text>
                                 </view>
@@ -139,9 +131,6 @@
             </template>
         </view>
 
-        <!-- 一对多详情（课程）| 对学生详情组件先后顺序有要求 -->
-        <Course ref="course" :detail="courseDetail" @student="(id) => (studentId = id)" />
-
         <Student ref="student" :student-id="studentId" @close="studentId = 0" @del="studentId = 0" />
         <Remark ref="remark" :detail="studentDetail" @confirm="handleSearch" />
     </view>
@@ -149,7 +138,6 @@
 
 <script>
 import Student from "@/components/Student";
-import Course from "@/components/Course";
 import Remark from "@/components/Remark";
 import dayjs from "dayjs";
 import { getExpiryDate, getExpiryDateWarning } from '@/utils/format'
@@ -157,13 +145,10 @@ import { getExpiryDate, getExpiryDateWarning } from '@/utils/format'
 export default {
     components: {
         Student,
-        Course,
         Remark
     },
     data() {
         return {
-            defaultCover:
-                "https://static.gangqintonghua.com/img/touxiang/pic1.webp",
             userId: 0,
             // teacherId 存在表示具体老师，否则表示老师端-登录人课表
             teacherId: 0,
@@ -180,7 +165,9 @@ export default {
 
             studentId: 0,
             courseDetail: {},
-            studentDetail: {}
+            studentDetail: {},
+
+            startX: 0
         };
     },
     onLoad(option) {
@@ -201,13 +188,30 @@ export default {
         }
 
         const week = new Date().getDay()
-        this.dayOfWeek = week === 1 ? 2 : week;
+        this.dayOfWeek = week === 1 ? 2 : (week === 0 ? 7 : week);
         this.handleSearch();
     },
     onShow() {
         if (this.studentId) this.$refs.student.getStudent()
     },
     methods: {
+        touchstart(e) {
+            this.startX = e.changedTouches[0].pageX
+        },
+
+        touchend(e) {
+            const moveX = e.changedTouches[0].pageX - this.startX
+            if (Math.abs(moveX) < 50) return
+            if (moveX > 0) {
+                if (this.dayOfWeek === 2) return
+                this.dayOfWeek--
+            } else {
+                if (this.dayOfWeek === 7) return
+                this.dayOfWeek++
+            }
+            this.handleSearch();
+        },
+
         handleToggleDayOfWeek(day) {
             this.dayOfWeek = day.value;
             this.handleSearch();
@@ -251,10 +255,9 @@ export default {
             this.studentId = period.oneCourse.student.accountId;
         },
 
-        // 一对多详情
-        openCourse(period) {
-            this.courseDetail = period;
-            this.$refs.course.open();
+        // 班级详情
+        toClass({ courseId, timetablePeriodId }) {
+            uni.navigateTo({ url: `/pages/audition/banji/index?courseId=${courseId}&teacherId=${this.teacherId || this.userId}&timetablePeriodId=${timetablePeriodId}` })
         },
 
         openRemark(student) {
@@ -427,6 +430,9 @@ export default {
                     font-weight: 500;
                     color: #141f33;
                     line-height: 40rpx;
+                    &.warning {
+                        color: #f15e5e;
+                    }
                 }
                 .course-name {
                     font-size: 28rpx;

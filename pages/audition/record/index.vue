@@ -34,7 +34,6 @@
                     <view class="page-list-item__title">
                         <view class="sub-title">
                             <text>{{ listItem.date }}</text>
-                            <image class="arrow_down" src="/static/images/audition/arrow_down_dark.png"></image>
                         </view>
                         <view class="desc">{{ `开通账号${listItem.items.length}个` }}</view>
                     </view>
@@ -44,7 +43,7 @@
                         <view v-for="(item, itemIndex) in listItem.items" :key="itemIndex"
                             class="item">
                             <image class="avatar"
-                                :src="`/static/images/audition/${item.student.gender || 'male'}.png`">
+                                :src="getStudentCoverUrl(item.student)">
                             </image>
                             <view class="content">
                                 <view class="student-info">

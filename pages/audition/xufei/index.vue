@@ -19,7 +19,7 @@
             <view v-for="item in list" :key="item.student.studentId" class="student">
                 <image
                     class="cover"
-                    :src="item.student.coverUrl || defaultCover"
+                    :src="getStudentCoverUrl(item.student)"
                 />
                 <view class="info">
                     <view class="msg">
@@ -96,7 +96,6 @@ export default {
         return {
             dicts: {},
             WEEK_DAY,
-            defaultCover: "https://static.gangqintonghua.com/img/touxiang/pic1.webp",
             pageNum: 1,
             pageSize: 10,
             sortForm: {

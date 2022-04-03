@@ -5,7 +5,7 @@
                 <view class="complaint-item-header">
                     <view class="left">
                         <text class="type">{{ dicts.complaintType[item.complaintType] }}</text>
-                        <image class="cover" :src="item.student.coverUrl || defaultCover" />
+                        <image class="cover" :src="getStudentCoverUrl(item.student)" />
                         <text class="name">{{ item.student.studentName }}</text>
                     </view>
                     <text class="time">{{ weekOrDateTime(item.createTime) }}</text>
@@ -76,7 +76,6 @@ export default {
     data() {
         return {
             dicts,
-            defaultCover: 'https://static.gangqintonghua.com/img/touxiang/pic1.webp',
             complaintList: []
         }
     },

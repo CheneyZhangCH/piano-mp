@@ -3,9 +3,7 @@
         <uni-popup ref="popup" :is-mask-click="false" type="center">
             <view class="main flex flex-column">
                 <view class="title flex">
-                    <image class="avatar" :src="
-                        student.coverUrl || defaultCover
-                    "></image>
+                    <image class="avatar" :src="getStudentCoverUrl(student)" />
                     <view class="center-popup-title-content">
                         <view class="center-popup-title-main flex align-center justify-between">
                             <view class="flex align-center">
@@ -18,11 +16,11 @@
                             </view>
                             <text v-if="!['AUDITION', 'ADMIN', 'SUPER_ADMIN'].includes(accountType)" class="set-grade"
                                 @click="setGrade">设置级别</text>
-                            <uni-icons v-else type="closeempty" size="14" @click="close" />
+                            <uni-icons v-else type="closeempty" size="14" color="#367AA0" @click="close" />
                         </view>
                         <view class="center-popup-title-sub">
                             <image class="gender-icon"
-                                :src="`/static/images/student/${student.gender || 'male'}-selected.png`" />
+                                :src="`/static/images/student/${student.gender || 'male'}.png`" />
                             <text class="text">{{ student.age + '岁' }}</text>
                             <text class="text">{{
                                 '课程陪练券' + trainTicketNum + '张'
@@ -88,7 +86,7 @@
                                     '剩余' + course.remainCourseNum + '节'
                                 }}</text>
                             </view>
-                            <view v-if="Array.isArray(course.chapters)" class="course-item-chapter"
+                            <view v-if="course.chapters.length" class="course-item-chapter"
                                 :class="course.courseType">
                                 <view v-for="chapter in course.chapters" :key="chapter.id"
                                     class="course-item-chapter-item ellipsis">
@@ -96,7 +94,18 @@
                                         ({{ chapter.bookName }}){{ chapter.chapterName }}
                                     </text>
                                     <view
-                                        v-if="['AUDITION', 'ADMIN', 'SUPER_ADMIN'].includes(accountType) && course.courseType === 'more'"
+                                        v-if="['AUDITION', 'ADMIN', 'SUPER_ADMIN'].includes(accountType) && course.courseType === 'more' && !isBanji"
+                                        class="btn" @click="toClass(course)">
+                                        班级详情
+                                        <uni-icons type="right" color="#99A0AD" size="12" />
+                                    </view>
+                                </view>
+                            </view>
+                            <view v-else class="course-item-chapter" :class="course.courseType">
+                                <view class="course-item-chapter-item ellipsis">
+                                    <text class="name">(暂无消课内容)</text>
+                                    <view
+                                        v-if="['AUDITION', 'ADMIN', 'SUPER_ADMIN'].includes(accountType) && course.courseType === 'more' && !isBanji"
                                         class="btn" @click="toClass(course)">
                                         班级详情
                                         <uni-icons type="right" color="#99A0AD" size="12" />
@@ -146,19 +155,24 @@
                                 续课
                             </button>
                         </view>
-                        <view>
-                            <button class="text" @click="refund">
-                                操作退费
-                            </button>
-                            <button class="text" @click="edit">
-                                修改信息
-                            </button>
+                        <view v-if="!dropFlag" class="drop" @click="dropFlag = true">
+                            <image src="/static/images/student/drop.png" />
                         </view>
-                        <view v-if="['ADMIN', 'SUPER_ADMIN'].includes(accountType)">
-                            <button class="danger" @click="del">
-                                删除学员
-                            </button>
-                        </view>
+                        <template v-else>
+                            <view>
+                                <button class="text" @click="refund">
+                                    操作退费
+                                </button>
+                                <button class="text" @click="edit">
+                                    修改信息
+                                </button>
+                            </view>
+                            <view v-if="['ADMIN', 'SUPER_ADMIN'].includes(accountType)">
+                                <button class="danger" @click="del">
+                                    删除学员
+                                </button>
+                            </view>
+                        </template>
                     </template>
                 </view>
                 <view v-else class="footer">
@@ -233,13 +247,16 @@ export default {
         ConflictGroup
     },
     props: {
-        studentId: [String, Number]
+        studentId: [String, Number],
+        isBanji: {
+            type: Boolean,
+            default: false
+        }
     },
     data() {
         return {
             accountType: '',
             WEEK_DAY,
-            defaultCover: "https://static.gangqintonghua.com/img/touxiang/pic1.webp",
             detail: {},
             form: {
                 grade: "",
@@ -248,12 +265,14 @@ export default {
             },
             disContinueIndex: 0,
             groupId: null,
-            groups: []
+            groups: [],
+            dropFlag: false
         }
     },
     watch: {
         studentId(newVal) {
             if (newVal) {
+                this.dropFlag = false
                 this.getStudent()
                 this.$refs.popup.open()
             }
@@ -382,17 +401,18 @@ export default {
         },
 
         async disContinueConfirm() {
+            const immediately = this.disContinueIndex === 1
             const data = {
                 data: {
                     groupId: this.groupId,
-                    immediately: this.disContinueIndex === 1,
+                    immediately,
                     studentId: this.studentId,
                 }
             }
             try {
                 await this.$http.post('/mini/student/discontinueStudent', data)
                 this.$toast({ title: '不续课成功！', icon: 'success' })
-                uni.navigateTo({ url: '/pages/success/index?from=disContinue' })
+                uni.navigateTo({ url: '/pages/success/index?from=disContinue&immediately=' + immediately })
             } catch (err) {
                 console.log(err)
             }
@@ -687,6 +707,14 @@ export default {
             &.disabled {
                 background: #e1e1e1;
                 border: none;
+            }
+        }
+        .drop {
+            margin-top: 14rpx;
+            justify-content: center;
+            image {
+                width: 20rpx;
+                height: 24rpx;
             }
         }
     }

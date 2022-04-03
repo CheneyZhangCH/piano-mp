@@ -2,7 +2,7 @@
     <view class="page common">
         <view class="page-header">
             <view class="student">
-                <image class="cover" :src="student.coverUrl || defaultCover" />
+                <image class="cover" :src="getStudentCoverUrl(student)" />
                 <text class="name">{{ student.studentName }}</text>
                 <image
                     class="gender-icon"
@@ -204,8 +204,8 @@
                                 class="num"
                             >
                                 {{
-                                    period.remainStudentNum + '人'
-                                }}
+                                    period.studentNum - period.remainStudentNum
+                                }}人
                             </text>
                         </view>
                     </view>
@@ -232,7 +232,6 @@ export default {
         return {
             loading: false,
             WEEK_DAY,
-            defaultCover: 'https://static.gangqintonghua.com/img/touxiang/pic1.webp',
             detail: {},
             studentId: 0,
             dialogStudentId: 0,

@@ -2,7 +2,7 @@
     <view class="page" :style="pageStyle">
         <view class="custom-header" :class="{ group: !!groupId }">
             <view class="title" :style="customTitleStyle">
-                <uni-icons v-if="!datacenterFlag" type="left" color="#FFF" size="16" @click="back"
+                <uni-icons v-if="!datacenterFlag" type="left" color="#FFF" size="20" @click="back"
                     style="float: left; padding: 0 30rpx;" />
                 数据中心
             </view>
@@ -229,7 +229,7 @@
                 </view>
                 <view class="list">
                     <view v-for="item in listStudent" :key="item.id" class="item">
-                        <image class="cover" :src="item.student.coverUrl || defaultCover" />
+                        <image class="cover" :src="getStudentCoverUrl(item.student)" />
                         <view class="content">
                             <view class="student">
                                 <view class="l">
@@ -282,7 +282,6 @@ export default {
     data() {
         return {
             dicts,
-            defaultCover: 'https://static.gangqintonghua.com/img/touxiang/pic1.webp',
             detail: null,
 
             groupValue: 0,

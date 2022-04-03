@@ -15,13 +15,14 @@
                 slot="icon"
                 :src="item.iconPath"
                 mode="aspectFit"
-                style="width: 30px; height: 18px"
+                style="width: 42rpx; height: 40rpx"
             />
+            <!-- width: 30px; height: 18px -->
             <image
                 slot="icon-active"
                 :src="item.selectedIconPath"
                 mode="aspectFit"
-                style="width: 30px; height: 18px"
+                style="width: 42rpx; height: 40rpx"
             />
             {{ item.text }}
         </van-tabbar-item>
