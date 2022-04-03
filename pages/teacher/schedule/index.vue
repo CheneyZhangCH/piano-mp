@@ -1,10 +1,11 @@
 <template>
     <view class="page" @touchstart="touchstart" @touchend="touchend">
         <view class="page-title">
-            <text v-for="day in dayOfWeekArr" :key="day.value" class="day-of-week"
-                :class="{ active: dayOfWeek === day.value }" @click="handleToggleDayOfWeek(day)">
-                {{ day.label }}
-            </text>
+            <view v-for="day in dayOfWeekArr" :key="day.value" class="day-of-week" @click="handleToggleDayOfWeek(day)">
+                <image v-if="dayOfWeek === day.value"
+                    :src="`https://static.gangqintonghua.com/img/week/week${day.value}.png`" class="active" />
+                <text v-else>{{ day.label }}</text>
+            </view>
         </view>
         <view class="page-content">
             <template v-if="periods.length">
@@ -259,7 +260,6 @@ export default {
     padding-top: 80rpx;
     padding-bottom: 100rpx;
 }
-
 .page-title {
     position: fixed;
     top: 0;
@@ -275,32 +275,16 @@ export default {
     justify-content: space-between;
 
     .day-of-week {
+        display: inline-flex;
         font-size: 28rpx;
         color: #99a0ad;
         line-height: 40rpx;
-
-        &.active {
-            font-size: 32rpx;
-            font-weight: 500;
-            color: #141f33;
-            position: relative;
-
-            &::after {
-                content: " ";
-                display: block;
-                position: absolute;
-                top: 20rpx;
-                right: 0;
-                opacity: 0.8;
-                width: 54rpx;
-                height: 22rpx;
-                background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
-                border-radius: 4rpx;
-            }
+        .active {
+            width: 64rpx;
+            height: 44rpx;
         }
     }
 }
-
 .page-content {
     padding: 0 30rpx;
 

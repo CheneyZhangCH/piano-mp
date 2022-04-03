@@ -74,8 +74,14 @@ export default {
             try {
                 const res = await this.$http.post('/mini/coursePackage/listAvailableCoursePackage')
                 this.packageList = res.data ?? []
-                this.packageId = this.packageList.length ? this.packageList[0].id : ''
-                this._listByPackageId()
+                if (this.packageList.length) {
+                    const current = this.packageList.filter(_ => _.current)
+                    if (current.length) {
+                        this.packageId = current[0].id
+                        this._listByPackageId()
+                    }
+                }
+
 
                 const countUnreadStudentWorkRes = await this.$http.get('/mini/finishiLesson/countUnreadStudentWork')
                 this.$store.dispatch('accountBusinessCount/setTabbarDot', {

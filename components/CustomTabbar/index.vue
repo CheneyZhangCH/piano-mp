@@ -15,16 +15,17 @@
                 slot="icon"
                 :src="item.iconPath"
                 mode="aspectFit"
-                style="width: 42rpx; height: 40rpx"
+                style="width: 48rpx; height: 44rpx"
             />
-            <!-- width: 30px; height: 18px -->
+            <!-- 1、width: 30px; height: 18px -->
+            <!-- 2、width: 42rpx; height: 40rpx -->
             <image
                 slot="icon-active"
                 :src="item.selectedIconPath"
                 mode="aspectFit"
-                style="width: 42rpx; height: 40rpx"
+                style="width: 48rpx; height: 44rpx"
             />
-            {{ item.text }}
+            <text style="font-size: 24rpx;">{{ item.text }}</text>
         </van-tabbar-item>
     </van-tabbar>
 </template>
@@ -32,6 +33,9 @@
 <script>
 import { mapGetters } from "vuex"
 export default {
+    // options: {
+    //     styleIsolation: 'shared'
+    // },
     props: {
         active: Number
     },
