@@ -1,7 +1,7 @@
 <template>
     <view class="notify" @click="toMessage">
         <image src="https://static.gangqintonghua.com/img/icon/notify.png" />
-        <view v-if="msgCount > 0" class="count">{{ msgCount }}</view>
+        <text v-if="msgCount > 0" class="count">{{ msgCount > 99 ? 99 : msgCount }}</text>
     </view>
 </template>
 
@@ -47,8 +47,9 @@ export default {
         top: 20rpx;
         right: 20rpx;
 
-        width: 24rpx;
+        min-width: 24rpx;
         height: 24rpx;
+        line-height: 24rpx;
         background: #f15e5e;
         border: 1px solid #ffffff;
         border-radius: 50%;
@@ -57,7 +58,6 @@ export default {
         font-size: 16rpx;
         font-weight: 600;
         color: #ffffff;
-        line-height: 24rpx;
     }
 }
 </style>

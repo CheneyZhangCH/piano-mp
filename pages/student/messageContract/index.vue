@@ -17,15 +17,21 @@
                         课时详情：
                         <template v-if="item.contractType === 'ACCOUNT'">
                             <text
-                                v-for="course in item.accountContract.courses"
+                                v-for="(course, index) in item.accountContract.courses"
                                 :key="course.courseId"
-                            >{{ course.courseName }}；</text>
+                            >
+                                {{ course.courseName }}{{ course.courseNum }}节
+                                <template v-if="index < item.accountContract.courses.length - 1">；</template>
+                            </text>
                         </template>
                         <template v-else>
                             <text
-                                v-for="course in item.continueContract.courses"
+                                v-for="(course, index) in item.continueContract.courses"
                                 :key="course.courseId"
-                            >{{ course.courseName }}；</text>
+                            >
+                                {{ course.courseName }}{{ course.courseNum }}节
+                                <template v-if="index < item.continueContract.courses.length - 1">；</template>
+                            </text>
                         </template>
                     </view>
                 </view>

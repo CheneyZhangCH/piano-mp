@@ -448,6 +448,9 @@ export default {
                     icon: 'success',
                 })
                 this.$refs.utnq.close()
+
+                this.pageNum = 1
+                this.listStudent = []
                 this._getGroupSalary()
             } catch (error) {
                 console.log(error)
@@ -941,6 +944,9 @@ export default {
                         }
                         .studentContinue {
                             color: #f15e5e;
+                        }
+                        .discontinue {
+                            color: #99A0AD;
                         }
                         .refund {
                             color: #44be5e;

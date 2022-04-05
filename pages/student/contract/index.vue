@@ -197,7 +197,7 @@ export default {
                 margin-right: 16rpx;
             }
             .text {
-                font-size: 20rpx;
+                font-size: 24rpx; // 设计稿20rpx
                 font-weight: 600;
                 color: #141f33;
                 line-height: 28rpx;

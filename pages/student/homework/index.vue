@@ -81,7 +81,7 @@
                     </view>
                     <view class="content">
                         <template v-if="item.courseType === 'one'">
-                            <view class="info ellipsis">
+                            <view v-if="item.chapterScores.length" class="info ellipsis">
                                 <text class="name">回课情况</text>
                                 <text class="msg">
                                     <text v-for="score in item.chapterScores" :key="score.id">

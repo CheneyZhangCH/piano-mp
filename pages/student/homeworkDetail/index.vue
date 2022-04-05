@@ -11,9 +11,7 @@
         <view class="page-content">
             <view class="divider">课堂报告</view>
             <view v-if="detail.chapterScores.length" class="block">
-                <view class="title">
-                    <text>回课情况</text>
-                </view>
+                <image class="title-icon" src="https://static.gangqintonghua.com/img/beijing/homework-huikeqingkuang.png" />
                 <view class="chapterScores">
                     <view v-for="item in detail.chapterScores" :key="item.id" class="score">
                         <text>
@@ -33,9 +31,7 @@
                 </view>
             </view>
             <view class="block">
-                <view class="title">
-                    <text>本课表现</text>
-                </view>
+                <image class="title-icon" src="https://static.gangqintonghua.com/img/beijing/homework-benkebiaoxian.png" />
                 <view class="scores">
                     <view class="score">
                         <text class="num">{{ detail.handScore || '-' }}</text>
@@ -66,9 +62,7 @@
                 <view class="chapterName">
                     {{chapter.chapterName}}
                 </view>
-                <view class="title">
-                    <text>课后作业</text>
-                </view>
+                <image class="title-icon" src="https://static.gangqintonghua.com/img/beijing/homework-kehouzuoye.png" />
                 <view class="workStep">
                     <view
                         v-for="(work, workIndex) in chapter.workStep"
@@ -79,9 +73,7 @@
                         <text class="work-content">{{ work.content }}</text>
                     </view>
                 </view>
-                <view class="title">
-                    <text>教师评语</text>
-                </view>
+                <image class="title-icon" src="https://static.gangqintonghua.com/img/beijing/homework-jiaoshipingyu.png" />
                 <view class="suggestStep">
                     <view
                         v-for="(suggest, suggestIndex) in chapter.suggestStep"
@@ -167,6 +159,12 @@ export default {
         }
     }
     &-content {
+        padding-bottom: 30rpx;
+        .title-icon {
+            width: 116rpx;
+            height: 40rpx;
+            margin-bottom: 24rpx;
+        }
         .block {
             background: #FFFFFF;
             border-radius: 20rpx;
@@ -232,30 +230,6 @@ export default {
                             background: #C9CED6;
                         }
                     }
-                }
-            }
-        }
-        .block,
-        .chapter {
-            .title {
-                font-size: 28rpx;
-                font-weight: 500;
-                color: #141F33;
-                line-height: 40rpx;
-                margin-bottom: 24rpx;
-                text {
-                    position: relative;
-                }
-                text::after {
-                    content: " ";
-                    display: block;
-                    position: absolute;
-                    top: 24rpx;
-                    left: 8rpx;
-                    opacity: 0.8;
-                    width: 100%;
-                    height: 12rpx;
-                    background: linear-gradient(90deg, #61BAEC 0%, #84DAEE 100%);
                 }
             }
         }

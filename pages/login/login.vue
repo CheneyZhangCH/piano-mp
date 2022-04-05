@@ -18,7 +18,12 @@
                     @focus="e => phoneFocus = true"
                     @blur="e => phoneFocus = false"
                 />
-                <image v-if="phoneClearVisible" class="clear" src="/static/images/login/login_exit.png" @click="phone = ''"/>
+                <image
+                    v-if="phoneClearVisible"
+                    class="clear"
+                    src="/static/images/login/login_exit.png"
+                    @click="phone = ''"
+                />
             </view>
             <view v-if="phone !== '13381796225'" class="form-item verify-code">
                 <view class="input">
@@ -31,7 +36,12 @@
                         @focus="e => codeFocus = true"
                         @blur="e => codeFocus = false"
                     />
-                    <image v-if="codeClearVisible" class="clear" src="/static/images/login/login_exit.png" @click="verifyCode = ''"/>
+                    <image
+                        v-if="codeClearVisible"
+                        class="clear"
+                        src="/static/images/login/login_exit.png"
+                        @click="verifyCode = ''"
+                    />
                 </view>
                 <button
                     class="send"
@@ -50,15 +60,15 @@
             >登录</button>
         </view>
 
-        <pianoMessageBox
-            ref="error"
-            message="仅对内部学员开放 请使用已开通的手机号登录"
-            @confirm="() => $refs.error.close()"
-        />
+        <MessageBox ref="error" />
     </view>
 </template>
 <script>
+import MessageBox from './components/MessageBox.vue'
 export default {
+    components: {
+        MessageBox
+    },
     data() {
         return {
             phone: '', // 项目正常版本迭代，各端打通

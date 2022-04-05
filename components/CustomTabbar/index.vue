@@ -11,21 +11,9 @@
             :info="item.key ? tabBarInfo[item.key] ? tabBarInfo[item.key] : null : null"
             :dot="item.key ? !!tabbarDot[item.key] : false"
         >
-            <image
-                slot="icon"
-                :src="item.iconPath"
-                mode="aspectFit"
-                style="width: 48rpx; height: 44rpx"
-            />
-            <!-- 1、width: 30px; height: 18px -->
-            <!-- 2、width: 42rpx; height: 40rpx -->
-            <image
-                slot="icon-active"
-                :src="item.selectedIconPath"
-                mode="aspectFit"
-                style="width: 48rpx; height: 44rpx"
-            />
-            <text style="font-size: 24rpx;">{{ item.text }}</text>
+            <image slot="icon" :src="item.iconPath" mode="aspectFit" />
+            <image slot="icon-active" :src="item.selectedIconPath" mode="aspectFit" />
+            {{ item.text }}
         </van-tabbar-item>
     </van-tabbar>
 </template>
@@ -33,9 +21,9 @@
 <script>
 import { mapGetters } from "vuex"
 export default {
-    // options: {
-    //     styleIsolation: 'shared'
-    // },
+    options: {
+        styleIsolation: 'shared'
+    },
     props: {
         active: Number
     },
@@ -50,3 +38,18 @@ export default {
     }
 }
 </script>
+
+<style lang="scss" scoped>
+/deep/.van-tabbar-item {
+    &__icon {
+        margin-bottom: 2rpx;
+    }
+    &__text {
+        font-size: 24rpx;
+    }
+    image {
+        width: 48rpx;
+        height: 44rpx;
+    }
+}
+</style>

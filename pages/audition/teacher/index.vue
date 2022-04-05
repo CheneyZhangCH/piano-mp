@@ -54,17 +54,8 @@
                                         '账户有效期剩余：' +
                                             period.oneCourse.student.expiryDateStr
                                     }}</view>
-                                <view class="remark" :class="{ 'exist': period.oneCourse.student.remark }"
-                                    @click="openRemark(period.oneCourse.student)">
-                                    <template v-if="period.oneCourse.student.remark">
-                                        <text>{{ period.oneCourse.student.remark }} </text>
-                                        <uni-icons type="closeempty" size="12"></uni-icons>
-                                    </template>
-                                    <template v-else>
-                                        <text>点击添加备注信息(15字内)</text>
-                                        <image src="/static/images/audition/edit.png" />
-                                    </template>
-                                </view>
+                                <Remark :student="period.oneCourse.student" @confirm="handleSearch"
+                                    :custom-style="'margin-left: 12rpx;'" />
                             </view>
                         </view>
                         <view v-else-if="
@@ -117,6 +108,9 @@
                             }}</view>
                             <view class="period-content">
                                 该时间段已被锁定，请勿做其余安排
+                                <view class="btn" @click="studentId = period.waitStudentId">
+                                    查看详情 <uni-icons type="right" color="#62BBEC" size="14" />
+                                </view>
                             </view>
                         </view>
                     </template>
@@ -133,7 +127,6 @@
         </view>
 
         <Student ref="student" :student-id="studentId" @close="studentId = 0" @del="studentId = 0" />
-        <Remark ref="remark" :detail="studentDetail" @confirm="handleSearch" />
     </view>
 </template>
 
@@ -166,7 +159,6 @@ export default {
 
             studentId: 0,
             courseDetail: {},
-            studentDetail: {},
 
             startX: 0
         };
@@ -259,11 +251,6 @@ export default {
         // 班级详情
         toClass({ courseId, timetablePeriodId }) {
             uni.navigateTo({ url: `/pages/audition/banji/index?courseId=${courseId}&teacherId=${this.teacherId || this.userId}&timetablePeriodId=${timetablePeriodId}` })
-        },
-
-        openRemark(student) {
-            this.studentDetail = student
-            this.$refs.remark.open()
         }
     },
     onPullDownRefresh() {
@@ -339,11 +326,20 @@ export default {
             border: 2rpx dashed #979797;
             .period-content {
                 display: flex;
+                flex-direction: column;
                 align-items: center;
 
                 padding-left: 20rpx;
+                padding-top: 68rpx;
                 font-size: 28rpx;
                 color: #99a0ad;
+                line-height: 40rpx;
+                .btn {
+                    font-size: 24rpx;
+                    color: #62BBEC;
+                    line-height: 34rpx;
+                    margin-top: 12rpx;
+                }
             }
         }
 
@@ -374,15 +370,15 @@ export default {
 
         .period-name {
             position: relative;
-            width: 176rpx;
-            padding: 0 8rpx;
+            width: 182rpx;
+            padding: 0 6rpx 0 8rpx;
 
             display: flex;
             align-items: center;
             justify-content: center;
 
             font-size: 28rpx;
-            font-weight: 500;
+            font-weight: 600; // 设计稿500
             color: #141f33;
 
             &::after {
@@ -413,7 +409,7 @@ export default {
 
                 .student-name {
                     font-size: 28rpx;
-                    font-weight: 500;
+                    font-weight: 600; // 设计稿500
                     color: #141f33;
                     line-height: 40rpx;
                     &.warning {
@@ -500,30 +496,6 @@ export default {
                 &.warning {
                     font-weight: 600;
                     color: #f15e5e;
-                }
-            }
-            .remark {
-                font-size: 24rpx;
-                color: #99a0ad;
-                margin-left: 12rpx;
-                height: 34rpx;
-                line-height: 34rpx;
-                &.exist {
-                    display: inline-block;
-                    background: #e2f3ff;
-                    border-radius: 4rpx;
-                    opacity: 0.58;
-                    padding-left: 10rpx;
-                    padding-right: 14rpx;
-                    color: #367aa0;
-                    text {
-                        margin-right: 14rpx;
-                    }
-                }
-                image {
-                    width: 20rpx;
-                    height: 20rpx;
-                    margin-left: 8rpx;
                 }
             }
         }

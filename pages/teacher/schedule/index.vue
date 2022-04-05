@@ -345,8 +345,8 @@ export default {
 
         .period-name {
             position: relative;
-            width: 176rpx;
-            padding: 0 8rpx;
+            width: 182rpx;
+            padding: 0 6rpx 0 8rpx;
 
             display: flex;
             align-items: center;

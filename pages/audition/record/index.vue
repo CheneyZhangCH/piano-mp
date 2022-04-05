@@ -70,7 +70,7 @@
                                 <template v-if="!item.folded">
                                     <view v-for="course in item.contract.courses" :key="course.courseId"
                                         class="course">
-                                        <text>{{ course.courseName }}({{ course.teacherName }}老师)</text>
+                                        <text>{{ course.courseName }}({{ course.teacherName }})</text>
                                         <text>周{{ WEEK_DAY[course.dayOfWeek] }}</text>
                                         <text>{{ course.timetablePeriodName }}</text>
                                     </view>
@@ -84,7 +84,7 @@
     </view>
 </template>
 <script>
-import tuiSticky from "@/components/ThorUi/tui-sticky/better-sticky"
+import tuiSticky from "@/components/ThorUi/tui-sticky"
 import dayjs from "dayjs";
 import { WEEK_DAY } from '@/utils/format'
 const CUR_MONTH = dayjs().format('YYYY-MM')

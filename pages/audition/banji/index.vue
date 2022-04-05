@@ -43,7 +43,7 @@
                     </view>
                     <view class="info">
                         <text>当前进度</text>
-                        <text class="value">
+                        <text class="value ellipsis">
                             <text v-if="chapter.bookName">({{ chapter.bookName }})</text>
                             <text v-if="chapter.chapterName">{{ chapter.chapterName }}</text>
                         </text>
@@ -83,20 +83,7 @@
                         </view>
                         <view class="operation">
                             <view class="left">
-                                <view
-                                    class="remark"
-                                    :class="{ 'exist': item.student.remark }"
-                                    @click="openRemark(item.student)"
-                                >
-                                    <template v-if="item.student.remark">
-                                        <text>{{ item.student.remark }}</text>
-                                        <uni-icons type="closeempty" size="12"></uni-icons>
-                                    </template>
-                                    <template v-else>
-                                        <text>点击添加备注信息(15字内)</text>
-                                        <image src="/static/images/audition/edit.png" />
-                                    </template>
-                                </view>
+                                <Remark :student="item.student" @confirm="init" />
                             </view>
                             <button class="btn" @click="studentId = item.student.studentId">查看详情</button>
                         </view>
@@ -106,7 +93,6 @@
         </scroll-view>
 
         <Student :student-id="studentId" is-banji @close="studentId = 0" />
-        <Remark ref="remark" :detail="studentDetail" @confirm="init" />
     </view>
 </template>
 
@@ -128,7 +114,6 @@ export default {
             detail: {},
 
             studentId: 0,
-            studentDetail: {},
 
             query: {}
         }
@@ -170,6 +155,12 @@ export default {
         this.query = option
         this.init()
     },
+    onShow() {
+        if (this.studentId) {
+            this.init()
+            this.$refs.student.getStudent()
+        }
+    },
     methods: {
         getExpiryDate,
         getExpiryDateWarning,
@@ -184,11 +175,6 @@ export default {
             } finally {
                 if (loading) uni.hideLoading();
             }
-        },
-
-        openRemark(student) {
-            this.studentDetail = student
-            this.$refs.remark.open()
         },
 
         async startClassDateChange(e) {
@@ -246,7 +232,7 @@ export default {
         .banji {
             margin: 0 24rpx;
             height: 340rpx;
-            background-image: url("https://static.gangqintonghua.com/img/beijing/banji.png");
+            background-image: url("https://static.gangqintonghua.com/img/beijing/banji-new.png");
             background-repeat: no-repeat;
             background-size: 100%;
 
@@ -285,7 +271,10 @@ export default {
                         line-height: 40rpx;
                     }
                     .value {
+                        flex: 1;
+                        text-align: right;
                         color: #141f33;
+                        padding-left: 20rpx;
                     }
                 }
             }
@@ -366,29 +355,6 @@ export default {
                     padding-top: 14rpx;
                     .left {
                         flex: 1;
-                        .remark {
-                            font-size: 24rpx;
-                            color: #99a0ad;
-                            &.exist {
-                                display: inline-block;
-                                height: 34rpx;
-                                line-height: 34rpx;
-                                background: #e2f3ff;
-                                border-radius: 4rpx;
-                                opacity: 0.58;
-                                padding-left: 10rpx;
-                                padding-right: 14rpx;
-                                color: #367aa0;
-                                text {
-                                    margin-right: 14rpx;
-                                }
-                            }
-                            image {
-                                width: 20rpx;
-                                height: 20rpx;
-                                margin-left: 8rpx;
-                            }
-                        }
                     }
                     .btn {
                         border-radius: 26rpx;

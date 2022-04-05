@@ -95,13 +95,14 @@ export default {
         right: 0;
         top: 0;
         height: 596rpx;
+        overflow: hidden;
         .bg {
             position: absolute;
             width: 100%;
             height: 100%;
             background-position: 38% 0;
             background-size: 200% 100%;
-            filter: blur(10px);
+            filter: blur(20px);
         }
         .cover {
             position: absolute;

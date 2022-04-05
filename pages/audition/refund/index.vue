@@ -109,6 +109,12 @@ export default {
         this.studentId = option.studentId
         this.init()
     },
+    onShow() {
+        if (this.dialogStudentId) {
+            this.init()
+            this.$refs.student.getStudent()
+        }
+    },
     methods: {
         dayjsFormat,
         async init() {

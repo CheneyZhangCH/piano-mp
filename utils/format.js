@@ -35,10 +35,16 @@ export const dayWeekTime = date => {
 
 // 账户有效期
 export const getExpiryDate = expiryDate => {
-    // （有效期-当前日期+1）/30=x月xx日
+    // if 有效期 >=当天  则显示天数=有效期-当天+1
+    // else 显示天数 有效期-当天
     if (!expiryDate) return '-'
-    const days = Math.ceil((expiryDate - new Date().getTime()) / (24 * 60 * 60 * 1000)) + 1
-    return [Math.floor(days / 30) ? Math.floor(days / 30) + '个月' : '', days % 30 ? days % 30 + '天' : ''].filter(Boolean).join('')
+    let days = (expiryDate - new Date(dayjsFormat(null, 'YYYY-MM-DD 00:00:00')).getTime()) / (24 * 60 * 60 * 1000)
+    if (days >= 0) days++
+    if (Math.abs(days) <= 30) return days + '天'
+
+    const monthSum = days > 0 ? Math.floor(days / 30) : Math.ceil(days / 30)
+    const daySum = days % 30
+    return [monthSum ? monthSum + '个月' : '', daySum ? daySum + '天' : ''].filter(Boolean).join('')
 }
 
 // n天到期

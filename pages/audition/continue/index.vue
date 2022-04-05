@@ -314,6 +314,12 @@ export default {
         this.studentId = option.studentId
         this.init()
     },
+    onShow() {
+        if (this.dialogStudentId) {
+            this.init()
+            this.$refs.student.getStudent()
+        }
+    },
     methods: {
         dayjsFormat,
         async init() {
@@ -326,7 +332,7 @@ export default {
                 this.trainTickets = []
 
                 const packageRes = await this.$http.get('/mini/coursePackage/listActive')
-                this.packages = packageRes.data?.filter(_ => _.id !== this.detail.coursePackage.packageId) ?? []
+                this.packages = packageRes.data ?? []
                 if (!this.packages.length) {
                     return uni.showToast({
                         title: '没有找到课程包，请联系管理员',
@@ -357,8 +363,8 @@ export default {
                 this.form.packageName = packageName
                 this.form.expiryMonths = expiryMonths
                 const { expiryDate } = this.student
-                // 账号有效期至：学生有效期+课程包月份-1
-                this.form.expiryDate = dayjs(expiryDate).add(expiryMonths, 'month').subtract(1, 'days').format('YYYY年 MM月 DD日')
+                // 账号有效期至：学生有效期+课程包月份*30 - 1
+                this.form.expiryDate = dayjs(expiryDate).add(expiryMonths * 30 - 1, 'days').format('YYYY年 MM月 DD日')
 
                 const filterCourses = courses.filter(course => course.courseActive) ?? []
                 const { courses: currentCourses } = this.coursePackage
@@ -477,7 +483,19 @@ export default {
         },
 
         dialogConfirm(value) {
-            let regExp = /^([1-9]{1}\d{0,4})$/
+            let regExp
+            switch (this.dialogMode) {
+                // 1~99999
+                case 'course':
+                    regExp = /^([1-9]{1}\d{0,4})$/
+                    break;
+                // 1~999
+                case 'expiryMonths':
+                    regExp = /^([1-9]{1}\d{0,2})$/
+                    break;
+                default:
+                    break;
+            }
             if (!regExp.test(+value)) return uni.showToast({ title: '请输入正确的数字！', icon: 'none' })
             switch (this.dialogMode) {
                 case 'course':
@@ -485,9 +503,7 @@ export default {
                     break
                 case 'expiryMonths':
                     this.form.expiryMonths = +value
-                    this.form.expiryDate = this.coursePackage.packageId === this.form.packageId
-                        ? dayjs().add(+value, 'month').subtract(1, 'days').format('YYYY年 MM月 DD日')
-                        : dayjs(this.student.expiryDate).add(+value, 'month').subtract(1, 'days').format('YYYY年 MM月 DD日')
+                    this.form.expiryDate = dayjs(this.student.expiryDate).add(+value * 30 - 1, 'days').format('YYYY年 MM月 DD日')
                     break
             }
             this.dialogClose()

@@ -5,7 +5,7 @@ export const complaintType = {
 
 const changeType = {
     studentContinue: '续课',
-    discontinue: '不续课',
+    discontinue: '未续课',
     refund: '退费'
 }
 

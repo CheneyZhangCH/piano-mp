@@ -1,6 +1,6 @@
 <template>
     <view>
-        <uni-popup ref="popup" :is-mask-click="false" type="center">
+        <uni-popup ref="popup" type="center" @change="onChange">
             <view class="main flex flex-column">
                 <view class="title flex">
                     <image class="avatar" :src="getStudentCoverUrl(student)" />
@@ -10,7 +10,7 @@
                                 <text class="student-name">{{
                                     student.studentName
                                 }}</text>
-                                <text class="package-name">{{
+                                <text v-if="coursePackage.packageName" class="package-name">{{
                                     coursePackage.packageName
                                 }}</text>
                             </view>
@@ -68,20 +68,22 @@
                         </view>
                     </view>
                     <view class="section-divider"></view>
-                    <view v-if="Array.isArray(coursePackage.courses)" class="course px-28">
+                    <view v-if="coursePackage.courses.length" class="course px-28">
                         <view v-for="course in coursePackage.courses" :key="course.courseId" class="course-item">
-                            <view class="course-item-title ellipsis" :class="{ warning: course.remainCourseNum <= 6 }">
-                                <text>{{
-                                    course.courseName +
-                                        '(' +
-                                        course.teacherName +
-                                        ')'
-                                }}</text>
-                                <text>{{
-                                    '周' + WEEK_DAY[course.dayOfWeek] +
-                                        ' ' +
-                                        course.timetablePeriodName
-                                }}</text>
+                            <view class="course-item-title" :class="{ warning: course.remainCourseNum <= 6 }">
+                                <text class="flex-1 ellipsis">
+                                    <text>{{
+                                        course.courseName +
+                                            '(' +
+                                            course.teacherName +
+                                            ')'
+                                    }}</text>
+                                    <text>{{
+                                        '周' + WEEK_DAY[course.dayOfWeek] +
+                                            ' ' +
+                                            course.timetablePeriodName
+                                    }}</text>
+                                </text>
                                 <text>{{
                                     '剩余' + course.remainCourseNum + '节'
                                 }}</text>
@@ -121,17 +123,8 @@
                             :class="{ 'warning': getExpiryDateWarning(student.expiryDate) }">
                             {{ '账户有效期：剩余' + getExpiryDate(student.expiryDate) }}
                         </view>
-                        <view class="section-divider"></view>
-                        <view class="remark" :class="{ 'exist': student.remark }" @click="openRemark(student)">
-                            <template v-if="student.remark">
-                                <text>{{ student.remark }} </text>
-                                <uni-icons type="closeempty" size="12"></uni-icons>
-                            </template>
-                            <template v-else>
-                                <text>点击添加备注信息(15字内)</text>
-                                <image src="/static/images/audition/edit.png" />
-                            </template>
-                        </view>
+                        <view class="section-divider" />
+                        <Remark :student="student" @confirm="getStudent" :custom-style="'margin: 30rpx 28rpx;'"/>
                     </template>
                 </scroll-view>
                 <view v-if="['AUDITION', 'ADMIN', 'SUPER_ADMIN'].includes(accountType)" class="action">
@@ -230,14 +223,12 @@
             </view>
         </uni-popup>
 
-        <!-- 备注 -->
-        <Remark ref="remark" :detail="student" @confirm="getStudent" />
         <ConflictGroup ref="group" :groups="groups" @confirm="groupConfirm" />
     </view>
 </template>
 
 <script>
-import Remark from "@/components/Remark";
+import Remark from '@/components/Remark'
 import ConflictGroup from '@/components/ConflictGroup'
 import { WEEK_DAY, getExpiryDate, getExpiryDateWarning } from '@/utils/format'
 
@@ -327,9 +318,12 @@ export default {
             this.detail = res.data ?? {}
         },
 
+        onChange(e) {
+            if(!e.show) this.$emit('close')
+        },
+
         close() {
             this.$refs.popup.close()
-            this.$emit('close')
         },
 
         setGrade() {
@@ -372,14 +366,10 @@ export default {
             }
         },
 
-        openRemark() {
-            this.$refs.remark.open()
-        },
-
         async disContinue(e) {
             this.disContinueIndex = +e.detail.value
             try {
-                const res = await this.$http.get('/mini/teacherGroup/listByStudentPackageId?studentPackageId=' + this.coursePackage.id)
+                const res = await this.$http.get('/mini/teacherGroup/listByStudentPackageId?studentPackageId=' + this.detail.studentPackageId)
                 if (res.data?.length) {
                     if (res.data.length > 1) {
                         this.groups = res.data
@@ -603,6 +593,9 @@ export default {
             &-item {
                 margin-bottom: 36rpx;
                 &-title {
+                    display: flex;
+                    justify-content: space-between;
+
                     font-size: 24rpx;
                     color: #141f33;
                     line-height: 34rpx;
@@ -655,30 +648,6 @@ export default {
             line-height: 34rpx;
             &.warning {
                 color: #f15e5e;
-            }
-        }
-        .remark {
-            font-size: 24rpx;
-            color: #99a0ad;
-            height: 34rpx;
-            line-height: 34rpx;
-            margin: 30rpx 28rpx;
-            &.exist {
-                display: inline-block;
-                background: #e2f3ff;
-                border-radius: 4rpx;
-                opacity: 0.58;
-                padding-left: 10rpx;
-                padding-right: 14rpx;
-                color: #367aa0;
-                text {
-                    margin-right: 14rpx;
-                }
-            }
-            image {
-                width: 20rpx;
-                height: 20rpx;
-                margin-left: 8rpx;
             }
         }
     }

@@ -259,21 +259,27 @@
                 <view class="footer">
                     <button class="btn cancel" @click="$refs.popup.close()">取消</button>
                     <button
-                        class="btn confirm"
-                        :class="{ disabled: disabled }"
+                        class="btn"
+                        :class="{ confirm: !disabled, disabled }"
                         :disabled="disabled"
                         @click="handleConfirm"
                     >确认</button>
                 </view>
             </view>
         </uni-popup>
+
+        <MessageBox ref="last" />
     </view>
 </template>
 
 <script>
+import MessageBox from './MessageBox.vue'
 import { WEEK_DAY } from '@/utils/format'
 import { numToChinese } from '@/utils/dicts'
 export default {
+    components: {
+        MessageBox
+    },
     props: {
         detail: {
             type: Object,
@@ -513,7 +519,7 @@ export default {
         },
 
         async handleConfirm() {
-            if(this.loading) return
+            if (this.loading) return
             this.loading = true
             const {
                 timetableId,
@@ -591,10 +597,34 @@ export default {
                 })
                 this.$refs.popup.close()
                 this.$emit('success', false) // 列表不loading
+                this._checkStudentEndAndNextCourse()
             } finally {
                 this.loading = false
             }
         },
+
+        async _checkStudentEndAndNextCourse() {
+            const {
+                timetablePeriodId,
+                oneCourse: {
+                    student: { studentId },
+                },
+            } = this.detail
+            const data = {
+                data: {
+                    timetablePeriodId,
+                    studentId
+                }
+            }
+            try {
+                const res = await this.$http.post('/mini/finishiLesson/checkStudentEndAndNextCourse', data)
+                const { course, lastCourse } = res.data ?? {}
+                if (!lastCourse) return
+                this.$refs.last.open(course)
+            } catch (error) {
+
+            }
+        }
     },
 }
 </script>

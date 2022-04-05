@@ -60,26 +60,12 @@ export default {
     },
     methods: {
         back() {
-            // 退费成功后需刷新页面（现重启-可能有问题）
-            if (this.from === 'refund') {
-                const curPages = getCurrentPages()
-                const { options, route } = curPages[1]
-                let url = '/' + route
-                let urlParams = []
-                Object.entries(options).forEach(([k, v]) => {
-                    urlParams.push(`${k}=${v}`)
-                })
-                if (urlParams.length) {
-                    url += `?${urlParams.join('&')}`
-                }
-                return uni.reLaunch({ url })
-            }
-            // 不续课（立即清退账户）直接返回首页（现重启-可能有问题）
-            if (this.immediately) {
+            // 退费成功、不续课（立即清退账户）直接返回首页
+            if (this.from === 'refund' || this.immediately) {
                 return uni.reLaunch({ url: '/pages/index/index' })
             }
             if (this.from === 'create') {
-                return uni.redirectTo({ url: '/pages/audition/account/index' })
+                return uni.reLaunch({ url: '/pages/audition/account/index' })
             }
             uni.navigateBack({ delta: 1 })
         }

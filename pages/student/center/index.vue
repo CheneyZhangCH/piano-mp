@@ -13,7 +13,7 @@
                 <view class="info">
                     <view class="name">
                         <text class="student">{{ student.studentName }}</text>
-                        <text class="package">{{ coursePackage.packageName }}</text>
+                        <text v-if="coursePackage.packageName" class="package">{{ coursePackage.packageName }}</text>
                     </view>
                     <view class="msg flex justify-between align-center">
                         <view class="gender-age">
@@ -21,38 +21,42 @@
                             </image>
                             <text v-if="student.age" class="age">{{ student.age }}岁</text>
                         </view>
-                        <view class="expiry" :class="{ guoqi: expiryDateStr === '您的账户已过期' }">
+                        <view class="expiry" :class="{ 'warning': getExpiryDateWarning(student.expiryDate) }">
                             {{ expiryDateStr }}
                         </view>
                     </view>
                 </view>
             </view>
-            <view v-for="item in courses" :key="item.id" class="block course">
-                <view class="block-title">
-                    <view>
-                        <text class="name">{{ item.courseName }}</text>
-                        <text class="times">共{{ item.courseNum }}节</text>
+            <template v-if="courses.length">
+                <view v-for="item in courses" :key="item.id" class="block course">
+                    <view class="block-title">
+                        <view>
+                            <text class="name">{{ item.courseName }}</text>
+                            <text class="times">共{{ item.courseNum }}节</text>
+                        </view>
+                        <view class="btn" @click="toFinishLesson(item)"> 消课记录 </view>
                     </view>
-                    <view class="btn" @click="toFinishLesson(item)"> 消课记录 </view>
+                    <view class="content">
+                        <view class="info">
+                            <text class="name">剩余课时</text>
+                            <text class="num" :class="{ warning: item.remainCourseNum <= 6 }">{{
+                                item.remainCourseNum
+                            }}</text>
+                            <text class="unit">（节）</text>
+                        </view>
+                        <view class="info">
+                            <text class="name">上课时间</text>
+                            <text class="time days">周{{ WEEK_DAY[item.dayOfWeek] }}</text>
+                            <text class="time">{{ item.timetablePeriodName }}</text>
+                        </view>
+                        <view class="info">
+                            <text class="name">任课老师</text>
+                            <image class="cover" :src="item.teacherCoverUrl" />
+                            <text class="teacher">{{ item.teacherName }}</text>
+                        </view>
+                    </view>
                 </view>
-                <view class="content">
-                    <view class="info">
-                        <text class="name">剩余课时</text>
-                        <text class="num">{{ item.remainCourseNum }}</text>
-                        <text class="unit">（节）</text>
-                    </view>
-                    <view class="info">
-                        <text class="name">上课时间</text>
-                        <text class="time days">周{{ WEEK_DAY[item.dayOfWeek] }}</text>
-                        <text class="time">{{ item.timetablePeriodName }}</text>
-                    </view>
-                    <view class="info">
-                        <text class="name">任课老师</text>
-                        <image class="cover" :src="item.teacherCoverUrl" />
-                        <text class="teacher">{{ item.teacherName }}</text>
-                    </view>
-                </view>
-            </view>
+            </template>
             <view class="block tools-block">
                 <view class="block-title">
                     <text class="name">我的工具</text>
@@ -67,13 +71,17 @@
                         <view class="box">
                             <image src="/static/images/student/peilianquan.png"
                                 style="width: 44rpx; height: 26rpx; margin-bottom: 16rpx;" />
-                            <text v-if="detail.trainTicketNum" class="num">{{ detail.trainTicketNum }}</text>
+                            <text v-if="detail.trainTicketNum" class="num">{{ detail.trainTicketNum }}张</text>
                         </view>
                         <text>课程陪练券</text>
                     </view>
                 </view>
             </view>
         </scroll-view>
+
+        <view class="slogan">
+            <image src="https://static.gangqintonghua.com/img/kong/slogan.png"></image>
+        </view>
 
         <MessageNotify />
         <customTabbar v-if="!studentId" :active="2" />
@@ -83,7 +91,7 @@
 <script lang="js">
 import MessageNotify from '../Components/MessageNotify'
 import dayjs from "dayjs"
-import { WEEK_DAY, weekOrDateTime } from '@/utils/format'
+import { WEEK_DAY, weekOrDateTime, getExpiryDateWarning } from '@/utils/format'
 export default {
     components: {
         MessageNotify
@@ -162,6 +170,7 @@ export default {
     },
     methods: {
         weekOrDateTime,
+        getExpiryDateWarning,
         async init() {
             const res = await this.$http.get(`/mini/student/getStudentDetail?studentId=${this.studentId || this.userId}`)
             this.detail = res.data ?? {}
@@ -214,7 +223,8 @@ export default {
     &-content {
         position: relative;
         z-index: 1;
-        height: 100%;
+        // height: 100%;
+        height: calc(100% - 138rpx);
         .block {
             margin: 0 30rpx;
             background: #ffffff;
@@ -295,8 +305,8 @@ export default {
                         font-size: 24rpx;
                         color: #fff;
                         padding-right: 32rpx;
-                        &.guoqi {
-                            font-size: 24rpx;
+                        &.warning {
+                            color: #f15e5e;
                         }
                     }
                 }
@@ -323,6 +333,9 @@ export default {
                         color: #141f33;
                         line-height: 66rpx;
                         margin-top: 12rpx;
+                        &.warning {
+                            color: #f15e5e;
+                        }
                     }
                     .unit,
                     .time,
@@ -364,6 +377,7 @@ export default {
                     .num {
                         position: absolute;
                         top: -10rpx;
+                        left: 26rpx;
 
                         height: 22rpx;
                         line-height: 22rpx;
@@ -372,11 +386,20 @@ export default {
 
                         font-size: 16rpx;
                         font-weight: 600;
-                        color: #ffffff;
+                        color: #fff;
                         padding: 0 4rpx;
+                        white-space: nowrap;
                     }
                 }
             }
+        }
+    }
+    .slogan {
+        margin: 40rpx 0;
+        text-align: center;
+        image {
+            width: 540rpx;
+            height: 54rpx;
         }
     }
 }

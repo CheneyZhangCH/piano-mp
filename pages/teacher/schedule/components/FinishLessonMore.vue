@@ -1,97 +1,95 @@
 <template>
-    <view>
-        <uni-popup
-            v-if="detail.timetablePeriodId"
-            ref="popup"
-            :is-mask-click="false"
-            type="center"
-        >
-            <view class="main">
-                <view class="header">
-                    {{ title }}
-                </view>
-                <view class="content">
-                    <view class="form-item">
-                        <view class="label">本课内容</view>
-                        <view class="value flex">
-                            <picker
-                                class="picker ellipsis"
-                                :class="{ placeholder: !form.bookId }"
-                                :value="bookValue"
-                                range-key="name"
-                                :range="bookList"
-                                @change="onBookChange"
-                            >
-                                {{ form.bookName || '请选择教材' }}
-                                <image
-                                    class="arrow"
-                                    src="/static/images/teacher/arrow-down.png"
-                                />
-                            </picker>
-                            <picker
-                                class="picker ellipsis"
-                                :class="{ placeholder: !form.chapterId }"
-                                :value="chapterValue"
-                                :disabled="chapterPickerDisabled"
-                                range-key="name"
-                                :range="chapterList"
-                                @change="onChapterChange"
-                            >
-                                {{ form.chapterName || '请选择曲目' }}
-                                <image
-                                    class="arrow"
-                                    src="/static/images/teacher/arrow-down.png"
-                                />
-                            </picker>
-                        </view>
-                    </view>
-                    <view class="form-item">
-                        <view class="label">学员选择</view>
-                        <view class="value">
-                            <van-checkbox-group
-                                v-model="form.studentIds"
-                                direction="horizontal"
-                                @change="(e) => (form.studentIds = e.detail)"
-                            >
-                                <van-checkbox
-                                    v-for="student in students"
-                                    :name="student.studentId"
-                                    use-icon-slot
-                                    :key="student.studentId"
-                                >
-                                    <image
-                                        slot="icon"
-                                        :src="`/static/images/student/icon-radio${
-                                            form.studentIds.includes(
-                                                '' + student.studentId
-                                            )
-                                                ? '-active'
-                                                : ''
-                                        }.png`"
-                                        style="width: 28rpx; height: 28rpx"
-                                    />
-                                    {{ student.studentName }}
-                                </van-checkbox>
-                            </van-checkbox-group>
-                        </view>
+    <uni-popup
+        v-if="detail.timetablePeriodId"
+        ref="popup"
+        :is-mask-click="false"
+        type="center"
+    >
+        <view class="main">
+            <view class="header">
+                {{ title }}
+            </view>
+            <view class="content">
+                <view class="form-item">
+                    <view class="label">本课内容</view>
+                    <view class="value flex">
+                        <picker
+                            class="picker ellipsis"
+                            :class="{ placeholder: !form.bookId }"
+                            :value="bookValue"
+                            range-key="name"
+                            :range="bookList"
+                            @change="onBookChange"
+                        >
+                            {{ form.bookName || '请选择教材' }}
+                            <image
+                                class="arrow"
+                                src="/static/images/teacher/arrow-down.png"
+                            />
+                        </picker>
+                        <picker
+                            class="picker ellipsis"
+                            :class="{ placeholder: !form.chapterId }"
+                            :value="chapterValue"
+                            :disabled="chapterPickerDisabled"
+                            range-key="name"
+                            :range="chapterList"
+                            @change="onChapterChange"
+                        >
+                            {{ form.chapterName || '请选择曲目' }}
+                            <image
+                                class="arrow"
+                                src="/static/images/teacher/arrow-down.png"
+                            />
+                        </picker>
                     </view>
                 </view>
-                <view class="footer">
-                    <button class="btn cancel" @click="$refs.popup.close()">
-                        取消
-                    </button>
-                    <button
-                        class="btn confirm"
-                        :class="{ disabled: disabled }"
-                        :disabled="disabled"
-                        @click="handleConfirm"
-                    >
-                        确认
-                    </button>
+                <view class="form-item">
+                    <view class="label">学员选择</view>
+                    <view class="value">
+                        <van-checkbox-group
+                            v-model="form.studentIds"
+                            direction="horizontal"
+                            @change="(e) => (form.studentIds = e.detail)"
+                        >
+                            <van-checkbox
+                                v-for="student in students"
+                                :name="student.studentId"
+                                use-icon-slot
+                                :key="student.studentId"
+                            >
+                                <image
+                                    slot="icon"
+                                    :src="`/static/images/student/icon-radio${
+                                        form.studentIds.includes(
+                                            '' + student.studentId
+                                        )
+                                            ? '-active'
+                                            : ''
+                                    }.png`"
+                                    style="width: 28rpx; height: 28rpx"
+                                />
+                                {{ student.studentName }}
+                            </van-checkbox>
+                        </van-checkbox-group>
+                    </view>
                 </view>
             </view>
-        </uni-popup>
-    </view>
+            <view class="footer">
+                <button class="btn cancel" @click="$refs.popup.close()">
+                    取消
+                </button>
+                <button
+                    class="btn confirm"
+                    :class="{ disabled: disabled }"
+                    :disabled="disabled"
+                    @click="handleConfirm"
+                >
+                    确认
+                </button>
+            </view>
+        </view>
+    </uni-popup>
 </template>
 
 <script>

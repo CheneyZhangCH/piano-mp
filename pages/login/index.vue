@@ -1,9 +1,6 @@
 <template>
     <view class="login-all-wrap">
-        <image
-            class="login-image"
-            src="https://static.gangqintonghua.com/img/beijing/login.png"
-        />
+        <image class="login-image" src="https://static.gangqintonghua.com/img/beijing/login.png" />
         <view class="login-btn-wrap">
             <button open-type="getPhoneNumber" @getphonenumber="getUserPhoneNumber">
                 <image src="https://static.gangqintonghua.com/img/icon/login-btn.png" />
@@ -13,16 +10,16 @@
             </button>
         </view>
 
-        <pianoMessageBox
-            ref="error"
-            message="仅对内部学员开放 请使用已开通的手机号登录"
-            @confirm="errorConfirm"
-        />
+        <MessageBox ref="error" @confirm="errorConfirm" />
     </view>
 </template>
 
 <script>
+import MessageBox from './components/MessageBox.vue'
 export default {
+    components: {
+        MessageBox
+    },
     data() {
         return {
             loading: false,
@@ -92,7 +89,7 @@ export default {
                             })
                             .catch((err) => {
                                 // console.log(err, 'catch')
-                                if(err.code === 4014) {
+                                if (err.code === 4014) {
                                     vm.$refs.error.open()
                                 }
                             })
@@ -113,7 +110,6 @@ export default {
         },
 
         errorConfirm() {
-            this.$refs.error.close()
             uni.navigateTo({ url: '/pages/login/login' })
         }
     },

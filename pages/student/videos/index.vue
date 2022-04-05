@@ -1,8 +1,9 @@
 <template>
     <view class="page">
-        <view class="page-package">
+        <scroll-view scroll-x="true"  :scroll-into-view="`package_${packageId}`" scroll-with-animation class="page-package">
             <view
                 v-for="item in packageList"
+                :id="`package_${item.id}`"
                 :key="item.id"
                 class="item"
                 :class="{
@@ -24,8 +25,8 @@
                     class="icon"
                 />
             </view>
-        </view>
-        <view class="page-courses">
+        </scroll-view>
+        <view v-if="courses.length" class="page-courses">
             <view v-for="item in courses" :key="item.id" @click="coursesDetail(item)" class="item">
                 <image :src="item.coverUrl" />
             </view>
@@ -124,7 +125,7 @@ export default {
         background-color: #fff;
         padding: 0 32rpx;
         white-space: nowrap;
-        overflow-x: auto;
+        border-bottom: 2rpx solid #F5F7FA;
         .item {
             display: inline-block;
             font-size: 26rpx;
@@ -133,8 +134,11 @@ export default {
             .icon {
                 margin-left: 10rpx;
             }
-            + .item {
-                margin-left: 80rpx;
+            &:not(:first-child) {
+                padding-left: 40rpx;
+            }
+            &:not(:last-child) {
+                padding-right: 40rpx;
             }
             &.available {
                 color: #616b80;
@@ -151,7 +155,7 @@ export default {
                     display: block;
                     position: absolute;
                     bottom: 0;
-                    width: 100%;
+                    width: calc(100% - 80rpx);
                     height: 4rpx;
                     background: linear-gradient(
                         90deg,

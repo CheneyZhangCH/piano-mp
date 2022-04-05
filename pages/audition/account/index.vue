@@ -1,5 +1,6 @@
 <template>
-    <view class="page">
+    <view class="page common" :class="{ step0: !studentId && step === 0 }" @touchstart="touchstart"
+        @touchend="touchend">
         <view class="page-content">
             <template v-if="step === 0">
                 <view class="block">
@@ -7,7 +8,7 @@
                         <view class="label">学员姓名：</view>
                         <view class="value border-b">
                             <input v-model="form.studentName" placeholder="请输入姓名或昵称 例：茹茹"
-                                placeholder-style="color: #99A0AD;font-size: 32rpx;" maxlength="3">
+                                placeholder-style="color: #99A0AD;font-size: 32rpx;" maxlength="10">
                         </view>
                     </view>
                     <view class="item">
@@ -55,71 +56,73 @@
                     </view>
                 </view>
                 <view class="block">
-                    <view class="item package-container">
+                    <view class="item">
                         <view class="label">选择课程：</view>
                         <view class="value package">
-                            <picker class="picker" :value="packageIndex" :range="packages" range-key="packageName"
-                                @change="packageChange">
-                                <text>{{ form.packageName }}</text>
+                            <picker class="picker" :class="{ placeholder: !form.packageId }" :value="packageIndex"
+                                :range="packages" range-key="packageName" @change="packageChange">
+                                <text>{{ form.packageName || '请选择课程' }}</text>
                                 <image src="/static/images/audition/arrow_down.png" />
                             </picker>
                         </view>
                     </view>
-                    <template v-if="form.courses.length">
-                        <view v-for="(course, index) in form.courses" :key="course.courseId" class="course">
-                            <view class="label">
-                                <text>
-                                    {{ course.courseName }}
-                                </text>
-                                <text>
-                                    {{ course.courseNum + ' ' + '节' }}
-                                </text>
-                                <view class="action" @click="dialogOpen('course', index)">
-                                    <text>修改课时</text>
-                                    <image src="/static/images/teacher/edit.png" />
+                    <view v-if="form.packageId" class="package-container">
+                        <template v-if="form.courses.length">
+                            <view v-for="(course, index) in form.courses" :key="course.courseId" class="course">
+                                <view class="label">
+                                    <text>
+                                        {{ course.courseName }}
+                                    </text>
+                                    <text>
+                                        {{ course.courseNum + ' ' + '节' }}
+                                    </text>
+                                    <view class="action" @click="dialogOpen('course', index)">
+                                        <text>修改课时</text>
+                                        <image src="/static/images/teacher/edit.png" />
+                                    </view>
                                 </view>
+                                <view class="value">
+                                    <picker class="teacher" :class="{ 'placeholder': !course.teacherName }"
+                                        :value="course.teacherIndex" :range="course.teachers" :data-index="index"
+                                        range-key="teacherName" @change="teacherChange">
+                                        <text>{{ course.teacherName || '选择老师' }}</text>
+                                        <image src="/static/images/audition/arrow_down.png" />
+                                    </picker>
+                                    <view class="timetable" :class="{ 'placeholder': !course.timetablePeriodId }"
+                                        @click="timetableChange(index)">
+                                        <text>
+                                            {{
+                                                course.timetablePeriodId ? '周' + WEEK_DAY[course.dayOfWeek] + ' ' +
+                                                    course.timetablePeriodName : '请选择该课程上课时间'
+                                            }}
+                                        </text>
+                                        <image src="/static/images/audition/arrow_down.png" />
+                                    </view>
+                                </view>
+                            </view>
+                        </template>
+                        <view class="course expiry">
+                            <view class="label">
+                                <text>账户有效期</text>
+                                <template v-if="!studentId">
+                                    <text>{{ form.expiryMonths + '个月' }}</text>
+                                    <view class="action" @click="dialogOpen('expiryMonths')">
+                                        <text>修改</text>
+                                        <image src="/static/images/teacher/edit.png" />
+                                    </view>
+                                </template>
+                                <template v-else>
+                                    <text>剩余{{ form.expiry.expiryMonths }}个月{{ form.expiry.expiryDays }}天</text>
+                                    <picker class="action" :value="expiryIndex" :range="['月数', '天数']"
+                                        @change="expiryChange">
+                                        <text>修改</text>
+                                        <image src="/static/images/teacher/edit.png" />
+                                    </picker>
+                                </template>
                             </view>
                             <view class="value">
-                                <picker class="teacher" :class="{ 'placeholder': !course.teacherName }"
-                                    :value="course.teacherIndex" :range="course.teachers" :data-index="index"
-                                    range-key="teacherName" @change="teacherChange">
-                                    <text>{{ course.teacherName || '选择老师' }}</text>
-                                    <image src="/static/images/audition/arrow_down.png" />
-                                </picker>
-                                <view class="timetable" :class="{ 'placeholder': !course.timetablePeriodId }"
-                                    @click="timetableChange(index)">
-                                    <text>
-                                        {{
-                                            course.timetablePeriodId ? '周' + WEEK_DAY[course.dayOfWeek] + ' ' +
-                                                course.timetablePeriodName : '请选择该课程上课时间'
-                                        }}
-                                    </text>
-                                    <image src="/static/images/audition/arrow_down.png" />
-                                </view>
+                                <text>账号有效期至：{{ form.expiryDate }}</text>
                             </view>
-                        </view>
-                    </template>
-                    <view class="course expiry">
-                        <view class="label">
-                            <text>账户有效期</text>
-                            <template v-if="!studentId">
-                                <text>{{ form.expiryMonths + '个月' }}</text>
-                                <view class="action" @click="dialogOpen('expiryMonth')">
-                                    <text>修改</text>
-                                    <image src="/static/images/teacher/edit.png" />
-                                </view>
-                            </template>
-                            <template v-else>
-                                <text>剩余{{ form.expiry.expiryMonths }}个月{{ form.expiry.expiryDays }}天</text>
-                                <picker class="action" :value="expiryIndex" :range="['月数', '天数']"
-                                    @change="expiryChange">
-                                    <text>修改</text>
-                                    <image src="/static/images/teacher/edit.png" />
-                                </picker>
-                            </template>
-                        </view>
-                        <view class="value">
-                            <text>账号有效期至：{{ form.expiryDate }}</text>
                         </view>
                     </view>
                 </view>
@@ -209,21 +212,22 @@
                 </view>
             </template>
         </view>
-        <view class="page-footer">
-            <template v-if="!studentId">
-                <button v-if="step === 0" class="btn " :class="{ confirm: !disabled, disabled }" :disabled="disabled"
-                    @click="next">
-                    下一步
-                </button>
-                <button v-else class="btn confirm" @click="confirm">
-                    生成合同
-                </button>
-                <view class="link" @click="toRecord">
-                    查看账号开通记录
-                    <uni-icons type="right" color="#99A0AD" size="12" />
-                </view>
-            </template>
-            <button v-else class="btn confirm" @click="edit">确认修改</button>
+        <view v-if="!studentId" class="page-actions">
+            <button v-if="step === 0" class="btn " :class="{ confirm: !disabled, disabled }" :disabled="disabled"
+                @click="next">
+                下一步
+            </button>
+            <button v-else class="btn confirm" @click="confirm">
+                生成合同
+            </button>
+            <view class="link" @click="toRecord">
+                查看账号开通记录
+                <uni-icons type="right" color="#99A0AD" size="12" />
+            </view>
+        </view>
+        <view v-else class="page-footer">
+            <button class="btn" :class="{ confirm: !disabled, disabled }" :disabled="disabled"
+                @click="edit">确认修改</button>
         </view>
 
         <uni-popup v-if="dialogVisible" ref="popup" type="dialog">
@@ -325,7 +329,15 @@ export default {
 
             studentId: 0,
             student: {},
+            coursePackage: {},
             expiryIndex: 0,
+
+            startX: 0,
+            // 原始月、天
+            originalExpiry: {
+                expiryDays: 0,
+                expiryMonths: 0
+            }
         }
     },
     onLoad(option) {
@@ -355,9 +367,10 @@ export default {
             if (!studentName || !gender || !birthday || !phone || !packageId || !courses.length) return true
 
             let coursesValid = false
+            const isCreate = !this.studentId
             for (let i = 0; i < courses.length; i++) {
                 const { courseId, courseNum, teacherId, timetableId, timetablePeriodId } = courses[i]
-                if (!courseId || !courseNum || !teacherId || !timetableId || !timetablePeriodId) {
+                if (!courseId || (isCreate && !courseNum) || !teacherId || !timetableId || !timetablePeriodId) {
                     coursesValid = true
                     break
                 }
@@ -379,6 +392,18 @@ export default {
         }
     },
     methods: {
+        touchstart(e) {
+            this.startX = e.changedTouches[0].pageX
+        },
+
+        touchend(e) {
+            if (this.step > 0) {
+                const moveX = e.changedTouches[0].pageX - this.startX
+                if (Math.abs(moveX) < 50) return
+                if (moveX > 0) this.step--
+            }
+        },
+
         dayjsFormat,
         async initOptions() {
             uni.showLoading({ title: '加载中', mask: true })
@@ -404,6 +429,10 @@ export default {
                     const res = await this.$http.get('/mini/student/getStudentCurrentPackageAndTicket?studentId=' + this.studentId)
                     const { student, coursePackage, phone, trainTickets } = res.data
                     this.student = student
+                    this.coursePackage = coursePackage
+                    // 陪练券
+                    this.trainTickets = trainTickets ?? []
+
                     const {
                         studentName,
                         gender,
@@ -416,45 +445,40 @@ export default {
                     const {
                         id,
                         packageId,
-                        packageName,
-                        courses: currentCourses
+                        status
                     } = coursePackage
                     this.form.studentName = studentName
                     this.form.gender = gender
                     this.form.birthday = dayjsFormat(birthday)
                     this.form.phone = phone
-                    this.form.packageId = packageId
+
+                    if (status === 'effective') {
+                        this.form.packageId = packageId
+                        this.getPackage()
+                    }
+
                     this.$set(this.form, 'oldPackageId', packageId)
                     this.$set(this.form, 'studentPackageId', id)
 
-                    this.form.packageName = packageName
-                    // this.form.expiryMonths = expiryMonths
-                    this.form.expiryDate = dayjs(expiryDate).format('YYYY年 MM月 DD日')
-                    // const diff = dayjs(expiryDate).diff(dayjs(),'day')
-                    const days = Math.ceil((expiryDate - new Date().getTime()) / (24 * 60 * 60 * 1000)) + 1
-                    this.$set(this.form, 'expiry', {
-                        expiryDays: days % 30,
-                        expiryMonths: Math.floor(days / 30)
-                    })
                     this.$set(this.form, 'grade', grade)
                     this.$set(this.form, 'examSeason', examSeason)
                     this.$set(this.form, 'lastExamTime', lastExamTime)
 
-                    const courses = []
-                    for (let i = 0; i < currentCourses.length; i++) {
-                        const { courseId, remainCourseNum, courseName, teacherId, teacherName, timetableId, timetablePeriodId, timetablePeriodName, dayOfWeek } = currentCourses[i]
-                        const teacherRes = await this.$http.get(`/mini/teacher/listByCourseId?courseId=${courseId}`)
-                        const teachers = teacherRes.data ?? []
-                        const teacherIndex = teachers.findIndex(_ => _.accountId === teacherId)
-                        courses.push({
-                            courseId, courseNum: remainCourseNum, courseName,
-                            teacherIndex, teacherId, teacherName, teachers,
-                            dayOfWeek,
-                            timetableId, timetablePeriodId, timetablePeriodName
-                        })
+                    // if 有效期 >=当天  则显示天数=有效期-当天+1
+                    // else 显示天数 有效期-当天
+                    let days = (expiryDate - new Date(dayjsFormat(null, 'YYYY-MM-DD 00:00:00')).getTime()) / (24 * 60 * 60 * 1000)
+                    if (days >= 0) days++
+                    if (Math.abs(days) <= 30) {
+                        this.originalExpiry = {
+                            expiryDays: days,
+                            expiryMonths: 0
+                        }
+                    } else {
+                        this.originalExpiry = {
+                            expiryDays: days % 30,
+                            expiryMonths: days > 0 ? Math.floor(days / 30) : Math.ceil(days / 30)
+                        }
                     }
-                    this.form.courses = courses
-                    this.trainTickets = trainTickets ?? []
                 } else {
                     this.form.packageId = this.packages[0].id
                     this.getPackage()
@@ -467,47 +491,66 @@ export default {
         async getPackage() {
             try {
                 const res = await this.$http.get(`/mini/coursePackage/getCoursePackage?coursePackageId=${this.form.packageId}`)
-
-                const { courses: tempCourses, coursePackage: { packageName, expiryMonths } } = res.data ?? {}
-                const currentCourses = tempCourses.filter(course => course.courseActive) ?? []
+                const { courses, coursePackage: { packageName, expiryMonths } } = res.data ?? {}
 
                 this.form.packageName = packageName
                 // 账号有效期至：
-                // 新增时 - 当天+课程包月份-1
-                // 修改时 - 新课程包: 学生有效期上+课程包月份-1 原课程包：学生有效期（还原）
+                // 新增时 - 当天+课程包月份*30 - 1
+                // 修改时 - 新课程包: 学生有效期+课程包月份*30 - 1 原课程包：学生有效期（还原）
                 if (this.studentId) {
                     const { expiryDate } = this.student
-                    if (this.form.packageId === this.form.oldPackageId) {
-                        const days = Math.ceil((expiryDate - new Date().getTime()) / (24 * 60 * 60 * 1000))
+                    if (this.coursePackage.status === 'effective' && this.form.packageId === this.form.oldPackageId) {
                         this.$set(this.form, 'expiry', {
-                            expiryDays: days % 30,
-                            expiryMonths: Math.floor(days / 30)
+                            ...this.originalExpiry
                         })
                         this.form.expiryDate = dayjs(expiryDate).format('YYYY年 MM月 DD日')
                     } else {
+                        const { expiryDays, expiryMonths: originalExpiryMonths } = this.originalExpiry
                         this.$set(this.form, 'expiry', {
-                            expiryDays: 0,
-                            expiryMonths
+                            expiryDays: expiryDays < 0 ? expiryDays + 30 : expiryDays,
+                            expiryMonths: expiryMonths + originalExpiryMonths - (expiryDays < 0 ? 1 : 0)
                         })
-                        this.form.expiryDate = dayjs(expiryDate).add(expiryMonths, 'month').subtract(1, 'days').format('YYYY年 MM月 DD日')
+                        this.form.expiryDate = dayjs(expiryDate).add(expiryMonths * 30 - 1, 'days').format('YYYY年 MM月 DD日')
                     }
                 } else {
                     this.form.expiryMonths = expiryMonths
-                    this.form.expiryDate = dayjs().add(expiryMonths, 'month').subtract(1, 'days').format('YYYY年 MM月 DD日')
+                    this.form.expiryDate = dayjs().add(expiryMonths * 30 - 1, 'days').format('YYYY年 MM月 DD日')
                 }
 
+                const filterCourses = courses.filter(course => course.courseActive) ?? []
+                const { courses: currentCourses, status } = this.coursePackage
+                const result = []
+                if (status === 'effective' && currentCourses?.length && currentCourses.length === filterCourses.length && !currentCourses.filter(x => !filterCourses.some(y => x.courseId === y.courseId)).length) {
+                    for (let i = 0; i < currentCourses.length; i++) {
+                        const { courseId, remainCourseNum, courseName, teacherId, teacherName, timetableId, timetablePeriodId, timetablePeriodName, dayOfWeek } = currentCourses[i]
+                        const { num } = filterCourses.filter(x => x.courseId === courseId)[0]
+                        const teacherRes = await this.$http.get(`/mini/teacher/listByCourseId?courseId=${courseId}`)
+                        const teachers = teacherRes.data ?? []
+                        const teacherIndex = teachers.findIndex(_ => _.accountId === teacherId)
 
-                const courses = []
-                for (let i = 0; i < currentCourses.length; i++) {
-                    const { courseId, num: courseNum, courseName } = currentCourses[i]
-                    const teacherRes = await this.$http.get(`/mini/teacher/listByCourseId?courseId=${courseId}`)
-                    courses.push({
-                        courseId, courseNum, courseName,
-                        teacherIndex: 0, teacherId: null, teacherName: null, teachers: teacherRes.data ?? [],
-                        timetableId: null, timetablePeriodId: null, timetablePeriodName: null
-                    })
+                        let courseNum = remainCourseNum
+                        if (this.form.packageId !== this.form.oldPackageId) {
+                            courseNum += num
+                        }
+                        result.push({
+                            courseId, courseNum, courseName,
+                            teacherIndex, teacherId, teacherName, teachers,
+                            timetableId, timetablePeriodId, timetablePeriodName,
+                            dayOfWeek
+                        })
+                    }
+                } else {
+                    for (let i = 0; i < filterCourses.length; i++) {
+                        const { courseId, num: courseNum, courseName } = filterCourses[i]
+                        const teacherRes = await this.$http.get(`/mini/teacher/listByCourseId?courseId=${courseId}`)
+                        result.push({
+                            courseId, courseNum, courseName,
+                            teacherIndex: 0, teacherId: null, teacherName: null, teachers: teacherRes.data ?? [],
+                            timetableId: null, timetablePeriodId: null, timetablePeriodName: null
+                        })
+                    }
                 }
-                this.form.courses = courses
+                this.form.courses = result
             } catch (error) {
                 console.log(error)
             }
@@ -536,7 +579,7 @@ export default {
             this.studentUsableTimetablePeriod = undefined
         },
 
-        async timetableChange(courseIndex, dayOfWeek = 2) {
+        async timetableChange(courseIndex) {
             this.timetableCourseIndex = courseIndex
             this.timetableCourse = this.form.courses[courseIndex]
             const teacherId = this.timetableCourse.teacherId
@@ -579,7 +622,7 @@ export default {
                     this.dialogCourseIndex = index
                     this.dialogInputValue = this.form.courses[index].courseNum
                     break
-                case 'expiryMonth':
+                case 'expiryMonths':
                     this.dialogInputValue = this.form.expiryMonths
                     break
                 case 'expiryExpiryMonths':
@@ -607,44 +650,52 @@ export default {
         },
 
         dialogConfirm(value) {
-            let regExp = /^([1-9]{1}\d{0,4})$/
-            let errorMessage = '请输入正确的数字！'
+            let regExp
             switch (this.dialogMode) {
+                // 修改时，剩余课时可以改成剩余课时=0；修改课程包状态
+                // 修改时 0~999、新增时 1~999
+                case 'course':
+                    regExp = this.studentId ? /^(0|[1-9]{1}\d{0,2})$/ : /^([1-9]{1}\d{0,2})$/
+                    break;
+                // 1~999
+                case 'expiryMonths':
+                    regExp = /^([1-9]{1}\d{0,2})$/
+                    break;
+                // 天不为0 0~999 天为0 1~999
+                case 'expiryExpiryMonths':
+                    regExp = this.form.expiry.expiryDays > 0 ? /^(0|[1-9]{1}\d{0,2})$/ : /^([1-9]{1}\d{0,2})$/
+                    break;
+                // 月不为0 0~30 月为0 1~30
+                case 'expiryDays':
+                    regExp = this.form.expiry.expiryMonths > 0 ? /^(0|[1-9]|[1-2]\d|30)$/ : /^([1-9]|[1-2]\d|30)$/
+                    break;
+                // 1~99999
+                case 'basicStudyDays':
+                    regExp = /^([1-9]{1}\d{0,4})$/
+                    break;
+                // 0~99999
                 case 'basicStudyChapters':
                     regExp = /^(0|[1-9]{1}\d{0,4})$/
-                    break;
-                // 0~999
-                case 'expiryExpiryMonths':
-                    regExp = /^(0|[1-9]{1}\d{0,2})$/
-                    break;
-                // 1~30
-                case 'expiryDays':
-                    regExp = /^([1-9]{1}|[1-2]{1}\d|30)$/
-                    errorMessage = '请输入1~30的数字！'
                     break;
                 default:
                     break;
             }
-            if (!regExp.test(+value)) return uni.showToast({ title: errorMessage, icon: 'none' })
+            if (!regExp.test(+value)) return uni.showToast({ title: '请输入正确的数字！', icon: 'none' })
             switch (this.dialogMode) {
                 case 'course':
                     this.form.courses[this.dialogCourseIndex].courseNum = +value
                     break
-                case 'expiryMonth':
+                case 'expiryMonths':
                     this.form.expiryMonths = +value
-                    this.form.expiryDate = dayjs().add(+value, 'month').format('YYYY年 MM月 DD日')
+                    this.form.expiryDate = dayjs().add(+value * 30 - 1, 'days').format('YYYY年 MM月 DD日')
                     break
                 case 'expiryExpiryMonths':
                     this.form.expiry.expiryMonths = +value
-                    this.form.expiryDate = this.form.packageId === this.form.oldPackageId
-                        ? dayjs().add(+value, 'month').add(+this.form.expiry.expiryDays - 1, 'days').format('YYYY年 MM月 DD日')
-                        : dayjs(this.student.expiryDate).add(+value, 'month').add(+this.form.expiry.expiryDays - 1, 'days').format('YYYY年 MM月 DD日')
+                    this.form.expiryDate = dayjs().add(+value * 30 + +this.form.expiry.expiryDays - 1, 'days').format('YYYY年 MM月 DD日')
                     break
                 case 'expiryDays':
                     this.form.expiry.expiryDays = +value
-                    this.form.expiryDate = this.form.packageId === this.form.oldPackageId
-                        ? dayjs().add(+this.form.expiry.expiryMonths, 'month').add(+value - 1, 'days').format('YYYY年 MM月 DD日')
-                        : dayjs(this.student.expiryDate).add(+this.form.expiry.expiryMonths, 'month').add(+value - 1, 'days').format('YYYY年 MM月 DD日')
+                    this.form.expiryDate = dayjs().add(+this.form.expiry.expiryMonths * 30 + +value - 1, 'days').format('YYYY年 MM月 DD日')
                     break
                 case 'basicStudyDays':
                     this.form.basicStudyDays = +value
@@ -662,7 +713,7 @@ export default {
             } = this.form
             if (!/\d{11}/.test(phone)) return uni.showToast({ title: '请输入正确的手机号码', icon: 'none' })
 
-            this.step += 1
+            this.step++
         },
 
         confirm() {
@@ -774,7 +825,7 @@ export default {
                     gender,
                     grade,
                     lastExamTime,
-                    newPackageId: oldPackageId === packageId ? null : packageId,
+                    newPackageId: oldPackageId === packageId ? this.coursePackage.status === 'effective' ? null : packageId : packageId,
                     packageId: oldPackageId,
                     phone,
                     studentId: this.studentId,
@@ -799,7 +850,10 @@ export default {
 <style lang="scss" scoped>
 .page {
     min-height: 100vh;
-    padding-bottom: 100rpx;
+    padding-bottom: 148rpx;
+    &.step0 {
+        padding-bottom: 270rpx;
+    }
     &-content {
         padding: 36rpx 32rpx;
         .block {
@@ -916,9 +970,6 @@ export default {
                         height: 20rpx;
                     }
                 }
-                &.package-container {
-                    margin-bottom: 50rpx;
-                }
                 .package {
                     padding: 0;
                     .picker {
@@ -930,6 +981,9 @@ export default {
                         font-size: 28rpx;
                         color: #141f33;
                         line-height: 40rpx;
+                        &.placeholder {
+                            color: #99a0ad;
+                        }
                         image {
                             width: 20rpx;
                             height: 20rpx;
@@ -962,6 +1016,9 @@ export default {
                         }
                     }
                 }
+            }
+            .package-container {
+                margin-top: 50rpx;
             }
             .course {
                 + .course {
@@ -1109,9 +1166,13 @@ export default {
             text-align: center;
         }
     }
-    &-footer {
-        padding: 0 52rpx;
-        margin-bottom: 16rpx;
+    &-actions {
+        position: fixed;
+        z-index: 9;
+        width: 100%;
+        bottom: 100rpx;
+        padding: 21rpx 52rpx 16rpx;
+        background-color: #f5f7fa;
         .btn {
             height: 84rpx;
             line-height: 84rpx;

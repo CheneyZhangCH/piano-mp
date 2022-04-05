@@ -10,17 +10,14 @@
                     @click="sortChange(s.name)"
                 >{{ s.title }}</text>
             </view>
-            <view class="btn" @click="filtrate">
+            <view class="btn" :class="{ filtrateNotEmpty }" @click="filtrate">
                 <text>筛选</text>
-                <image src="/static/images/audition/filtrate.png" />
+                <image :src="`/static/images/audition/filtrate${filtrateNotEmpty ? '-blue' : ''}.png`" />
             </view>
         </view>
         <view class="page-content">
             <view v-for="item in list" :key="item.student.studentId" class="student">
-                <image
-                    class="cover"
-                    :src="getStudentCoverUrl(item.student)"
-                />
+                <image class="cover" :src="getStudentCoverUrl(item.student)" />
                 <view class="info">
                     <view class="msg">
                         <text class="studentName">{{ item.student.studentName }}</text>
@@ -51,20 +48,7 @@
                     </view>
                     <view class="operation">
                         <view class="left">
-                            <view
-                                class="remark"
-                                :class="{ 'exist': item.student.remark }"
-                                @click="openRemark(item.student)"
-                            >
-                                <template v-if="item.student.remark">
-                                    <text>{{ item.student.remark }}</text>
-                                    <uni-icons type="closeempty" size="12"></uni-icons>
-                                </template>
-                                <template v-else>
-                                    <text>点击添加备注信息(15字内)</text>
-                                    <image src="/static/images/audition/edit.png" />
-                                </template>
-                            </view>
+                            <Remark :student="item.student" @confirm="handleSearch" />
                         </view>
                         <button class="btn" @click="studentId = item.student.studentId">查看详情</button>
                     </view>
@@ -74,15 +58,14 @@
 
         <customTabbar :active="2" />
 
-        <Student :student-id="studentId" @close="studentId = 0" />
-        <Remark ref="remark" :detail="studentDetail" @confirm="handleSearch" />
+        <Student ref="student" :student-id="studentId" @close="studentId = 0" />
         <Filtrate ref="filtrate" :dicts="dicts" @confirm="filtrateConfirm" />
     </view>
 </template>
 
 <script>
-import Student from "@/components/Student";
-import Remark from "@/components/Remark";
+import Student from "@/components/Student"
+import Remark from "@/components/Remark"
 import Filtrate from './components/Filtrate.vue'
 import { WEEK_DAY, getExpiryDate, getExpiryDateWarning } from '@/utils/format'
 
@@ -112,9 +95,13 @@ export default {
             },
 
             studentId: 0,
-            studentDetail: {},
 
             list: []
+        }
+    },
+    computed: {
+        filtrateNotEmpty() {
+            return this.filtrateForm.packageIds.length || this.filtrateForm.teacherIds.length
         }
     },
     onLoad() {
@@ -128,6 +115,12 @@ export default {
 
         this.init()
         this.handleSearch()
+    },
+    onShow() {
+        if (this.studentId) {
+            this.handleSearch()
+            this.$refs.student.getStudent()
+        }
     },
     methods: {
         getExpiryDate,
@@ -176,20 +169,10 @@ export default {
             try {
                 const res = await this.$http.post('/mini/student/listNeedContinueStudent', param)
                 this.list = res.data ?? []
-
-                this.$store.dispatch('accountBusinessCount/setTabbarInfo', {
-                    key: 'xufei',
-                    count: res.data?.length ?? 0
-                })
             } finally {
                 uni.hideLoading()
                 uni.stopPullDownRefresh()
             }
-        },
-
-        openRemark(student) {
-            this.studentDetail = student
-            this.$refs.remark.open()
         }
     },
     onPullDownRefresh() {
@@ -233,6 +216,9 @@ export default {
                 width: 20rpx;
                 height: 22rpx;
                 margin-left: 6rpx;
+            }
+            &.filtrateNotEmpty {
+                color: #62bbec;
             }
         }
     }
@@ -311,29 +297,6 @@ export default {
                     padding-top: 14rpx;
                     .left {
                         flex: 1;
-                        .remark {
-                            font-size: 24rpx;
-                            color: #99a0ad;
-                            &.exist {
-                                display: inline-block;
-                                height: 34rpx;
-                                line-height: 34rpx;
-                                background: #e2f3ff;
-                                border-radius: 4rpx;
-                                opacity: 0.58;
-                                padding-left: 10rpx;
-                                padding-right: 14rpx;
-                                color: #367aa0;
-                                text {
-                                    margin-right: 14rpx;
-                                }
-                            }
-                            image {
-                                width: 20rpx;
-                                height: 20rpx;
-                                margin-left: 8rpx;
-                            }
-                        }
                     }
                     .btn {
                         border-radius: 26rpx;

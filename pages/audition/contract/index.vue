@@ -199,6 +199,13 @@ export default {
             try {
                 await this.$http.post('/mini/student/continueStudent', data)
                 this.$toast({ title: '续费成功！', icon: 'success' })
+
+                // 续费成功后刷新续费列表个数
+                const countNeedContinueStudentRes = await this.$http.post('/mini/student/countNeedContinueStudent')
+                this.$store.dispatch('accountBusinessCount/setTabbarInfo', {
+                    key: 'xufei',
+                    count: countNeedContinueStudentRes.data ?? 0
+                })
                 uni.redirectTo({ url: '/pages/success/index?from=continue' })
             } finally {
                 this.loading = false
