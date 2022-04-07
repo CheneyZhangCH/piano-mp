@@ -7,15 +7,17 @@
             </view>
             <view class="record-content">
                 <template v-if="item.msgData">
-                    <template
-                        v-if="item.msgType === 'accountExpiry'"
-                    >距离您的账户有效期还剩余 {{ item.msgData.expiryDays }} 天，为保证课程连续性，请尽快联系店长续费噢~</template>
+                    <template v-if="item.msgType === 'accountExpiry'">
+                        距离您的账户有效期还剩余
+                        <text class="warning">{{ ' ' + item.msgData.expiryDays + ' ' }}</text>天，为保证课程连续性，请尽快联系店长续费噢~
+                    </template>
                     <template
                         v-else-if="item.msgType === 'useTrainTicket'"
                     >您有一张{{ item.msgData.ticketName }}于{{ dayjsFormat(item.msgData.useTime, 'MM月DD日hh:mm') }}被{{ item.msgData.teacherName }}老师核销。</template>
-                    <template
-                        v-else-if="item.msgType === 'courseRemain'"
-                    >{{ item.msgData.courseName }}仅剩余 {{ item.msgData.remainCourseNum }} 节，为保证课程连续性，请尽快联系店长续费噢~</template>
+                    <template v-else-if="item.msgType === 'courseRemain'">
+                        {{ item.msgData.courseName }}仅剩余
+                        <text class="warning">{{ ' ' + item.msgData.remainCourseNum + ' ' }}</text>节，为保证课程连续性，请尽快联系店长续费噢~
+                    </template>
                 </template>
             </view>
         </view>
@@ -101,6 +103,7 @@ export default {
             line-height: 34rpx;
             .warning {
                 color: #f15e5e;
+                font-weight: 600;
             }
         }
     }

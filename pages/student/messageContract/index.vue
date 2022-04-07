@@ -21,7 +21,9 @@
                                 :key="course.courseId"
                             >
                                 {{ course.courseName }}{{ course.courseNum }}节
-                                <template v-if="index < item.accountContract.courses.length - 1">；</template>
+                                <template
+                                    v-if="index < item.accountContract.courses.length - 1"
+                                >；</template>
                             </text>
                         </template>
                         <template v-else>
@@ -30,7 +32,9 @@
                                 :key="course.courseId"
                             >
                                 {{ course.courseName }}{{ course.courseNum }}节
-                                <template v-if="index < item.continueContract.courses.length - 1">；</template>
+                                <template
+                                    v-if="index < item.continueContract.courses.length - 1"
+                                >；</template>
                             </text>
                         </template>
                     </view>
@@ -52,7 +56,8 @@ import { weekOrDateTime } from "@/utils/format"
 export default {
     data() {
         return {
-            records: []
+            records: [],
+            showed: false
         }
     },
     onLoad() {
@@ -63,6 +68,10 @@ export default {
             return uni.navigateTo({ url: '/pages/login/index' })
         }
         this.init()
+    },
+    onShow() {
+        if (this.showed) this.init()
+        this.showed = true
     },
     methods: {
         weekOrDateTime,
@@ -78,7 +87,7 @@ export default {
         toContract(item) {
             const contract = item.contractType === 'ACCOUNT' ? item.accountContract : item.continueContract
             uni.setStorageSync('contract', JSON.stringify(contract))
-            uni.navigateTo({ url: '/pages/audition/contract/index?from=message' + item.contractType })
+            uni.navigateTo({ url: '/pages/audition/contract/index?from=message' + item.contractType + '&contractId=' + item.id })
         }
     },
 }

@@ -21,7 +21,7 @@
                     />
                     <text class="name ellipsis">{{ group.groupName }}</text>
                     <view class="leader">
-                        <text>组长：</text>
+                        <text class="er">组长：</text>
                         <image
                             class="cover"
                             :src="teacher.coverUrl"
@@ -30,7 +30,7 @@
                         />
                     </view>
                     <view class="member">
-                        <text>组员：</text>
+                        <text class="er">组员：</text>
                         <image
                             class="cover"
                             :src="teacher.coverUrl"
@@ -137,12 +137,12 @@ export default {
             .member {
                 display: flex;
                 align-items: center;
-                text {
+                .er {
                     font-size: 24rpx;
                     color: #525666;
                     margin-right: 10rpx;
                 }
-                image {
+                .cover {
                     width: 28rpx;
                     height: 28rpx;
                     border-radius: 50%;

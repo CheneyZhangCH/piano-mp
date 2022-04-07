@@ -102,7 +102,7 @@
         </view>
         <view class="update-to-next-month" @click="$refs.utnm.open()">
             更新至下个月
-            <image src="/static/images/teacher/refresh.png" />
+            <image src="/static/images/teacher/refresh-blue.png" />
         </view>
 
         <pianoMessageBox

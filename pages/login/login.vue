@@ -185,7 +185,7 @@ export default {
                                         uni.setStorageSync('contract', JSON.stringify(res.data))
                                         return uni.redirectTo({ url: '/pages/student/contract/index' })
                                     }
-                                    return uni.redirectTo({ url: '/pages/student/videos/index' })
+                                    return uni.redirectTo({ url: '/pages/student/homework/index' })
                                 } catch (error) {
                                     console.log(error)
                                 }

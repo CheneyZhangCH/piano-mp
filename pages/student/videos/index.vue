@@ -1,6 +1,11 @@
 <template>
     <view class="page">
-        <scroll-view scroll-x="true"  :scroll-into-view="`package_${packageId}`" scroll-with-animation class="page-package">
+        <scroll-view
+            scroll-x="true"
+            :scroll-into-view="`package_${packageId}`"
+            scroll-with-animation
+            class="page-package"
+        >
             <view
                 v-for="item in packageList"
                 :id="`package_${item.id}`"
@@ -21,8 +26,8 @@
                                 : '/static/images/student/unlock.png'
                             : '/static/images/student/lock.png'
                     "
-                    style="width: 10px; height: 12px"
                     class="icon"
+                    :class="{ 'lock': !item.available }"
                 />
             </view>
         </scroll-view>
@@ -82,20 +87,13 @@ export default {
                         this._listByPackageId()
                     }
                 }
-
-
-                const countUnreadStudentWorkRes = await this.$http.get('/mini/finishiLesson/countUnreadStudentWork')
-                this.$store.dispatch('accountBusinessCount/setTabbarDot', {
-                    key: 'homework',
-                    dotFlag: countUnreadStudentWorkRes.data > 0
-                })
             } finally {
                 uni.hideLoading()
             }
         },
 
         packageChange(item) {
-            if (!item.available) return
+            if (this.packageId === item.id || !item.available) return
             this.packageId = item.id
             this._listByPackageId()
         },
@@ -119,13 +117,14 @@ export default {
 
 <style lang="scss" scoped>
 .page {
+    min-height: 100vh;
     background-color: #fff;
     &-package {
         width: 100%;
         background-color: #fff;
         padding: 0 32rpx;
         white-space: nowrap;
-        border-bottom: 2rpx solid #F5F7FA;
+        border-bottom: 2rpx solid #f5f7fa;
         .item {
             display: inline-block;
             font-size: 26rpx;
@@ -133,6 +132,11 @@ export default {
             line-height: 36rpx;
             .icon {
                 margin-left: 10rpx;
+                width: 12px;
+                height: 12px;
+                &.lock {
+                    width: 10px;
+                }
             }
             &:not(:first-child) {
                 padding-left: 40rpx;

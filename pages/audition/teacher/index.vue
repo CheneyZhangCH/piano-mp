@@ -126,7 +126,7 @@
             </template>
         </view>
 
-        <Student ref="student" :student-id="studentId" @close="studentId = 0" @del="studentId = 0" />
+        <Student ref="student" :student-id="studentId" @close="studentId = 0" @del="studentDel" />
     </view>
 </template>
 
@@ -246,6 +246,11 @@ export default {
         // 学生详情弹窗
         openStudent(period) {
             this.studentId = period.oneCourse.student.accountId;
+        },
+
+        studentDel() {
+            this.studentId = 0
+            this.handleSearch()
         },
 
         // 班级详情

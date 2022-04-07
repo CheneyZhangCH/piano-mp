@@ -53,11 +53,15 @@
             </view>
             <view v-if="form.packageId" class="package-info">
                 <template v-if="form.courses.length">
-                    <view v-for="course in form.courses" :key="course.courseId" class="course">
+                    <view
+                        v-for="(course, courseIndex) in form.courses"
+                        :key="courseIndex"
+                        class="course"
+                    >
                         <view class="label">
                             <text>{{ course.courseName }}</text>
                             <text>{{ course.courseNum + ' ' + '节' }}</text>
-                            <view class="action" @click="dialogOpen('course', course.subscript)">
+                            <view class="action" @click="dialogOpen('course', courseIndex)">
                                 <text>修改课时</text>
                                 <image src="/static/images/teacher/edit.png" />
                             </view>
@@ -69,7 +73,7 @@
                                 :value="course.teacherIndex"
                                 :range="course.teachers"
                                 range-key="teacherName"
-                                @change="teacherChange($event, course.subscript)"
+                                @change="teacherChange($event, courseIndex)"
                             >
                                 <text>{{ course.teacherName || '选择老师' }}</text>
                                 <image src="/static/images/audition/arrow_down.png" />
@@ -77,7 +81,7 @@
                             <view
                                 class="timetable"
                                 :class="{ 'placeholder': !course.timetablePeriodId }"
-                                @click="timetableChange(course.subscript)"
+                                @click="timetableChange(courseIndex)"
                             >
                                 <text>
                                     {{
@@ -149,7 +153,7 @@
                 v-if="!immediatelyConfirm && !disabled"
                 class="btn confirm text-center"
                 :value="effectiveWayIndex"
-                :range="['剩余课时结束后生效课程', '立即生效']"
+                :range="['立即生效', '剩余课时结束后生效课程']"
                 @change="effectiveWayChange"
             >生成合同</picker>
             <button
@@ -381,8 +385,7 @@ export default {
                             courseId, courseNum: remainCourseNum + num, courseName,
                             teacherIndex, teacherId, teacherName, teachers,
                             timetableId, timetablePeriodId, timetablePeriodName,
-                            dayOfWeek,
-                            subscript: i // dom里循环生成的index有问题，待解决
+                            dayOfWeek
                         })
                     }
                 } else {
@@ -393,8 +396,7 @@ export default {
                         result.push({
                             courseId, courseNum, courseName,
                             teacherIndex: 0, teacherId: null, teacherName: null, teachers: teacherRes.data ?? [],
-                            timetableId: null, timetablePeriodId: null, timetablePeriodName: null,
-                            subscript: i
+                            timetableId: null, timetablePeriodId: null, timetablePeriodName: null
                         })
                     }
                 }
@@ -557,7 +559,7 @@ export default {
         effectiveWayChange(e) {
             const value = +e.detail.value
             this.effectiveWayIndex = value
-            this.immediately = value === 1
+            this.immediately = value === 0
             this.valid()
         },
 

@@ -97,7 +97,7 @@
             >确认</button>
         </view>
 
-        <Student :student-id="studentId" @close="studentId = 0" />
+        <Student :student-id="studentId" @close="studentId = 0" @del="studentDel"/>
     </view>
 </template>
 
@@ -169,6 +169,11 @@ export default {
 
         openStudent() {
             this.studentId = this.student.studentId
+        },
+
+        studentDel() {
+            this.studentId = 0
+            this.init()
         },
 
         async confirm() {

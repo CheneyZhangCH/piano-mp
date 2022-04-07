@@ -93,7 +93,8 @@ export default {
         return {
             WEEK_DAY,
             form: {},
-            from: ''
+            from: '',
+            contractId: 0
         }
     },
     computed: {
@@ -118,8 +119,21 @@ export default {
             this.from = option.from
         }
         this.form = JSON.parse(contract)
+        if (option?.contractId) {
+            this.contractId = option.contractId
+            this._getContractById()
+        }
     },
     methods: {
+        // 消除签约消息列表 - 小红点
+        async _getContractById() {
+            try {
+                await this.$http.post('/mini/studentContract/getContractById', { data: this.contractId })
+            } catch (error) {
+                console.log(error)
+            }
+        },
+
         async handleSubmit() {
             if (this.loading) return
             this.loading = true

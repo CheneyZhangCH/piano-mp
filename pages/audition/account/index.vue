@@ -68,7 +68,8 @@
                     </view>
                     <view v-if="form.packageId" class="package-container">
                         <template v-if="form.courses.length">
-                            <view v-for="(course, index) in form.courses" :key="course.courseId" class="course">
+                            <view v-for="(course, courseIndex) in form.courses" :key="courseIndex"
+                                class="course">
                                 <view class="label">
                                     <text>
                                         {{ course.courseName }}
@@ -76,20 +77,20 @@
                                     <text>
                                         {{ course.courseNum + ' ' + '节' }}
                                     </text>
-                                    <view class="action" @click="dialogOpen('course', index)">
+                                    <view class="action" @click="dialogOpen('course', courseIndex)">
                                         <text>修改课时</text>
                                         <image src="/static/images/teacher/edit.png" />
                                     </view>
                                 </view>
                                 <view class="value">
                                     <picker class="teacher" :class="{ 'placeholder': !course.teacherName }"
-                                        :value="course.teacherIndex" :range="course.teachers" :data-index="index"
-                                        range-key="teacherName" @change="teacherChange">
+                                        :value="course.teacherIndex" :range="course.teachers" range-key="teacherName"
+                                        @change="teacherChange($event, courseIndex)">
                                         <text>{{ course.teacherName || '选择老师' }}</text>
                                         <image src="/static/images/audition/arrow_down.png" />
                                     </picker>
                                     <view class="timetable" :class="{ 'placeholder': !course.timetablePeriodId }"
-                                        @click="timetableChange(index)">
+                                        @click="timetableChange(courseIndex)">
                                         <text>
                                             {{
                                                 course.timetablePeriodId ? '周' + WEEK_DAY[course.dayOfWeek] + ' ' +
@@ -564,8 +565,7 @@ export default {
             this.getPackage()
         },
 
-        teacherChange(e) {
-            const courseIndex = e.target.dataset.index
+        teacherChange(e, courseIndex) {
             const course = this.form.courses[courseIndex]
             const { teacherName, accountId } = course.teachers[+e.detail.value]
 
@@ -575,8 +575,6 @@ export default {
             this.$set(course, 'timetableId', null)
             this.$set(course, 'timetablePeriodId', null)
             this.$set(course, 'timetablePeriodName', null)
-
-            this.studentUsableTimetablePeriod = undefined
         },
 
         async timetableChange(courseIndex) {

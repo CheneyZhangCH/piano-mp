@@ -68,7 +68,7 @@
                         </view>
                     </view>
                     <view class="section-divider"></view>
-                    <view v-if="coursePackage.courses.length" class="course px-28">
+                    <view v-if="Array.isArray(coursePackage.courses)" class="course px-28">
                         <view v-for="course in coursePackage.courses" :key="course.courseId" class="course-item">
                             <view class="course-item-title" :class="{ warning: course.remainCourseNum <= 6 }">
                                 <text class="flex-1 ellipsis">
@@ -84,7 +84,7 @@
                                             course.timetablePeriodName
                                     }}</text>
                                 </text>
-                                <text>{{
+                                <text v-if="['AUDITION', 'ADMIN', 'SUPER_ADMIN'].includes(accountType)">{{
                                     '剩余' + course.remainCourseNum + '节'
                                 }}</text>
                             </view>
@@ -135,13 +135,13 @@
                         </text>
                         <view class="undo" @click="undo(student.status)">
                             <text>撤销</text>
-                            <image src="/static/images/teacher/refresh.png"></image>
+                            <image src="/static/images/teacher/refresh-blue.png"></image>
                         </view>
                     </view>
                     <template v-else>
                         <view>
                             <picker class="btn cancel picker" :value="disContinueIndex"
-                                :range="['剩余课时结束后清退账户', '立即清退账户']" @change="disContinue">
+                                :range="['立即清退账户', '剩余课时结束后清退账户']" @change="disContinue">
                                 不续课
                             </picker>
                             <button class="btn confirm" @click="doContinue">
@@ -391,7 +391,7 @@ export default {
         },
 
         async disContinueConfirm() {
-            const immediately = this.disContinueIndex === 1
+            const immediately = this.disContinueIndex === 0
             const data = {
                 data: {
                     groupId: this.groupId,

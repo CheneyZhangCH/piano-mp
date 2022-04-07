@@ -131,7 +131,7 @@ export default {
             try {
                 await this.$http.post('/mini/studentContract/confirmContract', data)
                 this.$toast({ title: '确认成功！', icon: 'success' })
-                uni.redirectTo({ url: '/pages/student/videos/index' })
+                uni.redirectTo({ url: '/pages/student/homework/index' })
             } finally {
                 this.loading = false
             }

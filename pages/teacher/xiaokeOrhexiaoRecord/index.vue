@@ -1,7 +1,7 @@
 <template>
     <view class="page common" :class="{ selectAble }">
-        <view class="page-search">
-            <view class="mode" @click="toggleSearchMode">{{ mode === 'month' ? '自定义时间' : '按月份筛选' }}</view>
+        <view v-if="accountType !== 'TEACHER'" class="page-search" :class="{ 'student': accountType === 'STUDENT' }">
+            <view v-if="accountType !== 'STUDENT'" class="mode" @click="toggleSearchMode">{{ mode === 'month' ? '自定义时间' : '按月份筛选' }}</view>
             <view
                 v-if="['ADMIN', 'SUPER_ADMIN', 'STUDENT'].includes(accountType) && courseId"
                 class="switch"
@@ -9,7 +9,7 @@
                 @click="toggleSelectAble"
             >
                 <template v-if="['ADMIN', 'SUPER_ADMIN'].includes(accountType)">
-                    <image class="refresh" src="/static/images/teacher/refresh.png" />恢复课时
+                    <image class="refresh" :src="`/static/images/teacher/refresh${selectAble ? '-blue' : ''}.png`" />恢复课时
                 </template>
                 <template v-else>
                     <image
@@ -29,28 +29,33 @@
         <view class="page-records">
             <view class="title">
                 <view class="time">
-                    <picker
-                        v-if="mode === 'month'"
-                        mode="date"
-                        fields="month"
-                        :value="month"
-                        @change="onMonthChange"
-                    >
-                        {{ month || '请选择月份' }}
-                        <uni-icons type="bottom" size="14" style="margin-left: 6rpx;" />
-                    </picker>
+                    <template v-if="accountType !== 'TEACHER'">
+                        <picker
+                            v-if="mode === 'month'"
+                            mode="date"
+                            fields="month"
+                            :value="month"
+                            @change="onMonthChange"
+                        >
+                            {{ month || '请选择月份' }}
+                            <uni-icons type="bottom" size="14" style="margin-left: 6rpx;" />
+                        </picker>
 
-                    <uni-datetime-picker
-                        v-if="mode === 'range'"
-                        :value="dateRange"
-                        :border="false"
-                        :clear-icon="false"
-                        type="daterange"
-                        @change="onDaterRangeChange"
-                    >
-                        {{ dateRange.length ? dateRange.join(' 至 ') : '请选择日期范围' }}
-                        <uni-icons type="bottom" size="14" style="margin-left: 6rpx;" />
-                    </uni-datetime-picker>
+                        <uni-datetime-picker
+                            v-if="mode === 'range'"
+                            :value="dateRange"
+                            :border="false"
+                            :clear-icon="false"
+                            type="daterange"
+                            @change="onDaterRangeChange"
+                        >
+                            {{ dateRange.length ? dateRange.join(' 至 ') : '请选择日期范围' }}
+                            <uni-icons type="bottom" size="14" style="margin-left: 6rpx;" />
+                        </uni-datetime-picker>
+                    </template>
+                    <template v-else>
+                        <text v-if="times">{{ times }}</text>
+                    </template>
                 </view>
                 <text class="len" v-if="records.length">{{ recordsLen }}</text>
             </view>
@@ -189,6 +194,8 @@ export default {
             ticketId: 0,
             teacherId: 0,
             studentId: 0,
+            startTime: undefined,
+            endTime: undefined,
 
             records: [],
 
@@ -207,7 +214,16 @@ export default {
                 return `共消课 ${this.records.reduce((acc, cur) => acc + cur.students.length, 0)}人`
             }
             return `共核销 ${this.records.length}张`
-        }
+        },
+        times() {
+            const start = +this.startTime,
+                end = +this.endTime
+
+            const s = start ? dayjs(start).format('YYYY年M月D日') : '',
+                e = end ? dayjs(end).format('YYYY年M月D日') : ''
+            console.log(s, e)
+            return [s, e].filter(Boolean).join(' 至 ')
+        },
     },
     onLoad(option) {
         const token = uni.getStorageSync('token')
@@ -225,6 +241,8 @@ export default {
         this.ticketId = option.ticketId ?? 0
         this.teacherId = option?.teacherId ?? 0
         this.studentId = option?.studentId ?? 0
+        this.startTime = option?.startTime ?? undefined
+        this.endTime = option?.endTime ?? undefined
 
         uni.setNavigationBarTitle({
             title: this.courseId ? '消课记录' : '核销记录'
@@ -259,7 +277,8 @@ export default {
                     } : {
                         ticketId
                     }),
-                    ...(this.mode === 'month' ? {
+                    // 老师端显示的时间是带过来只用于显示
+                    ...(this.accountType === 'TEACHER' ? {} : this.mode === 'month' ? {
                         minMonth: month,
                         maxMonth: month
                     } : {
@@ -346,6 +365,10 @@ export default {
         align-items: center;
         justify-content: space-between;
         padding: 20rpx 30rpx;
+        min-height: 88rpx;
+        &.student {
+            justify-content: flex-end;
+        }
         .mode {
             border-radius: 4px;
             border: 1px solid;

@@ -2,12 +2,12 @@
     <view>
         <view class="remark" :class="{ 'exist': student.remark }" :style="customStyle" @click="open">
             <template v-if="student.remark">
-                <text>{{ student.remark }}</text>
+                <text class="exist-text">{{ student.remark }}</text>
                 <uni-icons type="closeempty" color="#367AA0" size="12" @click.stop="confirm('')"></uni-icons>
             </template>
             <template v-else>
                 <text>点击添加备注信息(15字内)</text>
-                <image src="/static/images/audition/edit.png" />
+                <image class="icon" src="/static/images/audition/edit.png" />
             </template>
         </view>
 
@@ -89,11 +89,11 @@ export default {
         padding-left: 6rpx;
         padding-right: 6rpx;
         color: #367aa0;
-        text {
+        &-text {
             margin-right: 8rpx;
         }
     }
-    image {
+    .icon {
         width: 20rpx;
         height: 20rpx;
         margin-left: 8rpx;

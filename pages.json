@@ -9,7 +9,8 @@
 		{
 			"path": "pages/login/index",
 			"style": {
-				"navigationStyle": "custom"
+				"navigationStyle": "custom",
+                "disableScroll": true
 			}
 		},
 		{
@@ -133,7 +134,8 @@
                     "path": "center/index",
                     "style": {
                         "navigationBarTitleText": "学员中心",
-                        "navigationStyle": "custom"
+                        "navigationStyle": "custom",
+                        "disableScroll": true
                     }
                 },
                 {

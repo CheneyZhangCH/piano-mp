@@ -157,16 +157,22 @@
                     </view>
                 </view>
             </view>
-            <view v-else class="empty"></view>
+            <view v-else class="empty">
+                <image src="https://static.gangqintonghua.com/img/kong/kong.png"></image>
+            </view>
         </scroll-view>
 
         <uni-popup ref="message" :is-mask-click="false" type="center">
             <view class="piano-message-box">
                 <view class="piano-message-box__content">
-                    <view
-                        v-if="messageMode === 'ketang'"
-                        class="msg"
-                    >课堂上老师针对手型、识谱、学习态度 打出的分值相加除以打分次数得出的平均值</view>
+                    <template v-if="messageMode === 'ketang'">
+                        <view class="text text-center">
+                            课堂上老师针对手型、识谱、学习态度
+                        </view>
+                        <view class="text text-center">
+                            打出的分值相加除以打分次数得出的平均值
+                        </view>
+                    </template>
                     <template v-else>
                         <view class="msg">
                             <text class="label">回课成绩分：</text>
@@ -353,6 +359,7 @@ export default {
                 color: #141f33;
                 line-height: 34rpx;
                 margin-bottom: 60rpx;
+                text-align: center;
                 .num {
                     color: #62bbec;
                 }
@@ -512,6 +519,14 @@ export default {
                 }
             }
         }
+        .empty {
+            margin-top: 120rpx;
+            text-align: center;
+            image {
+                width: 328rpx;
+                height: 420rpx;
+            }
+        }
     }
 }
 </style>
@@ -529,11 +544,8 @@ export default {
         padding: 60rpx 32rpx 36rpx;
         .msg {
             display: flex;
-            font-size: 28rpx;
-            color: #99a0ad;
-            line-height: 40rpx;
             .label {
-                flex-basis: 160rpx;
+                flex-basis: 170rpx;
             }
             .value {
                 flex: 1;
@@ -542,6 +554,12 @@ export default {
             + .msg {
                 margin-top: 12rpx;
             }
+        }
+        .text,
+        .msg {
+            font-size: 28rpx;
+            color: #99a0ad;
+            line-height: 40rpx;
         }
     }
     &__btns {

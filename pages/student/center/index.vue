@@ -110,7 +110,8 @@ export default {
             userId: 0,
             studentId: 0,
 
-            WEEK_DAY
+            WEEK_DAY,
+            showed: false
         }
     },
     computed: {
@@ -165,8 +166,11 @@ export default {
         if (option?.studentId) {
             this.studentId = option.studentId
         }
-
         this.init()
+    },
+    onShow() {
+        if (this.showed) this.init()
+        this.showed = true
     },
     methods: {
         weekOrDateTime,
@@ -176,7 +180,7 @@ export default {
             this.detail = res.data ?? {}
         },
 
-        toFinishLesson({ courseType, courseId, teacherId }) {
+        toFinishLesson({ courseType, courseId }) {
             uni.navigateTo({ url: '/pages/teacher/xiaokeOrhexiaoRecord/index?courseType=' + courseType + '&courseId=' + courseId + '&studentId=' + (this.studentId || this.userId) })
         },
 

@@ -20,9 +20,27 @@
                                         : msgsInfo[msg.key].msgData.continueContract.packageName
                                 }}{{ msgsInfo[msg.key].msgData.confirmFlag ? '已开通' : '待确认' }}
                             </template>
-                            <template
-                                v-else-if="msg.key === 'courseMsg'"
-                            >{{ getCourseMsg(msgsInfo[msg.key].msgData) }}</template>
+                            <template v-else-if="msg.key === 'courseMsg'">
+                                <template
+                                    v-if="msgsInfo[msg.key].msgData.msgType === 'accountExpiry'"
+                                >
+                                    距离您的账户有效期还剩余
+                                    <text
+                                        class="warning"
+                                    >{{ ' ' + msgsInfo[msg.key].msgData.msgData.expiryDays + ' ' }}</text>天，为保证课程连续性，请尽快联系店长续费噢~
+                                </template>
+                                <template
+                                    v-else-if="msgsInfo[msg.key].msgData.msgType === 'useTrainTicket'"
+                                >您有一张{{ msgsInfo[msg.key].msgData.msgData.ticketName }}于{{ dayjsFormat(msgsInfo[msg.key].msgData.msgData.useTime, 'MM月DD日hh:mm') }}被{{ msgsInfo[msg.key].msgData.msgData.teacherName }}老师核销。</template>
+                                <template
+                                    v-else-if="msgsInfo[msg.key].msgData.msgType === 'courseRemain'"
+                                >
+                                    {{ msgsInfo[msg.key].msgData.msgData.courseName }}仅剩余
+                                    <text
+                                        class="warning"
+                                    >{{ ' ' + msgsInfo[msg.key].msgData.msgData.remainCourseNum + ' ' }}</text>节，为保证课程连续性，请尽快联系店长续费噢~
+                                </template>
+                            </template>
                             <template
                                 v-else-if="msg.key === 'complaintMsg'"
                             >您于{{ dayjsFormat(msgsInfo[msg.key].msgData.createTime, 'MM月DD日') }}提交的{{ dicts.complaintType[msgsInfo[msg.key].msgData.complaintType] }}审核{{ dicts.dealComplaint_status[msgsInfo[msg.key].msgData.status] }}</template>
@@ -79,21 +97,26 @@ export default {
         async init() {
             try {
                 const res = await this.$http.get('/mini/studentMsg/msgPage')
-                this.msgsInfo = res.data ?? {}
+                const {
+                    courseMsg: {
+                        msgData,
+                        unreadCount
+                    },
+                    ...rest
+                } = res.data ?? {}
+                if (msgData) {
+                    msgData.msgData = msgData.msgData ? JSON.parse(msgData.msgData) : null
+                }
+                this.msgsInfo = {
+                    courseMsg: {
+                        msgData,
+                        unreadCount
+                    },
+                    ...rest
+                }
+                console.log(this.msgsInfo)
             } catch (error) {
 
-            }
-        },
-
-        getCourseMsg(item) {
-            if (!item.msgData) return ''
-            const msgData = JSON.parse(item.msgData)
-            if (item.msgType === 'accountExpiry') {
-                return `距离您的账户有效期还剩余 ${msgData.expiryDays} 天，为保证课程连续性，请尽快联系店长续费噢~`
-            } else if (item.msgType === 'useTrainTicket') {
-                return `您有一张${msgData.ticketName}于${dayjsFormat(msgData.useTime, 'MM月DD日hh:mm')}被${msgData.teacherName}老师核销。`
-            } else if (item.msgType === 'courseRemain') {
-                return `${msgData.courseName}仅剩余 ${msgData.remainCourseNum} 节，为保证课程连续性，请尽快联系店长续费噢~`
             }
         },
 
@@ -152,6 +175,10 @@ export default {
                 font-size: 24rpx;
                 color: #99a0ad;
                 line-height: 34rpx;
+                .warning {
+                    color: #f15e5e;
+                    font-weight: 600;
+                }
             }
         }
     }

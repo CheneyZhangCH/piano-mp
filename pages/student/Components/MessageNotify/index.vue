@@ -37,7 +37,7 @@ export default {
     position: fixed;
     right: 20rpx;
     bottom: 200rpx;
-    z-index: 999;
+    z-index: 98;
     image {
         width: 96rpx;
         height: 96rpx;

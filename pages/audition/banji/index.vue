@@ -22,7 +22,7 @@
                     <view class="info">
                         <view class="edit-wrap">
                             <text>开班日期</text>
-                            <view class="edit">
+                            <!-- <view class="edit">
                                 <uni-datetime-picker
                                     type="date"
                                     :value="detail.startClassDate"
@@ -31,7 +31,7 @@
                                     修改
                                     <image src="/static/images/teacher/edit.png" />
                                 </uni-datetime-picker>
-                            </view>
+                            </view> -->
                         </view>
                         <text class="value">{{ startClassDate }}</text>
                     </view>

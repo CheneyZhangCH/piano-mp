@@ -174,7 +174,7 @@
                         <view v-if="['ADMIN', 'SUPER_ADMIN'].includes(accountType)" class="btn"
                             @click="$refs.utnq.open()">
                             更新至下一季度
-                            <image class="refresh" src="/static/images/teacher/refresh.png" />
+                            <image class="refresh" src="/static/images/teacher/refresh-blue.png" />
                         </view>
                     </view>
                     <view class="total" :class="{ empty: !group.totalAmount }">{{ group.totalAmount || '-' }}</view>
@@ -212,11 +212,13 @@
                             </view>
                             <view class="num">
                                 <text class="ratio">{{ item.ratio }}%/{{ item.refundRatio }}%</text>
-                                <text class="amount" :class="{ empty: !item.amount, positive: item.amount >
-                                        0 }">{{
-                                    item.amount ? `${item.amount >
-                                        0 ? `+${item.amount}` : item.amount}元` : '-'
-                                }}</text>
+                                <text class="amount" :class="{
+                                    empty: !item.amount, positive: item.amount >
+                                        0
+                                }">{{
+    item.amount ? `${item.amount >
+        0 ? `+${item.amount}` : item.amount}元` : '-'
+}}</text>
                             </view>
                         </view>
                     </view>
@@ -270,11 +272,10 @@
 </template>
 
 <script lang="js">
-import dayjs from "dayjs"
 import YanQuan from "./components/YanQuan.vue"
 
 import dicts from '@/utils/dicts'
-import { weekOrDateTime } from '@/utils/format'
+import { weekOrDateTime, dayjsFormat } from '@/utils/format'
 export default {
     components: {
         YanQuan
@@ -320,8 +321,8 @@ export default {
             const start = this.detail?.startTime,
                 end = this.detail?.endTime
 
-            const s = start ? dayjs(start).format('YYYY/M/D') : '',
-                e = end ? dayjs(end).format('YYYY/M/D') : ''
+            const s = start ? dayjsFormat(start, 'YYYY/M/D') : '',
+                e = end ? dayjsFormat(end, 'YYYY/M/D') : ''
             return [s, e].filter(Boolean).join('~')
         },
 
@@ -348,8 +349,8 @@ export default {
             const start = this.group?.startTime,
                 end = this.group?.endTime
 
-            const s = start ? dayjs(start).format('YYYY/M/D') : '',
-                e = end ? dayjs(end).format('YYYY/M/D') : ''
+            const s = start ? dayjsFormat(start, 'YYYY/M/D') : '',
+                e = end ? dayjsFormat(end, 'YYYY/M/D') : ''
             return [s, e].filter(Boolean).join('~')
         }
     },
@@ -462,7 +463,8 @@ export default {
         },
 
         toFinishLesson({ courseType, courseId }) {
-            uni.navigateTo({ url: '/pages/teacher/xiaokeOrhexiaoRecord/index?courseType=' + courseType + '&courseId=' + courseId + '&teacherId=' + this.teacher.accountId })
+            const { startTime, endTime } = this.detail
+            uni.navigateTo({ url: '/pages/teacher/xiaokeOrhexiaoRecord/index?courseType=' + courseType + '&courseId=' + courseId + '&teacherId=' + this.teacher.accountId + '&startTime=' + startTime + '&endTime=' + endTime })
         },
 
         toTrainTickets({ ticketId }) {
@@ -946,7 +948,7 @@ export default {
                             color: #f15e5e;
                         }
                         .discontinue {
-                            color: #99A0AD;
+                            color: #99a0ad;
                         }
                         .refund {
                             color: #44be5e;
