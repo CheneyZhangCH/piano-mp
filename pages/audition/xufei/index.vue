@@ -58,7 +58,7 @@
 
         <customTabbar :active="2" />
 
-        <Student ref="student" :student-id="studentId" @close="studentId = 0" />
+        <Student ref="student" :student-id="studentId" @close="studentId = 0" @del="handleSearch" />
         <Filtrate ref="filtrate" :dicts="dicts" @confirm="filtrateConfirm" />
     </view>
 </template>

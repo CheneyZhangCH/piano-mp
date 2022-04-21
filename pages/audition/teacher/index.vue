@@ -27,33 +27,35 @@
                             </view>
                             <view class="period-name">{{ period.periodName }}</view>
                             <view class="period-content">
-                                <view class="period-content-title">
-                                    <text class="student-name" :class="{ warning: period.oneCourse.warn }">{{
-                                        period.oneCourse.student.studentName
-                                    }}</text>
-                                    <image class="gender-icon" :src="`/static/images/student/${period.oneCourse.student.gender ||
-                                    'male'
-                                    }-selected.png`"></image>
-                                    <text class="student-age">{{
-                                        period.oneCourse.student.age + "岁"
-                                    }}</text>
-                                    <text class="packageName">
-                                        {{ period.oneCourse.coursePackage.packageName }}
-                                    </text>
+                                <view @click="openStudent(period)">
+                                    <view class="period-content-title">
+                                        <text class="student-name" :class="{ warning: period.oneCourse.warn }">{{
+                                            period.oneCourse.student.studentName
+                                        }}</text>
+                                        <image class="gender-icon" :src="`/static/images/student/${period.oneCourse.student.gender ||
+                                        'male'
+                                        }-selected.png`"></image>
+                                        <text class="student-age">{{
+                                            period.oneCourse.student.age + "岁"
+                                        }}</text>
+                                        <text class="packageName">
+                                            {{ period.oneCourse.coursePackage.packageName }}
+                                        </text>
+                                    </view>
+                                    <view v-if="Array.isArray(period.oneCourse.coursePackage.courses)" class="course">
+                                        <text v-for="course in period.oneCourse.coursePackage.courses"
+                                            :key="course.courseId" class="course-item"
+                                            :class="{ 'warning': course.remainCourseNum <= 6 }">
+                                            {{ course.courseName + '：' + course.remainCourseNum + '节' }}
+                                        </text>
+                                    </view>
+                                    <view class="expire-date"
+                                        :class="{ 'warning': period.oneCourse.student.expiryDateWarning }"
+                                        style="margin-bottom: 10rpx;">{{
+                                            '账户有效期剩余：' +
+                                                period.oneCourse.student.expiryDateStr
+                                        }}</view>
                                 </view>
-                                <view v-if="Array.isArray(period.oneCourse.coursePackage.courses)" class="course">
-                                    <text v-for="course in period.oneCourse.coursePackage.courses"
-                                        :key="course.courseId" class="course-item"
-                                        :class="{ 'warning': course.remainCourseNum <= 6 }">
-                                        {{ course.courseName + '：' + course.remainCourseNum + '节' }}
-                                    </text>
-                                </view>
-                                <view class="expire-date"
-                                    :class="{ 'warning': period.oneCourse.student.expiryDateWarning }"
-                                    style="margin-bottom: 10rpx;">{{
-                                        '账户有效期剩余：' +
-                                            period.oneCourse.student.expiryDateStr
-                                    }}</view>
                                 <Remark :student="period.oneCourse.student" @confirm="handleSearch"
                                     :custom-style="'margin-left: 12rpx;'" />
                             </view>
@@ -126,7 +128,7 @@
             </template>
         </view>
 
-        <Student ref="student" :student-id="studentId" @close="studentId = 0" @del="studentDel" />
+        <Student ref="student" :student-id="studentId" @close="studentId = 0" @del="handleSearch" />
     </view>
 </template>
 
@@ -246,11 +248,6 @@ export default {
         // 学生详情弹窗
         openStudent(period) {
             this.studentId = period.oneCourse.student.accountId;
-        },
-
-        studentDel() {
-            this.studentId = 0
-            this.handleSearch()
         },
 
         // 班级详情

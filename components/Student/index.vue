@@ -430,6 +430,7 @@ export default {
                             data: this.studentId
                         })
                         uni.showToast({ title: '删除成功！', icon: 'success' })
+                        this.close()
                         this.$emit('del')
                     }
                 }

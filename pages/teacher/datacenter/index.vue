@@ -264,8 +264,18 @@
 
         <YanQuan ref="yanquan" @success="init" />
 
-        <pianoMessageBox ref="utnq" message="更新至下一季度后续课利润将为初始状态 请问是否确认更新" showCancelButton
-            @confirm="updateToNextQuarterConfirm" />
+        <uni-popup ref="utnq" :is-mask-click="false" type="center">
+            <view class="piano-message-box">
+                <view class="piano-message-box__content">
+                    <view class="piano-message-box__message">更新至下一季度后续课利润将为初始状态</view>
+                    <view class="piano-message-box__message">请问是否确认更新</view>
+                </view>
+                <view class="piano-message-box__btns">
+                    <button class="btn cancel" @click="$refs.utnq.close()">取消</button>
+                    <button class="btn confirm" @click="updateToNextQuarterConfirm">确认</button>
+                </view>
+            </view>
+        </uni-popup>
 
         <customTabbar v-if="datacenterFlag" :active="1" />
     </view>
@@ -756,15 +766,14 @@ export default {
             }
             .content {
                 display: flex;
-                justify-content: space-around;
+                justify-content: flex-start;
                 flex-wrap: wrap;
                 row-gap: 24rpx;
                 .item {
-                    width: calc(50% - 12rpx);
+                    width: 50%;
                     display: flex;
                     text-align: center;
                     flex-direction: column;
-                    padding-right: 24rpx;
                     overflow: hidden;
                     .rate {
                         font-size: 32rpx;
@@ -998,3 +1007,5 @@ export default {
     }
 }
 </style>
+
+<style lang="scss" src="@/common/piano-message-box.scss"></style>

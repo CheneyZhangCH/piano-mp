@@ -53,13 +53,11 @@
                 </view>
             </view>
         </view>
-        <pianoMessageBox
-            ref="update"
-            title="修改"
-            showInput
-            showCancelButton
-            @confirm="updateTeacherGroupPackageStudentNum"
-        />
+
+        <uni-popup ref="popup" type="dialog">
+            <uni-popup-dialog mode="input" :value="dialogInputValue" placeholder="请输入" :maxlength="6"
+                :before-close="true" @close="$refs.popup.close()" @confirm="updateTeacherGroupPackageStudentNum" />
+        </uni-popup>
     </view>
 </template>
 
@@ -71,7 +69,8 @@ export default {
             groupId: 0,
             list: [],
             updateItem: {},
-            updateProp: ''
+            updateProp: '',
+            dialogInputValue: null
         }
     },
     onLoad(option) {
@@ -101,29 +100,30 @@ export default {
             this.updateItem = item
             this.updateProp = type
 
-            this.$refs.update.open(item[type] || null)
+            this.dialogInputValue = item[type] || null
+            this.$refs.popup.open()
         },
 
         async updateTeacherGroupPackageStudentNum(value) {
-            if (!/^(0|[1-9]{1}\d{0,5})$/.test(value)) {
+            if (!/^(0|[1-9]\d{0,5})$/.test(value)) {
                 this.$toast({ title: '请输入正确的人数！', icon: 'none' })
-                this.$refs.update.loading = false
                 return
             }
             const { id, groupId } = this.updateItem
             const param = {
                 data: {
-                    id, groupId
+                    id,
+                    groupId
                 }
             }
             param.data[this.updateProp] = +value
             try {
                 await this.$http.post('/mini/teacherGroup/updateTeacherGroupPackageStudentNum', param)
                 this.$toast({ title: '修改成功！', icon: 'success' })
-                this.$refs.update.close()
+                this.$refs.popup.close()
                 this.init()
-            } finally {
-                this.$refs.update.loading = false
+            } catch(err) {
+                console.log(err)
             }
         }
     }

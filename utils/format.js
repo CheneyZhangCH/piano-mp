@@ -6,14 +6,16 @@ export const dayjsFormat = (date, y = 'YYYY-MM-DD') => {
     return dayjs(date).format(y)
 }
 
-export const weekOrDateTime = timestamp => {
+export const weekOrDateTime = (timestamp) => {
+    if(!timestamp) return ''
     const target = dayjs(timestamp).format('YYYY-MM-DD')
     const time = dayjs(timestamp).format('HH:mm')
     const today = dayjs().format('YYYY-MM-DD')
     const yesterday = dayjs().subtract(1, 'days').format('YYYY-MM-DD')
 
     if (target === today) {
-        return '今天 ' + time
+        const period = dayjs(timestamp).hour() < 12 ? '上午' : '下午'
+        return '今天 ' + period + time
     } else if (target === yesterday) {
         return '昨天 ' + time
     } else {

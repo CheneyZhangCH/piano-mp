@@ -20,9 +20,9 @@ export const gender = {
 }
 
 export const msgType = {
-    accountExpiry: '账号有效时间',
-    courseRemain: '剩余课时',
-    useTrainTicket: '消券信息'
+    accountExpiry: '账户即将到期',
+    courseRemain: '课程即将到期',
+    useTrainTicket: '课程陪练券消耗提醒'
 }
 
 export const numToChinese = {

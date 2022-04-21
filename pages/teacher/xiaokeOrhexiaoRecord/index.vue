@@ -149,12 +149,19 @@
                 @click="toComplaint"
             >确定</button>
         </view>
-        <pianoMessageBox
-            ref="recoverLesson"
-            message="恢复该课时后老师与家长数据相应发生改变 请问是否确认恢复"
-            showCancelButton
-            @confirm="confirmRecoverLesson"
-        />
+
+        <uni-popup ref="recoverLesson" :is-mask-click="false" type="center">
+            <view class="piano-message-box">
+                <view class="piano-message-box__content">
+                    <view class="piano-message-box__message">恢复该课时后老师与家长数据相应发生改变</view>
+                    <view class="piano-message-box__message">请问是否确认恢复</view>
+                </view>
+                <view class="piano-message-box__btns">
+                    <button class="btn cancel" @click="$refs.recoverLesson.close()">取消</button>
+                    <button class="btn confirm" @click="confirmRecoverLesson">确认</button>
+                </view>
+            </view>
+        </uni-popup>
     </view>
 </template>
 
@@ -338,8 +345,8 @@ export default {
                 })
                 this.$refs.recoverLesson.close()
                 this.handleSearch()
-            } finally {
-                this.$refs.recoverLesson.loading = false
+            } catch (error) {
+                console.log(error)
             }
         },
 
@@ -524,3 +531,5 @@ export default {
     }
 }
 </style>
+
+<style lang="scss" src="@/common/piano-message-box.scss"></style>

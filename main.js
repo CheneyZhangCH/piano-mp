@@ -17,9 +17,6 @@ Vue.prototype.$http = hRequire
 import CustomTabbar from './components/CustomTabbar'
 Vue.component('customTabbar', CustomTabbar)
 
-import pianoMessageBox from './components/MessageBox'
-Vue.component('pianoMessageBox', pianoMessageBox)
-
 Vue.use(Global)
 
 // 权限验证操作

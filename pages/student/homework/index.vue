@@ -19,10 +19,7 @@
                     <view class="info">
                         <view class="title">
                             课堂数据
-                            <image
-                                src="/static/images/student/wenhao.png"
-                                @click="openMessage('ketang')"
-                            />
+                            <image src="/static/images/student/wenhao.png" @click="openMessage('ketang')" />
                         </view>
                         <view class="scores">
                             <view class="score">
@@ -42,10 +39,7 @@
                     <view class="info">
                         <view class="title">
                             学习数据
-                            <image
-                                src="/static/images/student/wenhao.png"
-                                @click="openMessage('xuexi')"
-                            />
+                            <image src="/static/images/student/wenhao.png" @click="openMessage('xuexi')" />
                         </view>
                         <view class="scores">
                             <view class="score">
@@ -70,7 +64,7 @@
             </view>
 
             <view v-if="list.length" class="list">
-                <view v-for="item in list" :key="item.id" class="item">
+                <view v-for="item in list" :key="item.id" class="item" @click="toDetail(item)">
                     <view class="teacher">
                         <view class="info">
                             <image class="cover" :src="item.teacher.coverUrl" />
@@ -110,10 +104,9 @@
                             <view class="info ellipsis">
                                 <text class="name">作业详情</text>
                                 <text class="msg">
-                                    <text
-                                        v-for="chapter in item.chapters"
-                                        :key="chapter.id"
-                                    >({{ chapter.bookName }}){{ chapter.chapterName }}</text>
+                                    <text v-for="chapter in item.chapters" :key="chapter.id">({{ chapter.bookName }}){{
+                                        chapter.chapterName
+                                    }}</text>
                                 </text>
                             </view>
                         </template>
@@ -129,11 +122,8 @@
                             <view class="info homework">
                                 <text class="name">作业详情</text>
                                 <view class="msg">
-                                    <view
-                                        v-for="(work, workIndex) in item.chapters[0].workStep"
-                                        :key="workIndex"
-                                        class="work"
-                                    >
+                                    <view v-for="(work, workIndex) in item.chapters[0].workStep" :key="workIndex"
+                                        class="work">
                                         <text>步骤{{ numToChinese[workIndex + 1] }}：</text>
                                         <text class="work-content">{{ work.content }}</text>
                                     </view>
@@ -141,7 +131,7 @@
                             </view>
                             <view class="info videos">
                                 <text class="name">配套视频</text>
-                                <view class="video" @click="toVideo(item.chapters[0])">
+                                <view class="video">
                                     点击观看配套与讲解视频
                                     <image src="/static/images/student/play-red.png" />
                                 </view>
@@ -150,7 +140,7 @@
                     </view>
                     <view v-if="item.courseType === 'one'" class="action">
                         <text class="read" :class="{ haveRead: item.haveRead }">{{ item.haveRead ? '已读' : '未读' }}</text>
-                        <view class="btn" @click="toDetail(item)">
+                        <view class="btn">
                             查看课堂报告与作业详情
                             <uni-icons type="right" color="#99A0AD" size="12" />
                         </view>
@@ -301,12 +291,13 @@ export default {
             this.handleSearch()
         },
 
-        toVideo({ chapterId }) {
-            uni.navigateTo({ url: `/pages/student/videos/chapter?id=${chapterId}` })
-        },
-
-        toDetail({ id }) {
-            uni.navigateTo({ url: `/pages/student/homeworkDetail/index?id=${id}` })
+        toDetail(item) {
+            if (item.courseType === 'one') {
+                uni.navigateTo({ url: `/pages/student/homeworkDetail/index?id=${item.id}` })
+            } else {
+                const { chapterId } = item.chapters[0]
+                uni.navigateTo({ url: `/pages/student/videos/chapter?id=${chapterId}` })
+            }
         },
 
         openMessage(mode) {

@@ -105,12 +105,18 @@
             <image src="/static/images/teacher/refresh-blue.png" />
         </view>
 
-        <pianoMessageBox
-            ref="utnm"
-            message="更新至下个月后收入将恢复至底薪 请问是否确认更新"
-            showCancelButton
-            @confirm="updateToNextMonthConfirm"
-        />
+        <uni-popup ref="utnm" :is-mask-click="false" type="center">
+            <view class="piano-message-box">
+                <view class="piano-message-box__content">
+                    <view class="piano-message-box__message">更新至下个月后收入将恢复至底薪</view>
+                    <view class="piano-message-box__message">请问是否确认更新</view>
+                </view>
+                <view class="piano-message-box__btns">
+                    <button class="btn cancel" @click="$refs.utnm.close()">取消</button>
+                    <button class="btn confirm" @click="updateToNextMonthConfirm">确认</button>
+                </view>
+            </view>
+        </uni-popup>
     </view>
 </template>
 
@@ -317,3 +323,5 @@ export default {
     }
 }
 </style>
+
+<style lang="scss" src="@/common/piano-message-box.scss"></style>

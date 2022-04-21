@@ -139,11 +139,8 @@ export default {
             this.loading = true
             uni.showLoading({ title: '保存中', mask: true })
 
-            if (this.from === 'continue') {
-                this.continue()
-            } else {
-                this.create()
-            }
+            if (this.from === 'continue') this.continue()
+            else this.create()
         },
 
         async create() {
@@ -174,10 +171,10 @@ export default {
             try {
                 await this.$http.post('/mini/student/addStudent', data)
                 this.$toast({ title: '账号开通成功！', icon: 'success' })
+                uni.hideLoading()
                 uni.redirectTo({ url: '/pages/success/index?from=create' })
             } finally {
                 this.loading = false
-                uni.hideLoading()
             }
         },
 
@@ -220,10 +217,10 @@ export default {
                     key: 'xufei',
                     count: countNeedContinueStudentRes.data ?? 0
                 })
+                uni.hideLoading()
                 uni.redirectTo({ url: '/pages/success/index?from=continue' })
             } finally {
                 this.loading = false
-                uni.hideLoading()
             }
         }
     },

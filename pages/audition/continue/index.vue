@@ -217,7 +217,7 @@
             </view>
         </uni-popup>
 
-        <Student :student-id="dialogStudentId" @close="dialogStudentId = 0" />
+        <Student :student-id="dialogStudentId" @close="dialogStudentId = 0" @del="studentDel" />
         <ConflictGroup ref="group" :groups="groups" @confirm="groupConfirm" />
     </view>
 </template>
@@ -626,6 +626,10 @@ export default {
             }
             uni.setStorageSync('contract', JSON.stringify(data))
             uni.redirectTo({ url: '/pages/audition/contract/index?from=continue' })
+        },
+
+        studentDel() {
+            uni.reLaunch({ url: '/pages/index/index' })
         }
     }
 }

@@ -92,7 +92,7 @@
             </view>
         </scroll-view>
 
-        <Student :student-id="studentId" is-banji @close="studentId = 0" />
+        <Student :student-id="studentId" is-banji @close="studentId = 0" @del="init"/>
     </view>
 </template>
 
@@ -177,21 +177,21 @@ export default {
             }
         },
 
-        async startClassDateChange(e) {
-            const data = {
-                data: {
-                    ...this.query,
-                    startClassDate: e
-                }
-            }
-            try {
-                await this.$http.post('/mini/courseTimetable/updateTimetablePeriodClassDate', data)
-                this.$toast({ title: '修改成功！', icon: 'success' })
-                this.init(false)
-            } catch (error) {
-                console.log(error)
-            }
-        },
+        // async startClassDateChange(e) {
+        //     const data = {
+        //         data: {
+        //             ...this.query,
+        //             startClassDate: e
+        //         }
+        //     }
+        //     try {
+        //         await this.$http.post('/mini/courseTimetable/updateTimetablePeriodClassDate', data)
+        //         this.$toast({ title: '修改成功！', icon: 'success' })
+        //         this.init(false)
+        //     } catch (error) {
+        //         console.log(error)
+        //     }
+        // },
 
         back() {
             uni.navigateBack({ delta: 1 })

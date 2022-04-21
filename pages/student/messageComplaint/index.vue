@@ -3,7 +3,7 @@
         <view v-for="item in records" :key="item.id" class="record">
             <view class="record-title">
                 <text class="name">{{ complaintType[item.complaintType] }}</text>
-                <text class="date">{{ weekOrDateTime(item.createTime) }}</text>
+                <text class="date">{{ weekOrDateTime(item.dealTime) }}</text>
             </view>
             <view class="record-content">
                 <view class="infos">

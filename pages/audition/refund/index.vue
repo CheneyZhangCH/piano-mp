@@ -60,7 +60,7 @@
             >确认</button>
         </view>
 
-        <Student :student-id="dialogStudentId" @close="dialogStudentId = 0" />
+        <Student :student-id="dialogStudentId" @close="dialogStudentId = 0" @del="studentDel" />
         <ConflictGroup ref="group" :groups="groups" @confirm="groupConfirm" />
     </view>
 </template>
@@ -184,6 +184,10 @@ export default {
             } finally {
                 this.loading = false
             }
+        },
+
+        studentDel() {
+            uni.reLaunch({ url: '/pages/index/index' })
         }
     }
 }
