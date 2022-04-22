@@ -356,7 +356,7 @@ export default {
             padding: 0 14rpx;
 
             font-size: 24rpx;
-            font-weight: 500;
+            font-weight: 600;
             color: #ffffff;
             &.new {
                 background: #f15e5e;
@@ -380,7 +380,7 @@ export default {
             justify-content: center;
 
             font-size: 28rpx;
-            font-weight: 600; // 设计稿500
+            font-weight: 600;
             color: #141f33;
 
             &::after {
@@ -411,7 +411,7 @@ export default {
 
                 .student-name {
                     font-size: 28rpx;
-                    font-weight: 600; // 设计稿500
+                    font-weight: 600;
                     color: #141f33;
                     line-height: 40rpx;
                     &.warning {
@@ -420,7 +420,7 @@ export default {
                 }
                 .course-name {
                     font-size: 28rpx;
-                    font-weight: 500;
+                    font-weight: 600;
                     color: #141f33;
                     line-height: 40rpx;
                 }
@@ -449,7 +449,7 @@ export default {
                 margin-bottom: 10rpx;
                 .student-item {
                     font-size: 24rpx;
-                    font-weight: 500;
+                    font-weight: 600;
                     color: #525666;
                     line-height: 34rpx;
                     + .student-item {
@@ -484,7 +484,7 @@ export default {
                     }
 
                     &.warning {
-                        font-weight: 500;
+                        font-weight: 600;
                         color: #f15e5e;
                     }
                 }

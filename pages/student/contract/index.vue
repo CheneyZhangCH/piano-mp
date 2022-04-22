@@ -172,7 +172,7 @@ export default {
                         margin-top: 0;
                     }
                     &.bold {
-                        font-weight: 500;
+                        font-weight: 600;
                     }
                     .row-label {
                         min-width: 68rpx;
@@ -190,6 +190,7 @@ export default {
         .agree {
             margin-bottom: 12px;
             display: flex;
+            align-items: center;
             justify-content: center;
             image {
                 width: 24rpx;

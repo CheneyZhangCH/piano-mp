@@ -253,7 +253,7 @@ export default {
             }
             .title {
                 font-size: 28rpx;
-                font-weight: 500;
+                font-weight: 600;
                 color: #141f33;
                 line-height: 40rpx;
                 margin-bottom: 20rpx;
@@ -295,7 +295,7 @@ export default {
                 .info {
                     .chapter {
                         font-size: 28rpx;
-                        font-weight: 500;
+                        font-weight: 600;
                         color: #141f33;
                         line-height: 40rpx;
                         + .chapter {

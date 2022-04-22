@@ -96,7 +96,7 @@ export default {
         padding: 40rpx 30rpx;
 
         font-size: 32rpx;
-        font-weight: 500;
+        font-weight: 600;
         color: #141f33;
         line-height: 44rpx;
     }
@@ -104,7 +104,7 @@ export default {
         .title {
             padding: 30rpx;
             font-size: 28rpx;
-            font-weight: 500;
+            font-weight: 600;
             color: #141f33;
             line-height: 40rpx;
         }
@@ -126,7 +126,7 @@ export default {
                 }
                 &.active {
                     position: relative;
-                    font-weight: 500;
+                    font-weight: 600;
                     color: #62bbec;
                     border-radius: 12rpx;
                 }

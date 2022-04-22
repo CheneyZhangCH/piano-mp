@@ -3,7 +3,7 @@
         <view v-for="item in records" :key="item.id" class="record">
             <view class="record-title">
                 <text class="name">{{ complaintType[item.complaintType] }}</text>
-                <text class="date">{{ weekOrDateTime(item.dealTime) }}</text>
+                <text class="date">{{ todayOrYesterdayOrDateFormat(item.dealTime) }}</text>
             </view>
             <view class="record-content">
                 <view class="infos">
@@ -41,7 +41,7 @@
 
 <script>
 import { complaintType } from '@/utils/dicts'
-import { weekOrDateTime, dayWeekTime } from "@/utils/format"
+import { todayOrYesterdayOrDateFormat, dayWeekTime } from "@/utils/format"
 export default {
     filters: {
         finishTime({ finishTime }) {
@@ -67,7 +67,7 @@ export default {
         this.init()
     },
     methods: {
-        weekOrDateTime,
+        todayOrYesterdayOrDateFormat,
         async init() {
             try {
                 const res = await this.$http.post('/mini/studentComplaint/listDealComplaintForStudent')
@@ -110,12 +110,12 @@ export default {
             border-bottom: 2rpx solid #f5f7fa;
             .name {
                 font-size: 28rpx;
-                font-weight: 500;
+                font-weight: 600;
                 color: #141f33;
                 line-height: 40rpx;
             }
             .date {
-                font-size: 20rpx;
+                font-size: 24rpx;
                 color: #99a0ad;
             }
         }

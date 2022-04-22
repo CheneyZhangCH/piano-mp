@@ -29,6 +29,7 @@
                     class="icon"
                     :class="{ 'lock': !item.available }"
                 />
+                <image v-if="packageId === item.id" src="/static/images/student/video-active-underline.png" class="underline"/>
             </view>
         </scroll-view>
         <view v-if="courses.length" class="page-courses">
@@ -122,14 +123,14 @@ export default {
     &-package {
         width: 100%;
         background-color: #fff;
-        padding: 0 32rpx;
         white-space: nowrap;
         border-bottom: 2rpx solid #f5f7fa;
         .item {
             display: inline-block;
             font-size: 26rpx;
             color: #c9ced6;
-            line-height: 36rpx;
+            line-height: 80rpx;
+            padding: 0 40rpx;
             .icon {
                 margin-left: 10rpx;
                 width: 12px;
@@ -138,36 +139,22 @@ export default {
                     width: 10px;
                 }
             }
-            &:not(:first-child) {
-                padding-left: 40rpx;
-            }
-            &:not(:last-child) {
-                padding-right: 40rpx;
-            }
             &.available {
                 color: #616b80;
             }
             &.active {
                 position: relative;
-
                 font-size: 30rpx;
-                font-weight: 500;
+                font-weight: 600;
                 color: #62bbec;
-                line-height: 80rpx;
-                &::after {
-                    content: " ";
-                    display: block;
-                    position: absolute;
-                    bottom: 0;
-                    width: calc(100% - 80rpx);
-                    height: 4rpx;
-                    background: linear-gradient(
-                        90deg,
-                        #61baec 0%,
-                        #84daee 100%
-                    );
-                    border-radius: 2rpx;
-                }
+            }
+            .underline {
+                width: 112rpx;
+                height: 4rpx;
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
             }
         }
     }

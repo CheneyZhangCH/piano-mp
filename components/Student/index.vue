@@ -602,7 +602,7 @@ export default {
                     line-height: 34rpx;
                     margin-bottom: 14rpx;
                     &.warning {
-                        font-weight: 500;
+                        font-weight: 600;
                         color: #f15e5e;
                     }
                     text + text {
@@ -661,11 +661,13 @@ export default {
             height: 72rpx;
             line-height: 72rpx;
             font-size: 32rpx;
-            font-weight: 500;
+            font-weight: 600;
             color: #616b80;
             background-color: #fff;
             border: 1px solid #d3d7e0;
             border-radius: 44rpx;
+            padding: 0;
+            box-sizing: border-box;
             &::after {
                 display: none;
             }
@@ -680,7 +682,8 @@ export default {
             }
         }
         .drop {
-            margin-top: 14rpx;
+            padding-top: 14rpx;
+            padding-bottom: 14rpx;
             justify-content: center;
             image {
                 width: 20rpx;
@@ -724,7 +727,7 @@ export default {
             border-radius: 12rpx;
 
             font-size: 32rpx;
-            font-weight: 500;
+            font-weight: 600;
             color: #fff;
             margin-top: 30rpx;
         }

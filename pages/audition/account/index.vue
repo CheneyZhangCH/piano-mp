@@ -467,7 +467,7 @@ export default {
 
                     // if 有效期 >=当天  则显示天数=有效期-当天+1
                     // else 显示天数 有效期-当天
-                    let days = (expiryDate - new Date(dayjsFormat(null, 'YYYY-MM-DD 00:00:00')).getTime()) / (24 * 60 * 60 * 1000)
+                    let days = (expiryDate - new Date(dayjsFormat(null, 'YYYY/MM/DD 00:00:00')).getTime()) / (24 * 60 * 60 * 1000)
                     if (days >= 0) days++
                     if (Math.abs(days) <= 30) {
                         this.originalExpiry = {

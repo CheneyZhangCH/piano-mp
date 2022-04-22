@@ -3,7 +3,7 @@
         <view class="custom-header" :class="{ group: !!groupId }">
             <view class="title" :style="customTitleStyle">
                 <uni-icons v-if="!datacenterFlag" type="left" color="#FFF" size="20" @click="back"
-                    style="float: left; padding: 0 30rpx;" />
+                    style="position: absolute; left: 0; padding: 0 30rpx;" />
                 数据中心
             </view>
         </view>
@@ -177,7 +177,9 @@
                             <image class="refresh" src="/static/images/teacher/refresh-blue.png" />
                         </view>
                     </view>
-                    <view class="total" :class="{ empty: !group.totalAmount }">{{ group.totalAmount || '-' }}</view>
+                    <view v-if="group" class="total" :class="{ empty: !group.totalAmount }">{{
+                        formatThousandsNum(group.totalAmount) || '-'
+                    }}</view>
                 </view>
                 <view class="container amonut">
                     <view class="amonut-item">
@@ -285,7 +287,7 @@
 import YanQuan from "./components/YanQuan.vue"
 
 import dicts from '@/utils/dicts'
-import { weekOrDateTime, dayjsFormat } from '@/utils/format'
+import { weekOrDateTime, dayjsFormat, formatThousandsNum } from '@/utils/format'
 export default {
     components: {
         YanQuan
@@ -333,7 +335,7 @@ export default {
 
             const s = start ? dayjsFormat(start, 'YYYY/M/D') : '',
                 e = end ? dayjsFormat(end, 'YYYY/M/D') : ''
-            return [s, e].filter(Boolean).join('~')
+            return [s, e].filter(Boolean).join('-')
         },
 
         courseSalary() {
@@ -361,7 +363,7 @@ export default {
 
             const s = start ? dayjsFormat(start, 'YYYY/M/D') : '',
                 e = end ? dayjsFormat(end, 'YYYY/M/D') : ''
-            return [s, e].filter(Boolean).join('~')
+            return [s, e].filter(Boolean).join('-')
         }
     },
     onLoad(option) {
@@ -396,6 +398,7 @@ export default {
         this.init()
     },
     methods: {
+        formatThousandsNum,
         weekOrDateTime,
         async init() {
             const res = await this.$http.get('/mini/teacher/getTeacherDataInfo?teacherId=' + this.userId)
@@ -478,7 +481,8 @@ export default {
         },
 
         toTrainTickets({ ticketId }) {
-            uni.navigateTo({ url: '/pages/teacher/xiaokeOrhexiaoRecord/index?ticketId=' + ticketId + '&teacherId=' + this.teacher.accountId })
+            const { startTime, endTime } = this.detail
+            uni.navigateTo({ url: '/pages/teacher/xiaokeOrhexiaoRecord/index?ticketId=' + ticketId + '&teacherId=' + this.teacher.accountId + '&startTime=' + startTime + '&endTime=' + endTime })
         },
 
         toVideos() {
@@ -511,24 +515,28 @@ export default {
         background-image: url("https://static.gangqintonghua.com/img/beijing/zhongxin.png?imageView2/0/w/375");
         background-size: 100%;
         background-repeat: no-repeat;
+
         &.group {
             background-image: url("https://static.gangqintonghua.com/img/beijing/zhongxin-group.png");
         }
+
         .title {
             position: absolute;
             width: 100%;
             z-index: 1;
             text-align: center;
             font-size: 32rpx;
-            font-weight: 500;
+            font-weight: 600;
             color: #fff;
         }
     }
+
     &-content {
         position: relative;
         z-index: 1;
         height: 100%;
     }
+
     .personal,
     .group {
         .switch {
@@ -544,33 +552,42 @@ export default {
             color: #ffffff;
             line-height: 34rpx;
         }
+
         .block {
             margin: 0 30rpx;
             background: #ffffff;
             border-radius: 10px;
             padding: 24rpx 24rpx 0 36rpx;
+
             .block-title {
                 margin-bottom: 30rpx;
+
                 .name {
                     font-size: 28rpx;
+                    font-weight: 600;
                     color: #141f33;
                     margin-right: 12rpx;
                 }
+
                 .times {
                     font-size: 20rpx;
                     color: #99a0ad;
                     align-self: flex-end;
                 }
+
                 .num {
                     float: right;
 
                     font-size: 24rpx;
                     color: #141f33;
+
                     .sal {
                         padding: 0 6rpx;
+
                         &.plus {
                             color: #f15e5e;
                         }
+
                         &.minus {
                             color: #44be5e;
                         }
@@ -579,36 +596,43 @@ export default {
             }
         }
     }
+
     .personal {
         .user {
             display: flex;
             position: relative;
             padding-left: 30rpx;
             margin-bottom: 20rpx;
+
             .cover {
                 width: 120rpx;
                 height: 120rpx;
                 border-radius: 50%;
                 margin-right: 24rpx;
             }
+
             .info {
                 flex: 1;
                 overflow: hidden;
+
                 .msg {
                     display: flex;
                     align-items: center;
                     margin: 14rpx 0 16rpx;
+
                     .name {
                         max-width: 128rpx;
                         font-size: 32rpx;
-                        font-weight: 500;
+                        font-weight: 600;
                         margin-right: 12rpx;
                         color: #ffffff;
                     }
+
                     .groups {
                         flex: 1;
                         overflow: hidden;
                     }
+
                     .group {
                         display: inline-block;
                         max-width: 120rpx;
@@ -617,23 +641,27 @@ export default {
 
                         padding: 0 14rpx;
                         font-size: 24rpx;
-                        font-weight: 500;
+                        font-weight: 600;
                         color: #eff5ff;
                         line-height: 17px;
                         word-break: keep-all;
-                        + .group {
+
+                        +.group {
                             margin-left: 6rpx;
                         }
                     }
                 }
+
                 .yanquan {
                     display: flex;
                     align-items: center;
+
                     text {
                         font-size: 28rpx;
                         color: #ffffff;
                         margin-right: 4rpx;
                     }
+
                     image {
                         width: 24rpx;
                         height: 24rpx;
@@ -641,36 +669,44 @@ export default {
                 }
             }
         }
+
         .basic {
             margin-bottom: 24rpx;
             padding-bottom: 10rpx;
+
             .salary {
                 font-size: 48rpx;
-                font-family: PingFangSC-Medium, PingFang SC;
-                font-weight: 500;
+                font-weight: 600;
                 color: #141f33;
                 line-height: 66rpx;
             }
+
             .desc {
                 font-size: 16rpx;
                 color: #99a0ad;
                 text-align: right;
             }
         }
+
         .list {
             margin-bottom: 24rpx;
+
             .container {
                 padding-bottom: 30rpx;
-                + .container {
+
+                +.container {
                     border-top: 1px solid #f5f7fa;
                     padding-top: 24rpx;
                 }
+
                 .wrap {
                     .item {
                         display: flex;
-                        + .item {
+
+                        +.item {
                             margin-top: 16rpx;
                         }
+
                         .name,
                         .num,
                         .salary,
@@ -678,15 +714,18 @@ export default {
                             font-size: 24rpx;
                             color: #525666;
                         }
+
                         .name {
                             width: 284rpx;
                         }
+
                         .right {
                             flex: 1;
                             display: flex;
                             justify-content: space-between;
                         }
                     }
+
                     .empty {
                         font-size: 24rpx;
                         color: #99a0ad;
@@ -694,10 +733,12 @@ export default {
                     }
                 }
             }
+
             .disciplines {
                 .wrap {
                     .item {
                         justify-content: space-between;
+
                         .content {
                             flex: 1;
                             padding-right: 20rpx;
@@ -706,18 +747,22 @@ export default {
                 }
             }
         }
+
         .tools {
             margin-bottom: 30rpx;
             padding-bottom: 30rpx;
+
             .tool {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
+
                 image {
                     width: 40rpx;
                     height: 40rpx;
                     margin-bottom: 6rpx;
                 }
+
                 text {
                     font-size: 24rpx;
                     color: #616b80;
@@ -725,10 +770,12 @@ export default {
             }
         }
     }
+
     .group {
-        .block + .block {
+        .block+.block {
             margin-top: 24rpx;
         }
+
         .teachers {
             display: flex;
             height: 52rpx;
@@ -737,15 +784,18 @@ export default {
             column-gap: 50rpx;
             padding-left: 66rpx;
             margin-bottom: 30rpx;
+
             .member,
             .leader {
                 display: flex;
                 align-items: center;
+
                 text {
                     font-size: 24rpx;
                     color: #ffffff;
                     margin-right: 10rpx;
                 }
+
                 image {
                     width: 40rpx;
                     height: 40rpx;
@@ -754,43 +804,53 @@ export default {
                 }
             }
         }
+
         .xukelirun {
             padding-bottom: 24rpx;
+
             .block-title {
                 display: flex;
                 justify-content: space-between;
+
                 .btn {
                     font-size: 24rpx;
                     color: #99a0ad;
                 }
             }
+
             .content {
                 display: flex;
                 justify-content: flex-start;
                 flex-wrap: wrap;
                 row-gap: 24rpx;
+
                 .item {
                     width: 50%;
                     display: flex;
                     text-align: center;
                     flex-direction: column;
                     overflow: hidden;
+
                     .rate {
                         font-size: 32rpx;
-                        font-weight: 500;
+                        font-weight: 600;
                         line-height: 44rpx;
                         margin-bottom: 8rpx;
                         color: #99a0ad;
+
                         &.reach {
                             color: #f15e5e;
                         }
+
                         &.unreach {
                             color: #44be5e;
                         }
+
                         &.empty {
                             color: #99a0ad;
                         }
                     }
+
                     .name {
                         font-size: 24rpx;
                         color: #99a0ad;
@@ -799,6 +859,7 @@ export default {
                 }
             }
         }
+
         .lirun,
         .xuke {
             &.block {
@@ -806,13 +867,16 @@ export default {
                 padding-right: 0;
             }
         }
+
         .lirun {
             .block-title {
                 display: flex;
                 justify-content: space-between;
+
                 .btn {
                     font-size: 24rpx;
                     color: #62bbec;
+
                     .refresh {
                         width: 24rpx;
                         height: 22rpx;
@@ -820,59 +884,76 @@ export default {
                     }
                 }
             }
+
             .container {
                 padding-left: 36rpx;
                 padding-right: 24rpx;
+
                 .block-title {
                     margin-bottom: 0;
                 }
-                + .container {
+
+                +.container {
                     border-top: 1px solid #f5f7fa;
                 }
+
                 .total {
                     font-size: 36rpx;
-                    font-weight: 500;
+                    font-weight: 600;
                     color: #141f33;
                     line-height: 50rpx;
                     padding: 24rpx 0;
+
                     &.empty {
                         color: #99a0ad;
                     }
                 }
+
                 &.amonut {
                     padding: 24rpx 24rpx 24rpx 36rpx;
+
                     .amonut-item {
                         display: flex;
                         justify-content: space-between;
-                        + .amonut-item {
+
+                        +.amonut-item {
                             margin-top: 12rpx;
                         }
+
                         font-size: 24rpx;
                         color: #141f33;
                         line-height: 34rpx;
+
                         .num {
                             color: #f15e5e;
                         }
+
                         .refund {
                             color: #44be5e;
                         }
+
                         .empty {
                             color: #99a0ad;
                         }
                     }
                 }
+
                 &.fenhong {
                     padding-bottom: 24rpx;
+
                     .block-title {
                         margin-top: 24rpx;
                         margin-bottom: 24rpx;
                     }
+
                     .fenhong-item {
                         display: flex;
                         align-items: center;
-                        + .fenhong-item {
+
+                        +.fenhong-item {
                             margin-top: 18rpx;
                         }
+
                         .info {
                             width: 312rpx;
                             display: flex;
@@ -880,18 +961,21 @@ export default {
                             margin-right: 12rpx;
 
                             overflow: hidden;
+
                             image {
                                 width: 40rpx;
                                 height: 40rpx;
                                 border-radius: 50%;
                                 margin-right: 12rpx;
                             }
+
                             .name {
-                                flex: 1;
+                                max-width: 144rpx;
                                 font-size: 24rpx;
                                 color: #525666;
                                 line-height: 34rpx;
                             }
+
                             .btn {
                                 font-size: 20rpx;
                                 color: #62bbec;
@@ -899,20 +983,25 @@ export default {
                                 margin-left: 12rpx;
                             }
                         }
+
                         .num {
                             flex: 1;
                             font-size: 24rpx;
 
                             line-height: 34rpx;
+
                             .ratio {
                                 color: #99a0ad;
                             }
+
                             .amount {
                                 float: right;
                                 color: #44be5e;
+
                                 &.empty {
                                     color: #99a0ad;
                                 }
+
                                 &.positive {
                                     color: #f15e5e;
                                 }
@@ -922,73 +1011,89 @@ export default {
                 }
             }
         }
+
         .xuke {
             padding-bottom: 24rpx;
             margin-bottom: 50rpx;
+
             .block-title {
                 padding-left: 36rpx;
                 padding-right: 24rpx;
             }
+
             .list {
                 .item {
                     display: flex;
                     justify-content: space-between;
                     border-top: 1px solid #f5f7fa;
                     padding: 10rpx 24rpx 24rpx 36rpx;
+
                     .cover {
                         width: 60rpx;
                         height: 60rpx;
                         border-radius: 50%;
                         margin-right: 12rpx;
                     }
+
                     .content {
                         flex: 1;
                     }
+
                     .student,
                     .teacher {
                         display: flex;
                         align-items: center;
                         justify-content: space-between;
+
                         .l {
                             flex: 1;
                             overflow: hidden;
                         }
+
                         .studentContinue {
                             color: #f15e5e;
                         }
+
                         .discontinue {
                             color: #99a0ad;
                         }
+
                         .refund {
                             color: #44be5e;
                         }
                     }
+
                     .student {
                         .l {
                             font-size: 24rpx;
-                            font-weight: 500;
+                            font-weight: 600;
                             color: #141f33;
                             line-height: 34rpx;
                             margin-top: 14rpx;
                             margin-bottom: 12rpx;
+
                             .package-name {
                                 margin-right: 8rpx;
                             }
                         }
+
                         .r {
                             font-size: 24rpx;
                             color: #525666;
                         }
                     }
+
                     .teacher {
                         .l {
                             display: flex;
                             align-items: center;
+
                             text {
                                 font-size: 24rpx;
                                 color: #525666;
                                 margin-right: 10rpx;
                             }
+
                             image {
                                 width: 40rpx;
                                 height: 40rpx;
@@ -996,9 +1101,10 @@ export default {
                                 margin-left: -10rpx;
                             }
                         }
+
                         .r {
                             font-size: 28rpx;
-                            font-weight: 500;
+                            font-weight: 600;
                         }
                     }
                 }
@@ -1008,4 +1114,5 @@ export default {
 }
 </style>
 
-<style lang="scss" src="@/common/piano-message-box.scss"></style>
+<style lang="scss" src="@/common/piano-message-box.scss">
+</style>

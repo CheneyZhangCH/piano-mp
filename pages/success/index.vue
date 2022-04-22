@@ -113,7 +113,7 @@ export default {
         padding: 14rpx 76rpx 18rpx;
 
         font-size: 32rpx;
-        font-weight: 500;
+        font-weight: 600;
         color: #62bbec;
         line-height: 44rpx;
         margin: 0 230rpx;

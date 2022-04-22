@@ -5,7 +5,7 @@
                 <text class="name">基本收入（元）</text>
                 <text class="times">{{ times }}</text>
             </view>
-            <view class="salary">{{ detail.salary }}</view>
+            <view class="salary">{{ formatThousandsNum(detail.salary) || '-' }}</view>
             <view class="desc">* 基本收入为税前收入，额外奖金不含在内另行计算</view>
         </view>
         <view class="list block">
@@ -36,7 +36,7 @@
                                 >{{ item.num }}{{ item.courseType === 'one' ? '节' : '人' }}</text>
                                 <view class="salary">
                                     <text>+{{ item.salary }}元</text>
-                                    <uni-icons type="right" size="12"></uni-icons>
+                                    <uni-icons type="right" color="#99A0AD" size="12" />
                                 </view>
                             </view>
                         </view>
@@ -69,7 +69,7 @@
                                 <text class="num">{{ item.num }}张</text>
                                 <view class="salary">
                                     <text>+{{ item.salary }}元</text>
-                                    <uni-icons type="right" size="12"></uni-icons>
+                                    <uni-icons type="right" color="#99A0AD" size="12" />
                                 </view>
                             </view>
                         </view>
@@ -121,6 +121,7 @@
 </template>
 
 <script>
+import { formatThousandsNum } from '@/utils/format'
 import dayjs from "dayjs";
 export default {
     data() {
@@ -139,7 +140,7 @@ export default {
 
             const s = start ? dayjs(start).format('YYYY/M/D') : '',
                 e = end ? dayjs(end).format('YYYY/M/D') : ''
-            return [s, e].filter(Boolean).join('~')
+            return [s, e].filter(Boolean).join('-')
         },
 
         courseSalary() {
@@ -166,6 +167,7 @@ export default {
         this.init()
     },
     methods: {
+        formatThousandsNum,
         async init() {
             const res = await this.$http.get("/mini/teacher/getTeacherDataInfo?teacherId=" + this.teacherId);
             if (res.ok) {
@@ -231,7 +233,10 @@ export default {
                 font-size: 24rpx;
                 color: #141f33;
                 .sal {
-                    padding: 0 6rpx;
+                    display: inline-block;
+                    text-align: right;
+                    min-width: 68rpx;
+                    margin: 0 6rpx;
                     &.plus {
                         color: #f15e5e;
                     }

@@ -21,7 +21,7 @@
                     class="btn"
                     :class="{ confirm: seconds === 0 }"
                     :disabled="seconds > 0"
-                    @click="close"
+                    @click="confirm"
                 >
                     已告知
                     <text v-if="seconds > 0">({{ seconds }}s)</text>
@@ -56,7 +56,8 @@ export default {
             }, 1000)
         },
 
-        close() {
+        confirm() {
+            this.$emit('confirm')
             this.$refs.popup.close()
         }
     }
@@ -77,7 +78,7 @@ export default {
         color: #616b80;
         line-height: 42rpx;
         &.course {
-            font-weight: 500;
+            font-weight: 600;
             color: #62bbec;
             margin: 16rpx 0;
             text + text {
@@ -99,7 +100,7 @@ export default {
             border: 2rpx solid #d3d7e0;
 
             font-size: 32rpx;
-            font-weight: 500;
+            font-weight: 600;
             color: #d3d7e0;
             &::after {
                 display: none;

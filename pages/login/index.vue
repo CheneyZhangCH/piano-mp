@@ -1,6 +1,6 @@
 <template>
     <view class="login-all-wrap">
-        <image class="login-image" src="https://static.gangqintonghua.com/img/beijing/login.png" />
+        <image class="login-image" src="https://static.gangqintonghua.com/img/beijing/login-new.png" />
         <view class="login-btn-wrap">
             <button open-type="getPhoneNumber" @getphonenumber="getUserPhoneNumber">
                 <image src="https://static.gangqintonghua.com/img/icon/login-btn.png" />

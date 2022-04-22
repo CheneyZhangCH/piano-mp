@@ -90,6 +90,8 @@ export default {
             uni.showToast({ title: '请先登录', icon: 'none' })
             return uni.navigateTo({ url: '/pages/login/index' })
         }
+    },
+    onShow() {
         this.init()
     },
     methods: {
@@ -166,7 +168,7 @@ export default {
             overflow: hidden;
             &-name {
                 font-size: 28rpx;
-                font-weight: 500;
+                font-weight: 600;
                 color: #141f33;
                 line-height: 40rpx;
                 margin-bottom: 6rpx;

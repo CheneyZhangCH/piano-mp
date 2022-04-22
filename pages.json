@@ -101,7 +101,8 @@
                 {
                     "path": "videos/index",
                     "style": {
-                        "navigationBarTitleText": "配套视频"
+                        "navigationBarTitleText": "配套视频",
+                        "disableScroll": true
                     }
                 },
                 {
@@ -121,6 +122,7 @@
                     "path": "homework/index",
                     "style": {
                         "navigationBarTitleText": "课后作业",
+                        "disableScroll": true,
                         "navigationStyle": "custom"
                     }
                 },
@@ -190,7 +192,8 @@
                     "path": "datacenter/index",
                     "style": {
                         "navigationBarTitleText": "数据中心",
-                        "navigationStyle": "custom"
+                        "navigationStyle": "custom",
+                        "disableScroll": true
                     }
                 },
                 {

@@ -8,7 +8,7 @@
                         <image class="cover" :src="getStudentCoverUrl(item.student)" />
                         <text class="name">{{ item.student.studentName }}</text>
                     </view>
-                    <text class="time">{{ weekOrDateTime(item.createTime) }}</text>
+                    <text class="time">{{ todayOrYesterdayOrDateFormat(item.createTime) }}</text>
                 </view>
                 <view class="complaint-item-content">
                     <view class="infos">
@@ -63,7 +63,7 @@
 
 <script>
 import dicts from '@/utils/dicts'
-import { weekOrDateTime, dayWeekTime } from '@/utils/format'
+import { todayOrYesterdayOrDateFormat, dayWeekTime } from '@/utils/format'
 export default {
     filters: {
         finishTime({ finishTime }) {
@@ -92,7 +92,7 @@ export default {
         this.init()
     },
     methods: {
-        weekOrDateTime,
+        todayOrYesterdayOrDateFormat,
         dayWeekTime,
         async init() {
             try {
@@ -152,7 +152,7 @@ export default {
                 }
                 .type {
                     font-size: 28rpx;
-                    font-weight: 500;
+                    font-weight: 600;
                     color: #141f33;
                     margin-right: 50rpx;
                 }

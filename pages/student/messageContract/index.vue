@@ -7,7 +7,7 @@
                         <text v-if="!item.haveRead" class="dot"></text>
                         <text class="name">钢琴童话教育培训协议</text>
                     </view>
-                    <text class="date">{{ weekOrDateTime(item.createTime) }}</text>
+                    <text class="date">{{ todayOrYesterdayOrDateFormat(item.createTime) }}</text>
                 </view>
                 <view class="main">
                     <view
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { weekOrDateTime } from "@/utils/format"
+import { todayOrYesterdayOrDateFormat } from "@/utils/format"
 export default {
     data() {
         return {
@@ -74,7 +74,7 @@ export default {
         this.showed = true
     },
     methods: {
-        weekOrDateTime,
+        todayOrYesterdayOrDateFormat,
         async init() {
             try {
                 const res = await this.$http.get('/mini/studentContract/listStudentContract')
@@ -124,7 +124,7 @@ export default {
             }
             .name {
                 font-size: 28rpx;
-                font-weight: 500;
+                font-weight: 600;
                 color: #141f33;
                 line-height: 40rpx;
             }

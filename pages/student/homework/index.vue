@@ -8,11 +8,13 @@
                 <view class="msg ellipsis">
                     <text>
                         在钢琴童话学习的第
-                        <text class="num">{{ studentScore.studyDays }}</text>天
+                        <text class="num"> {{ ' ' + studentScore.studyDays + ' ' }} </text>天
                     </text>
                     <text>
                         目前共掌握了
-                        <text class="num">{{ studentScore.studyChapters }}</text>首曲目
+                        <text class="num"> {{
+                            studentScore.studyChapters ? ' ' + studentScore.studyChapters + ' ' : ' - '
+                        }} </text>首曲目
                     </text>
                 </view>
                 <view class="infos">
@@ -166,7 +168,7 @@
                     <template v-else>
                         <view class="msg">
                             <text class="label">回课成绩分：</text>
-                            <text class="value">由老师针对回课所打出的分值 相加除以打分次数得出的平均值</text>
+                            <text class="value">由老师针对回课所打出的分值\n相加除以打分次数得出平均值</text>
                         </view>
                         <view class="msg">
                             <text class="label">考级信息：</text>
@@ -244,6 +246,8 @@ export default {
         this.headerTop = rect.top
 
         this.init()
+    },
+    onShow() {
         this.handleSearch()
     },
     methods: {
@@ -323,20 +327,23 @@ export default {
         background-image: url("https://static.gangqintonghua.com/img/beijing/zhongxin.png?imageView2/0/w/375");
         background-size: 100%;
         background-repeat: no-repeat;
+
         .title {
             position: absolute;
             width: 100%;
             z-index: 1;
             text-align: center;
             font-size: 32rpx;
-            font-weight: 500;
+            font-weight: 600;
             color: #fff;
         }
     }
+
     &-content {
         position: relative;
         z-index: 1;
         height: 100%;
+
         .student-score {
             margin: 0 24rpx;
             height: 478rpx;
@@ -344,55 +351,67 @@ export default {
             background-repeat: no-repeat;
             background-size: 100%;
 
-            padding: 44rpx 40rpx 0;
+            padding: 46rpx 40rpx 0;
+
             .msg {
                 font-size: 24rpx;
                 color: #141f33;
                 line-height: 34rpx;
                 margin-bottom: 60rpx;
                 text-align: center;
+
                 .num {
+                    font-size: 28rpx;
                     color: #62bbec;
+                    font-weight: 600;
                 }
-                > text {
-                    + text {
+
+                >text {
+                    +text {
                         margin-left: 20rpx;
                     }
                 }
             }
+
             .infos {
                 .info {
-                    + .info {
+                    +.info {
                         margin-top: 30rpx;
                     }
+
                     .title {
                         display: flex;
                         align-items: center;
                         font-size: 28rpx;
-                        font-weight: 500;
+                        font-weight: 600;
                         color: #141f33;
                         line-height: 40rpx;
                         margin-bottom: 20rpx;
+
                         image {
                             width: 20rpx;
                             height: 20rpx;
                             margin-left: 8rpx;
                         }
                     }
+
                     .scores {
                         display: flex;
+
                         .score {
                             display: flex;
                             flex-direction: column;
                             flex: 1;
                             text-align: center;
+
                             .num {
                                 font-size: 28rpx;
-                                font-weight: 500;
+                                font-weight: 600;
                                 color: #141f33;
                                 line-height: 40rpx;
                                 margin-bottom: 2rpx;
                             }
+
                             .desc {
                                 font-size: 24rpx;
                                 color: #99a0ad;
@@ -403,68 +422,85 @@ export default {
                 }
             }
         }
+
         .list {
             padding: 34rpx 30rpx;
+
             .item {
                 background: #ffffff;
                 border-radius: 20rpx;
                 margin-bottom: 36rpx;
+
                 .teacher {
                     padding: 16rpx 32rpx;
                     border-bottom: 1px solid #f5f7fa;
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
+
                     .info {
                         flex: 1;
                         display: flex;
                         align-items: center;
+
                         .cover {
                             width: 60rpx;
                             height: 60rpx;
                             border-radius: 50%;
                             margin-right: 16rpx;
                         }
+
                         .name {
                             font-size: 28rpx;
                             color: #141f33;
                             margin-right: 16rpx;
                         }
                     }
+
                     .sub-name {
                         font-size: 24rpx;
                         color: #99a0ad;
                     }
                 }
+
                 .content {
                     padding: 20rpx 32rpx;
+
                     .info {
                         font-size: 24rpx;
                         line-height: 34rpx;
-                        + .info {
+
+                        +.info {
                             margin-top: 16rpx;
                         }
+
                         .name {
                             color: #99a0ad;
                             margin-right: 56rpx;
                         }
+
                         .msg {
                             color: #525666;
+
                             .num {
                                 font-weight: 500;
                                 color: #62bbec;
                                 margin: 0 16rpx 0 8rpx;
                             }
                         }
+
                         &.homework {
                             display: flex;
+
                             .work {
                                 font-size: 24rpx;
                                 color: #525666;
                                 line-height: 34rpx;
-                                + .work {
+
+                                +.work {
                                     margin-top: 10rpx;
                                 }
+
                                 &-content {
                                     font-weight: 500;
                                     color: #62bbec;
@@ -472,14 +508,17 @@ export default {
                                 }
                             }
                         }
+
                         &.videos {
                             display: flex;
+
                             .video {
                                 display: flex;
                                 align-items: center;
                                 font-size: 24rpx;
                                 color: #f15e5e;
                                 line-height: 34rpx;
+
                                 image {
                                     width: 22rpx;
                                     height: 22rpx;
@@ -489,19 +528,23 @@ export default {
                         }
                     }
                 }
+
                 .action {
                     padding: 14rpx 32rpx 16rpx;
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
+
                     .read {
                         font-size: 24rpx;
                         color: #f15e5e;
                         line-height: 34rpx;
+
                         &.haveRead {
                             color: #3eb156;
                         }
                     }
+
                     .btn {
                         font-size: 24rpx;
                         color: #62bbec;
@@ -510,9 +553,11 @@ export default {
                 }
             }
         }
+
         .empty {
             margin-top: 120rpx;
             text-align: center;
+
             image {
                 width: 328rpx;
                 height: 420rpx;
@@ -527,25 +572,32 @@ export default {
     width: 650rpx;
     background-color: #fff;
     border-radius: 32rpx;
+
     &___header {
         padding: 22rpx 0;
         text-align: center;
     }
+
     &__content {
         padding: 60rpx 32rpx 36rpx;
+
         .msg {
             display: flex;
+
             .label {
                 flex-basis: 170rpx;
             }
+
             .value {
                 flex: 1;
                 overflow: hidden;
             }
-            + .msg {
+
+            +.msg {
                 margin-top: 12rpx;
             }
         }
+
         .text,
         .msg {
             font-size: 28rpx;
@@ -553,11 +605,13 @@ export default {
             line-height: 40rpx;
         }
     }
+
     &__btns {
         display: flex;
         column-gap: 48rpx;
         padding: 32rpx 48rpx;
         box-shadow: 0px -4rpx 8rpx 0px rgba(0, 0, 0, 0.05);
+
         .btn {
             flex: 1;
             height: 72rpx;
@@ -569,14 +623,17 @@ export default {
             background-color: #fff;
             border: 1px solid #d3d7e0;
             border-radius: 44rpx;
+
             &::after {
                 display: none;
             }
+
             &.confirm {
                 color: #fff;
                 background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
                 border: none;
             }
+
             &.disabled {
                 background: #e1e1e1;
                 border: none;

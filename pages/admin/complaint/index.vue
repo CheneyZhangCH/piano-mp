@@ -14,7 +14,7 @@
             <view class="complaint-info">
                 <view class="complaint-info-header">
                     <text class="type">{{ dicts.complaintType[detail.complaintType] }}</text>
-                    <text class="time">{{ weekOrDateTime(detail.createTime) }}</text>
+                    <text class="time">{{ todayOrYesterdayOrDateFormat(detail.createTime) }}</text>
                 </view>
                 <view class="complaint-info-content">
                     <view class="infos">
@@ -104,7 +104,7 @@
 <script>
 import Student from '@/components/Student'
 import dicts from '@/utils/dicts'
-import { weekOrDateTime, dayWeekTime } from '@/utils/format'
+import { todayOrYesterdayOrDateFormat, dayWeekTime } from '@/utils/format'
 export default {
     components: {
         Student
@@ -150,7 +150,7 @@ export default {
         this.init()
     },
     methods: {
-        weekOrDateTime,
+        todayOrYesterdayOrDateFormat,
         async init() {
             try {
                 const res = await this.$http.get(`/mini/studentComplaint/getStudentComplaintVo?id=${this.complaintId}`)

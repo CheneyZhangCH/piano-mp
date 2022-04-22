@@ -1,56 +1,36 @@
 <template>
-    <view class="page common" :class="{ selectAble }">
+    <view class="page common" :class="{ 'page-selectAble': selectAble }">
         <view v-if="accountType !== 'TEACHER'" class="page-search" :class="{ 'student': accountType === 'STUDENT' }">
-            <view v-if="accountType !== 'STUDENT'" class="mode" @click="toggleSearchMode">{{ mode === 'month' ? '自定义时间' : '按月份筛选' }}</view>
-            <view
-                v-if="['ADMIN', 'SUPER_ADMIN', 'STUDENT'].includes(accountType) && courseId"
-                class="switch"
-                :class="{ selectAble }"
-                @click="toggleSelectAble"
-            >
+            <view v-if="accountType !== 'STUDENT'" class="mode" @click="toggleSearchMode">{{
+                    mode === 'month' ? '自定义时间'
+                        : '按月份筛选'
+            }}</view>
+            <view v-if="['ADMIN', 'SUPER_ADMIN', 'STUDENT'].includes(accountType) && courseId" class="switch"
+                :class="{ selectAble }" @click="toggleSelectAble">
                 <template v-if="['ADMIN', 'SUPER_ADMIN'].includes(accountType)">
-                    <image class="refresh" :src="`/static/images/teacher/refresh${selectAble ? '-blue' : ''}.png`" />恢复课时
+                    <image class="refresh" :src="`/static/images/teacher/refresh${selectAble ? '-blue' : ''}.png`" />
+                    恢复课时
                 </template>
                 <template v-else>
-                    <image
-                        class="refresh"
-                        :src="`/static/images/student/shensu${selectAble ? '-blue' : ''}.png`"
-                    />课时申诉
+                    <image class="shensu" :src="`/static/images/student/shensu${selectAble ? '-blue' : ''}.png`" />课时申诉
                 </template>
-                <uni-icons
-                    v-if="selectAble"
-                    type="closeempty"
-                    color="#62BBEC"
-                    size="12"
-                    style="margin-left: 8rpx;"
-                />
+                <uni-icons v-if="selectAble" type="closeempty" color="#62BBEC" size="12" style="margin-left: 8rpx;" />
             </view>
         </view>
         <view class="page-records">
             <view class="title">
                 <view class="time">
                     <template v-if="accountType !== 'TEACHER'">
-                        <picker
-                            v-if="mode === 'month'"
-                            mode="date"
-                            fields="month"
-                            :value="month"
-                            @change="onMonthChange"
-                        >
+                        <picker v-if="mode === 'month'" mode="date" fields="month" :value="month"
+                            @change="onMonthChange">
                             {{ month || '请选择月份' }}
-                            <uni-icons type="bottom" size="14" style="margin-left: 6rpx;" />
+                            <image src="/static/images/audition/arrow_down_dark.png" class="arrow" />
                         </picker>
 
-                        <uni-datetime-picker
-                            v-if="mode === 'range'"
-                            :value="dateRange"
-                            :border="false"
-                            :clear-icon="false"
-                            type="daterange"
-                            @change="onDaterRangeChange"
-                        >
+                        <uni-datetime-picker v-if="mode === 'range'" :value="dateRange" :border="false"
+                            :clear-icon="false" type="daterange" @change="onDaterRangeChange">
                             {{ dateRange.length ? dateRange.join(' 至 ') : '请选择日期范围' }}
-                            <uni-icons type="bottom" size="14" style="margin-left: 6rpx;" />
+                            <image src="/static/images/audition/arrow_down_dark.png" class="arrow" />
                         </uni-datetime-picker>
                     </template>
                     <template v-else>
@@ -61,25 +41,16 @@
             </view>
             <view class="list">
                 <template v-if="records.length">
-                    <view
-                        v-for="item in records"
-                        :key="item.id"
-                        class="item"
-                        @click="onRecordClick(item)"
-                    >
+                    <view v-for="item in records" :key="item.id" class="item" :class="{ 'ticket': !courseId }"
+                        @click="onRecordClick(item)">
                         <template v-if="courseId">
-                            <image
-                                v-if="selectAble"
-                                class="select-icon"
-                                :src="`/static/images/student/icon-radio${selectedFinishLesson.id === item.id ? '-active' : ''}.png`"
-                            />
+                            <image v-if="selectAble" class="select-icon"
+                                :src="`/static/images/student/icon-radio${selectedFinishLesson.id === item.id ? '-active' : ''}.png`" />
                             <view class="info">
                                 <view class="chapters">
-                                    <view
-                                        v-for="c in item.chapters"
-                                        :key="c.id"
-                                        class="chapters-item ellipsis"
-                                    >{{ c.chapterName || '' }}</view>
+                                    <view v-for="c in item.chapters" :key="c.id" class="chapters-item ellipsis">{{
+                                            c.chapterName || ''
+                                    }}</view>
                                 </view>
                                 <view class="text">
                                     <text>{{ item | time }}</text>
@@ -90,22 +61,23 @@
                                     <text>学习态度:{{ item.attitudeScore || '-' }}分</text>
                                 </view>
                             </view>
-                            <template v-if="item.students.length">
-                                <view v-if="courseType === 'one'" class="touxiang one">
-                                    <image
-                                        class="cover"
-                                        :src="getStudentCoverUrl(item.students[0])"
-                                    />
-                                    <text class="name ellipsis">{{ item.students[0].studentName }}</text>
+                            <template v-if="accountType === 'STUDENT'">
+                                <view v-if="item.teacher" class="touxiang one">
+                                    <image class="cover" :src="item.teacher.coverUrl" />
+                                    <text class="name ellipsis">{{ item.teacher.teacherName }}</text>
                                 </view>
-                                <view v-else class="touxiang more">
-                                    <image
-                                        v-for="s in item.students"
-                                        :key="s.studentId"
-                                        class="cover"
-                                        :src="getStudentCoverUrl(s)"
-                                    />
-                                </view>
+                            </template>
+                            <template v-else>
+                                <template v-if="item.students.length">
+                                    <view v-if="courseType === 'one'" class="touxiang one">
+                                        <image class="cover" :src="getStudentCoverUrl(item.students[0])" />
+                                        <text class="name ellipsis">{{ item.students[0].studentName }}</text>
+                                    </view>
+                                    <view v-else class="touxiang more">
+                                        <image v-for="s in item.students" :key="s.studentId" class="cover"
+                                            :src="getStudentCoverUrl(s)" />
+                                    </view>
+                                </template>
                             </template>
                         </template>
                         <template v-else>
@@ -113,41 +85,27 @@
                                 <text>{{ item | day }}</text>
                                 <text>{{ item | weekAndTime }}</text>
                             </view>
-                            <view class="ticket-name">{{ item.ticketName }}</view>
+                            <view class="ticket-name">
+                                <text>{{ item | ticketName }}</text>
+                            </view>
                         </template>
                     </view>
                 </template>
             </view>
         </view>
-        <view
-            v-if="['ADMIN', 'SUPER_ADMIN', 'STUDENT'].includes(accountType) && courseId && selectAble"
-            class="page-footer"
-        >
+        <view v-if="['ADMIN', 'SUPER_ADMIN', 'STUDENT'].includes(accountType) && courseId && selectAble"
+            class="page-footer">
             <template v-if="['ADMIN', 'SUPER_ADMIN'].includes(accountType)">
                 <!-- 一对一、一对多但只有一个学生 -->
                 <button
                     v-if="courseType === 'one' || (courseType === 'more' && (!selectedFinishLesson || selectedFinishLesson && selectedFinishLesson.students.length === 1))"
-                    class="btn"
-                    :class="{ confirm: !!selectedFinishLesson, disabled: !selectedFinishLesson }"
-                    :disabled="!selectedFinishLesson"
-                    @click="openRecoverLesson(0)"
-                >确定</button>
-                <picker
-                    v-else
-                    class="btn confirm picker"
-                    :value="recoverLessonStudent"
-                    range-key="studentName"
-                    :range="selectedFinishLesson.students"
-                    @change="onRecoverLessonStudentChange"
-                >确定</picker>
+                    class="btn" :class="{ confirm: !!selectedFinishLesson, disabled: !selectedFinishLesson }"
+                    :disabled="!selectedFinishLesson" @click="openRecoverLesson(0)">确定</button>
+                <picker v-else class="btn confirm picker" :value="recoverLessonStudent" range-key="studentName"
+                    :range="selectedFinishLesson.students" @change="onRecoverLessonStudentChange">确定</picker>
             </template>
-            <button
-                v-else
-                class="btn"
-                :class="{ confirm: !!selectedFinishLesson, disabled: !selectedFinishLesson }"
-                :disabled="!selectedFinishLesson"
-                @click="toComplaint"
-            >确定</button>
+            <button v-else class="btn" :class="{ confirm: !!selectedFinishLesson, disabled: !selectedFinishLesson }"
+                :disabled="!selectedFinishLesson" @click="toComplaint">确定</button>
         </view>
 
         <uni-popup ref="recoverLesson" :is-mask-click="false" type="center">
@@ -188,6 +146,10 @@ export default {
             const week = '周' + WEEK_DAY[new Date(useTime).getDay()]
             const time = dayjs(useTime).format('HH:mm')
             return [week, time].join(' ')
+        },
+        // 4个字换行
+        ticketName({ ticketName: name }) {
+            return name.substr(0, 4) + '\n' + name.substr(4)
         }
     },
     data() {
@@ -364,53 +326,64 @@ export default {
 .page {
     min-height: 100vh;
     background-color: #fff;
-    &.selectAble {
+
+    &.page-selectAble {
         padding-bottom: 148rpx;
     }
+
     &-search {
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 20rpx 30rpx;
         min-height: 88rpx;
+
         &.student {
             justify-content: flex-end;
         }
+
         .mode {
             border-radius: 4px;
             border: 1px solid;
-            border-image: linear-gradient(
-                    90deg,
+            border-image: linear-gradient(90deg,
                     rgba(97, 186, 236, 1),
-                    rgba(132, 218, 238, 1)
-                )
-                1 1;
+                    rgba(132, 218, 238, 1)) 1 1;
 
             padding: 2rpx 10rpx;
             font-size: 28rpx;
             color: #62bbec;
             line-height: 20px;
         }
+
         .switch {
             font-size: 24rpx;
             color: #141f33;
+
             .refresh {
                 width: 24rpx;
                 height: 22rpx;
-                margin-right: 4rpx;
+                margin-right: 8rpx;
             }
+
+            .shensu {
+                width: 24rpx;
+                height: 26rpx;
+                margin-right: 6rpx;
+            }
+
             &.selectAble {
                 background: #e2f3ff;
                 border-radius: 6px;
                 border: 1px solid #62bbec;
                 padding: 6rpx 10rpx 4rpx 20rpx;
 
-                font-weight: 500;
+                font-weight: 600;
                 color: #62bbec;
                 line-height: 34rpx;
             }
         }
     }
+
     &-records {
         .title {
             display: flex;
@@ -420,59 +393,83 @@ export default {
             line-height: 88rpx;
             background: #f5f7fa;
             padding: 0 14rpx 0 22rpx;
+
             .time {
                 // font-size: 28rpx;
-                font-weight: 500;
+                font-weight: 600;
                 // color: #141f33;
             }
+
             .len {
                 font-size: 24rpx;
                 color: #99a0ad;
             }
+
+            .arrow {
+                width: 20rpx;
+                height: 20rpx;
+                margin-left: 6rpx;
+            }
         }
+
         .list {
             .item {
                 display: flex;
                 align-items: center;
                 margin: 0 30rpx;
                 padding: 30rpx 0;
+
+                &.ticket {
+                    justify-content: space-between;
+                }
+
                 .select-icon {
                     width: 28rpx;
                     height: 28rpx;
                     margin-right: 20rpx;
                 }
+
                 .info {
                     flex: 1;
+
                     .chapters {
                         margin-bottom: 14rpx;
+
                         &-item {
                             font-size: 24rpx;
-                            font-weight: 500;
+                            font-weight: 600;
                             color: #141f33;
                             line-height: 34rpx;
-                            + .chapters-item {
+
+                            +.chapters-item {
                                 margin-top: 16rpx;
                             }
                         }
                     }
+
                     .text {
                         font-size: 24rpx;
                         color: #99a0ad;
                         line-height: 34rpx;
-                        text + text {
+
+                        text+text {
                             margin-left: 22rpx;
                         }
-                        + .text {
+
+                        +.text {
                             margin-top: 10rpx;
                         }
                     }
                 }
+
                 .touxiang {
                     display: flex;
+
                     &.one {
                         flex-direction: column;
                         align-items: center;
                         width: 110rpx;
+
                         .name {
                             width: 100%;
                             text-align: center;
@@ -482,6 +479,7 @@ export default {
                             margin-top: 2rpx;
                         }
                     }
+
                     &.more {
                         width: 160rpx;
                         column-gap: 4rpx;
@@ -489,41 +487,52 @@ export default {
                         flex-wrap: wrap;
                         justify-content: flex-end;
                     }
+
                     .cover {
                         width: 44rpx;
                         height: 44rpx;
                         border-radius: 50%;
                     }
                 }
+
                 &:not(:last-child) {
                     border-bottom: 1px solid #f5f7fa;
                 }
+
                 .ticket {
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
+
                     &-time {
-                        flex: 1;
                         display: flex;
                         flex-direction: column;
                         font-size: 24rpx;
                         color: #99a0ad;
                         line-height: 34rpx;
-                        text + text {
-                            margin-top: 4rpx;
+
+                        text {
+                            text-align: center;
+
+                            +text {
+                                margin-top: 4rpx;
+                            }
                         }
                     }
+
                     &-name {
                         width: 120rpx;
                         font-size: 24rpx;
-                        font-weight: 500;
+                        font-weight: 600;
                         color: #141f33;
                         line-height: 34rpx;
+                        text-align: center;
                     }
                 }
             }
         }
     }
+
     &-footer {
         .picker {
             text-align: center;
@@ -532,4 +541,5 @@ export default {
 }
 </style>
 
-<style lang="scss" src="@/common/piano-message-box.scss"></style>
+<style lang="scss" src="@/common/piano-message-box.scss">
+</style>

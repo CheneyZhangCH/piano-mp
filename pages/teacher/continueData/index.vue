@@ -144,7 +144,7 @@ export default {
             }
             .name {
                 font-size: 32rpx;
-                font-weight: 500;
+                font-weight: 600;
                 line-height: 44rpx;
                 color: #141f33;
             }
@@ -160,7 +160,7 @@ export default {
                 .num {
                     margin-bottom: 8rpx;
                     font-size: 32rpx;
-                    font-weight: 500;
+                    font-weight: 600;
                     line-height: 44rpx;
                     color: #141f33;
                 }
@@ -176,7 +176,7 @@ export default {
                 .num {
                     margin-bottom: 10rpx;
                     font-size: 28rpx;
-                    font-weight: 500;
+                    font-weight: 600;
                     line-height: 40rpx;
                     color: #99a0ad;
                 }

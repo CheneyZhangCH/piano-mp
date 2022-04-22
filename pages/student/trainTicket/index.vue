@@ -21,7 +21,7 @@ import dayjs from "dayjs"
 export default {
     filters: {
         effectiveTime({effectiveTime}){
-            return dayjs(effectiveTime).format('YYYY年 MM月 DD日')
+            return dayjs(effectiveTime).format('YYYY年 MM月DD日')
         }
     },
     data() {
@@ -93,6 +93,7 @@ export default {
                     color: #62bbec;
                     line-height: 40rpx;
                     padding: 24rpx 0 4rpx 36rpx;
+                    margin-bottom: 4rpx;
                     text + text {
                         margin-left: 18rpx;
                     }

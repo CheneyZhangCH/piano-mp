@@ -183,7 +183,7 @@ export default {
 
             text-align: center;
             font-size: 32rpx;
-            font-weight: 500;
+            font-weight: 600;
             color: #616b80;
             &::after {
                 display: none;

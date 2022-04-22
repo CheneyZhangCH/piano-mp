@@ -48,7 +48,7 @@
                     :class="{ confirm: sendCodeEnabled }"
                     :disabled="!sendCodeEnabled"
                     @click="getSmsCode"
-                >{{ duration !== undefined ? `已发送（${duration}s）` : '获取验证码' }}</button>
+                >{{ !sendCodeFlag ? `已发送（${duration}s）` : '获取验证码' }}</button>
             </view>
         </view>
         <view class="footer">
@@ -73,7 +73,8 @@ export default {
         return {
             phone: '', // 项目正常版本迭代，各端打通
             verifyCode: '',
-            duration: undefined,
+            duration: 100,
+            sendCodeFlag: true,
 
             loading: false,
             headerHeight: 0,
@@ -94,7 +95,7 @@ export default {
             return this.phone.length === 11 && (this.verifyCode.length === 6 || this.phone === '13381796225')
         },
         sendCodeEnabled: function () {
-            return this.phone.length === 11 && this.duration === undefined
+            return this.phone.length === 11 && this.sendCodeFlag
         },
 
         phoneClearVisible() {
@@ -128,15 +129,15 @@ export default {
                     title: '短信发送成功',
                     position: 'top'
                 })
-                this.duration = 60
-                const timer = setInterval(() => {
-                    if (this.duration >= 0) {
-                        this.duration--
-                    } else {
-                        this.duration = undefined
+                this.sendCodeFlag = false
+                var timer = setInterval(() => {
+                    this.duration--
+                    if(this.duration <= 0) {
+                        this.duration = 100
                         clearInterval(timer)
+                        this.sendCodeFlag = true
                     }
-                }, 1000)
+                }, 1000);
             } finally {
                 this.loading = false
             }
@@ -239,7 +240,7 @@ export default {
         height: 80rpx;
         line-height: 80rpx;
         font-size: 56rpx;
-        font-weight: 500;
+        font-weight: 600;
         color: #141f33;
         margin-top: 52rpx;
         margin-bottom: 48rpx;

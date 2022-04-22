@@ -16,11 +16,12 @@
                         <view v-if="
                             period.periodStatus === '1' && period.oneCourse
                         " class="period-main">
-                            <image class="avatar" :src="getStudentCoverUrl(period.oneCourse.student)" @click="openStudent(period)" />
+                            <image class="avatar" :src="getStudentCoverUrl(period.oneCourse.student)"
+                                @click="openStudent(period)" />
                             <view v-if="period.oneCourse.newStudent" class="period-status new">新学员
                             </view>
                             <view class="period-name">{{
-                                period.periodName
+                                    period.periodName
                             }}</view>
                             <view class="period-content">
                                 <view class="period-content-title">
@@ -32,7 +33,7 @@
                                     'male'
                                     }-selected.png`"></image>
                                     <text class="student-age">{{
-                                        period.oneCourse.student.age + "岁"
+                                            period.oneCourse.student.age + "岁"
                                     }}</text>
                                 </view>
                                 <view v-if="period.oneCourse.chapters.length" class="chapter">
@@ -50,15 +51,13 @@
                             <image class="avatar" src="/static/images/teacher/course_type_more.png"
                                 @click="openCourse(period)" />
                             <view class="period-name">{{
-                                period.periodName
+                                    period.periodName
                             }}</view>
                             <view class="period-content">
                                 <view class="period-content-title">
-                                    <text class="course-name">
-                                        {{
-                                            period.moreCourse.course
-                                                .courseName
-                                        }}
+                                    <text class="course-name"
+                                        :class="{ weekHaveFinish: period.moreCourse.weekHaveFinish }">
+                                        {{ period.moreCourse.course.courseName }}
                                     </text>
                                 </view>
                                 <view v-if="
@@ -75,7 +74,7 @@
                                 <view v-if="period.moreCourse.chapter" class="chapter">
                                     <view class="chapter-item ellipsis">
                                         ({{
-                                            period.moreCourse.chapter.bookName
+                                                period.moreCourse.chapter.bookName
                                         }}){{ period.moreCourse.chapter.chapterName }}
                                     </view>
                                 </view>
@@ -84,12 +83,12 @@
                         </view>
                         <view v-else-if="period.periodStatus === '3'" class="period-main">
                             <view class="period-name">{{
-                                period.periodName
+                                    period.periodName
                             }}</view>
                         </view>
                         <view v-else-if="period.periodStatus === '4'" class="period-main lock">
                             <view class="period-name">{{
-                                period.periodName
+                                    period.periodName
                             }}</view>
                             <view class="period-content">
                                 该时间段已被锁定，请勿做其余安排
@@ -260,6 +259,7 @@ export default {
     padding-top: 80rpx;
     padding-bottom: 100rpx;
 }
+
 .page-title {
     position: fixed;
     top: 0;
@@ -279,12 +279,14 @@ export default {
         font-size: 28rpx;
         color: #99a0ad;
         line-height: 40rpx;
+
         .active {
             width: 64rpx;
             height: 44rpx;
         }
     }
 }
+
 .page-content {
     padding: 0 30rpx;
 
@@ -315,8 +317,10 @@ export default {
         background: #ffffff;
         box-shadow: 0px 0px 8px 0px #e3e5e9;
         border-radius: 16rpx;
+
         &.lock {
             border: 2rpx dashed #979797;
+
             .period-content {
                 display: flex;
                 align-items: center;
@@ -353,7 +357,7 @@ export default {
             justify-content: center;
 
             font-size: 28rpx;
-            font-weight: 500;
+            font-weight: 600;
             color: #141f33;
 
             &::after {
@@ -380,20 +384,16 @@ export default {
                 margin-bottom: 24rpx;
                 padding-left: 100rpx;
 
-                .student-name {
+                .student-name,
+                .course-name {
                     font-size: 28rpx;
-                    font-weight: 500;
+                    font-weight: 600;
                     color: #141f33;
                     line-height: 40rpx;
+
                     &.weekHaveFinish {
                         color: #62bbec;
                     }
-                }
-                .course-name {
-                    font-size: 28rpx;
-                    font-weight: 500;
-                    color: #62bbec;
-                    line-height: 40rpx;
                 }
 
                 .gender-icon {
@@ -410,28 +410,34 @@ export default {
                     margin-left: 8rpx;
                 }
             }
+
             .student {
                 padding: 0 10rpx 20rpx 20rpx;
+
                 .student-item {
                     font-size: 24rpx;
                     font-weight: 600;
                     color: #525666;
                     line-height: 34rpx;
-                    + .student-item {
+
+                    +.student-item {
                         margin-left: 10rpx;
                     }
+
                     &.weekHaveFinish {
                         color: #62bbec;
                     }
                 }
             }
+
             .chapter {
                 padding: 0 10rpx 20rpx 20rpx;
 
                 .chapter-item {
-                    + .chapter-item {
+                    +.chapter-item {
                         margin-top: 10rpx;
                     }
+
                     font-size: 24rpx;
                     color: #525666;
                     line-height: 34rpx;

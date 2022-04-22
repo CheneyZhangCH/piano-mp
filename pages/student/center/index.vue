@@ -3,7 +3,7 @@
         <view class="custom-header">
             <view class="title" :style="customTitleStyle">
                 <uni-icons v-if="studentId" type="left" color="#FFF" size="20" @click="back"
-                    style="float: left; padding: 0 30rpx" />
+                    style="position: absolute; left: 0; padding: 0 30rpx" />
                 学员中心
             </view>
         </view>
@@ -220,7 +220,7 @@ export default {
             z-index: 1;
             text-align: center;
             font-size: 32rpx;
-            font-weight: 500;
+            font-weight: 600;
             color: #fff;
         }
     }

@@ -9,7 +9,7 @@
                         <view class="info">
                             <image
                                 class="gender"
-                                :src="`/static/images/${student.gender || 'male'}_selected.png`"
+                                :src="`/static/images/student/${student.gender || 'male'}-selected.png`"
                             />
                             <text class="age">{{ student.age }}岁</text>
                             <text v-if="student.packageName" class="packageName ellipsis">{{ student.packageName }}</text>
@@ -86,6 +86,7 @@ export default {
                     margin-right: 8rpx;
                 }
                 .age {
+                    width: 60rpx;
                     margin-right: 20rpx;
                 }
                 .packageName {
@@ -93,9 +94,8 @@ export default {
                 }
             }
             .detail {
-                border-radius: 8px;
+                border-radius: 8rpx;
                 border: 2rpx solid;
-                border-image: linear-gradient(90deg, rgba(97, 186, 236, 1), rgba(132, 218, 238, 1)) 1 1;
 
                 padding: 6rpx 16rpx;
                 font-size: 22rpx;

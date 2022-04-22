@@ -8,12 +8,15 @@
                 }"
             />
             <image class="cover" :src="book.coverUrl"></image>
-            <view class="custom-header" :style="{top: `${headerTop}px`,height: `${headerHeight}px`}">
-                <van-icon name="arrow-left" class="back" @click="goBack"/>
-                <text class="title">{{ book.bookName }}</text>
+        </view>
+        <view class="custom-header">
+            <view class="title" :style="customTitleStyle">
+                <uni-icons type="left" color="#FFF" size="20" @click="back"
+                    style="position: absolute; left: 0; padding: 0 30rpx" />
+                {{ book.bookName }}
             </view>
         </view>
-        <view class="units">
+        <scroll-view scroll-y="true" class="units">
             <view v-for="item in units" :key="item.unit.id" class="item">
                 <view class="name">{{ item.unit.unitName }}</view>
                 <view class="chapter">
@@ -27,7 +30,7 @@
                     </view>
                 </view>
             </view>
-        </view>
+        </scroll-view>
     </view>
 </template>
 
@@ -63,6 +66,11 @@ export default {
 
         this.init(option)
     },
+    computed: {
+        customTitleStyle() {
+            return `top: ${this.headerTop}px; height: ${this.headerHeight}px; line-height: ${this.headerHeight}px`
+        },
+    },
     methods: {
         async init({id}){
             const res = await this.$http.get('/mini/teachingBook/getBook?bookId='+id)
@@ -77,7 +85,7 @@ export default {
             uni.navigateTo({ url: `/pages/student/videos/chapter?id=${chapter.chapter.id}` })
         },
 
-        goBack(){
+        back(){
             uni.navigateBack({ delta: 1 })
         }
     }
@@ -112,33 +120,30 @@ export default {
             width: calc(100% - 64rpx);
             height: 304rpx;
         }
-        .custom-header {
+    }
+
+    .custom-header {
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        .title {
             position: absolute;
-            z-index: 9;
-            display: flex;
-            align-items: center;
             width: 100%;
-            height: 56rpx;
+            z-index: 1;
             text-align: center;
-            color: #FFF;
-            .title {
-                font-size: 32rpx;
-                font-weight: 500;
-                line-height: 44rpx;
-                flex: 1;
-            }
-            .back {
-                font-size: 32rpx;
-                margin-left: 28rpx;
-            }
+            font-size: 32rpx;
+            font-weight: 600;
+            color: #fff;
         }
     }
     .units {
+        height: calc(100vh - 596rpx);
         .item {
             .name {
                 background-color: #f5f7fa;
 
-                font-weight: 500;
+                font-weight: 600;
                 color: #141f33;
                 line-height: 92rpx;
                 padding: 0 44rpx;

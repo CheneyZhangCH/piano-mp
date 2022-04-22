@@ -48,6 +48,7 @@
                     <view class="label">学员选择</view>
                     <view class="value">
                         <van-checkbox-group
+                            class="checkbox-group"
                             v-model="form.studentIds"
                             direction="horizontal"
                             @change="(e) => (form.studentIds = e.detail)"
@@ -57,6 +58,7 @@
                                 :name="student.studentId"
                                 use-icon-slot
                                 :key="student.studentId"
+                                class="checkbox"
                             >
                                 <image
                                     slot="icon"
@@ -67,7 +69,6 @@
                                             ? '-active'
                                             : ''
                                     }.png`"
-                                    style="width: 28rpx; height: 28rpx"
                                 />
                                 {{ student.studentName }}
                             </van-checkbox>
@@ -95,6 +96,9 @@
 <script>
 import { WEEK_DAY } from '@/utils/format'
 export default {
+    options: {
+        styleIsolation: 'shared'
+    },
     props: {
         detail: {
             type: Object,
@@ -253,7 +257,7 @@ export default {
             }
             .label {
                 font-size: 28rpx;
-                font-weight: 500;
+                font-weight: 600;
                 color: #141f33;
                 line-height: 40rpx;
                 padding-bottom: 32rpx;
@@ -283,6 +287,16 @@ export default {
                         top: 18rpx;
                         width: 20rpx;
                         height: 20rpx;
+                    }
+                }
+                .checkbox-group {
+                    /deep/.checkbox {
+                        width: 33%;
+                        image {
+                            width: 28rpx;
+                            height: 28rpx;
+                            transform: translateY(4rpx);
+                        }
                     }
                 }
             }

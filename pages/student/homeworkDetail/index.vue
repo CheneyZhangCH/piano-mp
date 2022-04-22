@@ -207,7 +207,7 @@ export default {
                     text-align: center;
                     .num {
                         font-size: 28rpx;
-                        font-weight: 500;
+                        font-weight: 600;
                         color: #141f33;
                         line-height: 40rpx;
                         margin-bottom: 2rpx;
@@ -271,7 +271,7 @@ export default {
             }
             .chapterName {
                 font-size: 32rpx;
-                font-weight: 500;
+                font-weight: 600;
                 color: #141F33;
                 line-height: 44rpx;
                 text-align: center;

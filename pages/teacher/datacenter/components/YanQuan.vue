@@ -7,7 +7,7 @@
                         class="input"
                         :value="code"
                         placeholder="请输入10位课程陪练券码"
-                        placeholder-style="color: #99A0AD;font-size: 32rpx;"
+                        placeholder-style="color: #99A0AD;"
                         maxlength="10"
                         border="false"
                         clearable
@@ -131,7 +131,6 @@ export default {
                 padding-left: 36rpx;
                 padding-right: 20rpx;
                 font-size: 32rpx;
-                font-weight: 500;
                 color: #141f33;
                 box-sizing: border-box;
             }
@@ -140,16 +139,17 @@ export default {
             width: 100%;
             text-align: center;
             font-size: 28rpx;
-            font-weight: 500;
+            font-weight: 600;
             color: #525666;
             line-height: 40rpx;
         }
         .name {
             font-size: 32rpx;
-            font-weight: 500;
+            font-weight: 600;
             color: #62bbec;
             line-height: 44rpx;
             margin-top: 36rpx;
+            text-align: center;
         }
     }
 }

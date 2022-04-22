@@ -3,7 +3,7 @@
         <view v-for="item in records" :key="item.id" class="record">
             <view class="record-title">
                 <text class="name">{{ msgType[item.msgType] }}</text>
-                <text class="date">{{ weekOrDateTime(item.createTime) }}</text>
+                <text class="date">{{ todayOrYesterdayOrDateFormat(item.createTime) }}</text>
             </view>
             <view class="record-content">
                 <template v-if="item.msgData">
@@ -32,7 +32,7 @@
 
 <script>
 import { msgType } from '@/utils/dicts'
-import { dayjsFormat, weekOrDateTime } from "@/utils/format"
+import { dayjsFormat, todayOrYesterdayOrDateFormat } from "@/utils/format"
 export default {
     data() {
         return {
@@ -51,7 +51,7 @@ export default {
     },
     methods: {
         dayjsFormat,
-        weekOrDateTime,
+        todayOrYesterdayOrDateFormat,
         async init() {
             try {
                 const res = await this.$http.post('/mini/studentMsg/listCourseMsg')
@@ -98,7 +98,7 @@ export default {
                 line-height: 40rpx;
             }
             .date {
-                font-size: 20rpx;
+                font-size: 24rpx;
                 color: #99a0ad;
             }
         }

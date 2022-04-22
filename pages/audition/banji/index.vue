@@ -7,7 +7,7 @@
                     color="#FFF"
                     size="20"
                     @click="back"
-                    style="float: left; padding: 0 30rpx"
+                    style="position: absolute; left: 0; padding: 0 30rpx"
                 />班级详情
             </view>
         </view>
@@ -20,29 +20,17 @@
                 </view>
                 <view class="infos">
                     <view class="info">
-                        <view class="edit-wrap">
-                            <text>开班日期</text>
-                            <!-- <view class="edit">
-                                <uni-datetime-picker
-                                    type="date"
-                                    :value="detail.startClassDate"
-                                    @change="startClassDateChange"
-                                >
-                                    修改
-                                    <image src="/static/images/teacher/edit.png" />
-                                </uni-datetime-picker>
-                            </view> -->
-                        </view>
+                        <text class="label">开班日期</text>
                         <text class="value">{{ startClassDate }}</text>
                     </view>
                     <view class="info">
-                        <text>班级人数</text>
+                        <text class="label">班级人数</text>
                         <text
                             class="value"
-                        >{{ detail.students.length === detail.studentNum ? '满班' : detail.students.length }}</text>
+                        >{{ detail.students.length === detail.studentNum ? '满班' : `${detail.students.length}人` }}</text>
                     </view>
                     <view class="info">
-                        <text>当前进度</text>
+                        <text class="label">当前进度</text>
                         <text class="value ellipsis">
                             <text v-if="chapter.bookName">({{ chapter.bookName }})</text>
                             <text v-if="chapter.chapterName">{{ chapter.chapterName }}</text>
@@ -221,7 +209,7 @@ export default {
             z-index: 1;
             text-align: center;
             font-size: 32rpx;
-            font-weight: 500;
+            font-weight: 600;
             color: #fff;
         }
     }
@@ -243,6 +231,7 @@ export default {
                 color: #141f33;
                 line-height: 44rpx;
                 margin-bottom: 50rpx;
+                text-align: center;
             }
             .infos {
                 .info {
@@ -252,28 +241,17 @@ export default {
                     + .info {
                         margin-top: 20rpx;
                     }
-                    .edit-wrap {
-                        display: flex;
-                        align-items: baseline;
-                        .edit {
-                            color: #62bbec;
-                            margin-left: 16rpx;
-                            image {
-                                width: 28rpx;
-                                height: 20rpx;
-                                margin-left: 4rpx;
-                            }
-                        }
-                    }
                     text {
                         font-size: 28rpx;
-                        color: #99a0ad;
+                        color: #141f33;
                         line-height: 40rpx;
+                    }
+                    .label {
+                        color: #99a0ad;
                     }
                     .value {
                         flex: 1;
                         text-align: right;
-                        color: #141f33;
                         padding-left: 20rpx;
                     }
                 }
@@ -306,7 +284,7 @@ export default {
                     margin-bottom: 16rpx;
                     .studentName {
                         font-size: 28rpx;
-                        font-weight: 500;
+                        font-weight: 600;
                         color: #141f33;
                         line-height: 40rpx;
                         margin-right: 16rpx;
@@ -343,7 +321,7 @@ export default {
                             margin-left: 10rpx;
                         }
                         &.warning {
-                            font-weight: 500;
+                            font-weight: 600;
                             color: #f15e5e;
                         }
                     }

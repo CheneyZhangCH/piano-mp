@@ -32,7 +32,7 @@
                                     <text
                                         v-if="item.chapterScore > 0"
                                         class="score"
-                                    >{{ item.chapterScore }}分</text>
+                                    >{{ item.chapterScore * 2 }}分</text>
                                 </view>
                             </view>
                         </view>
@@ -262,13 +262,13 @@
                         class="btn"
                         :class="{ confirm: !disabled, disabled }"
                         :disabled="disabled"
-                        @click="handleConfirm"
+                        @click="_checkStudentEndAndNextCourse"
                     >确认</button>
                 </view>
             </view>
         </uni-popup>
 
-        <MessageBox ref="last" />
+        <MessageBox ref="last" @confirm="handleConfirm"/>
     </view>
 </template>
 
@@ -597,7 +597,6 @@ export default {
                 })
                 this.$refs.popup.close()
                 this.$emit('success', false) // 列表不loading
-                this._checkStudentEndAndNextCourse()
             } finally {
                 this.loading = false
             }
@@ -619,7 +618,7 @@ export default {
             try {
                 const res = await this.$http.post('/mini/finishiLesson/checkStudentEndAndNextCourse', data)
                 const { course, lastCourse } = res.data ?? {}
-                if (!lastCourse) return
+                if (!lastCourse) return this.handleConfirm()
                 this.$refs.last.open(course)
             } catch (error) {
 
@@ -640,7 +639,7 @@ export default {
             }
             .label {
                 font-size: 28rpx;
-                font-weight: 500;
+                font-weight: 600;
                 color: #141f33;
                 line-height: 40rpx;
                 padding-bottom: 32rpx;
@@ -670,7 +669,7 @@ export default {
                     }
                     .score {
                         font-size: 28rpx;
-                        font-weight: 500;
+                        font-weight: 600;
                         color: #62bbec;
                     }
                 }
