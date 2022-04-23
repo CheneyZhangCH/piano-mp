@@ -6,7 +6,7 @@
                 <text class="name">{{ detail.teacher.teacherName }}</text>
                 <text class="sub-name">{{ detail.courseName }}</text>
             </view>
-            <text class="sub-name">布置于 {{ weekOrDateTime(detail.finishTime) }}</text>
+            <text class="sub-name">布置于 {{ agoWeekOrDateTime(detail.finishTime) }}</text>
         </view>
         <view class="page-content">
             <view class="divider">课堂报告</view>
@@ -90,7 +90,7 @@
 
 <script>
 import { numToChinese } from '@/utils/dicts'
-import { weekOrDateTime } from '@/utils/format'
+import { agoWeekOrDateTime } from '@/utils/format'
 export default {
     data() {
         return {
@@ -110,7 +110,7 @@ export default {
         this.init()
     },
     methods: {
-        weekOrDateTime,
+        agoWeekOrDateTime,
         async init() {
             uni.showLoading({ title: '加载中' })
             try {

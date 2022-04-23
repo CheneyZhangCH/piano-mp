@@ -15,7 +15,7 @@
                         <text class="name ellipsis">{{ teacher.teacherName }}</text>
                         <view v-if="groups.length" class="groups">
                             <text v-for="g in groups.slice(0, 2)" :key="g.id" class="group ellipsis">{{
-                                g.groupName
+                                    g.groupName
                             }}</text>
                         </view>
                     </view>
@@ -37,7 +37,7 @@
                     <text class="name">基本收入（元）</text>
                     <text class="times">{{ times }}</text>
                 </view>
-                <view class="salary">{{ formatThousandsNum(detail.salary) }}</view>
+                <view v-if="detail" class="salary">{{ formatThousandsNum(detail.salary) }}</view>
                 <view class="desc">* 基本收入为税前收入，额外奖金不含在内另行计算</view>
             </view>
             <view class="list block">
@@ -48,7 +48,7 @@
                         <text class="num">
                             总计
                             <text class="sal" :class="{ 'plus': courseSalary > 0, 'minus': courseSalary < 0 }">{{
-                                courseSalary > 0 ? '+' : ''
+                                    courseSalary > 0 ? '+' : ''
                             }}{{ courseSalary || '-' }}</text>元
                         </text>
                     </view>
@@ -77,7 +77,7 @@
                             总计
                             <text class="sal"
                                 :class="{ 'plus': trainTicketSalary > 0, 'minus': trainTicketSalary < 0 }">{{
-                                    trainTicketSalary > 0 ? '+' : ''
+                                        trainTicketSalary > 0 ? '+' : ''
                                 }}{{ trainTicketSalary || '-' }}</text>元
                         </text>
                     </view>
@@ -106,7 +106,7 @@
                             总计
                             <text class="sal"
                                 :class="{ 'plus': disciplineAmount > 0, 'minus': disciplineAmount < 0 }">{{
-                                    disciplineAmount > 0 ? '+' : ''
+                                        disciplineAmount > 0 ? '+' : ''
                                 }}{{ disciplineAmount || '-' }}</text>元
                         </text>
                     </view>
@@ -158,7 +158,7 @@
                     <view v-for="item in group.packageRatios" :key="item.id" class="item">
                         <text class="rate"
                             :class="{ 'reach': item.actualRatio >= item.ratio, 'unreach': item.actualRatio < item.ratio, empty: !item.actualRatio }">{{
-                                item.actualRatio ? `${item.actualRatio}%` : '-'
+                                    item.actualRatio ? `${item.actualRatio}%` : '-'
                             }}</text>
                         <text class="name ellipsis">{{ item.packageName }}({{ item.ratio }}%)</text>
                     </view>
@@ -178,21 +178,21 @@
                         </view>
                     </view>
                     <view v-if="group" class="total" :class="{ empty: !group.totalAmount }">{{
-                        formatThousandsNum(group.totalAmount) || '-'
+                            formatThousandsNum(group.totalAmount) || '-'
                     }}</view>
                 </view>
                 <view class="container amonut">
                     <view class="amonut-item">
                         <text>续课收入</text>
                         <text class="num" :class="{ empty: !group.continueAmount }">{{
-                            group.continueAmount ?
-                                `+${group.continueAmount}元` : '-'
+                                group.continueAmount ?
+                                    `+${group.continueAmount}元` : '-'
                         }}</text>
                     </view>
                     <view class="amonut-item">
                         <text>退费支出</text>
                         <text class="num refund" :class="{ empty: !group.refundAmount }">{{
-                            group.refundAmount ? `${group.refundAmount}元` : '-'
+                                group.refundAmount ? `${group.refundAmount}元` : '-'
                         }}</text>
                     </view>
                 </view>
@@ -218,8 +218,8 @@
                                     empty: !item.amount, positive: item.amount >
                                         0
                                 }">{{
-    item.amount ? `${item.amount >
-        0 ? `+${item.amount}` : item.amount}元` : '-'
+        item.amount ? `${item.amount >
+            0 ? `+${item.amount}` : item.amount}元` : '-'
 }}</text>
                             </view>
                         </view>
@@ -240,7 +240,7 @@
                                     <text class="student-name">{{ item.student.studentName }}-</text>
                                     <text class="package-name">{{ item.packageName }}</text>
                                     <text class="status" :class="item.changeType">{{
-                                        dicts.changeType[item.changeType]
+                                            dicts.changeType[item.changeType]
                                     }}</text>
                                 </view>
                                 <view class="r">
@@ -285,9 +285,9 @@
 
 <script lang="js">
 import YanQuan from "./components/YanQuan.vue"
-
 import dicts from '@/utils/dicts'
-import { weekOrDateTime, dayjsFormat, formatThousandsNum } from '@/utils/format'
+import { dayjsFormat, weekOrDateTime, formatThousandsNum } from '@/utils/format'
+
 export default {
     components: {
         YanQuan
@@ -400,6 +400,7 @@ export default {
     methods: {
         formatThousandsNum,
         weekOrDateTime,
+
         async init() {
             const res = await this.$http.get('/mini/teacher/getTeacherDataInfo?teacherId=' + this.userId)
             this.detail = res.data ?? {}

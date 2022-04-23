@@ -6,7 +6,6 @@ export const dayjsFormat = (date, y = 'YYYY-MM-DD') => {
     return dayjs(date).format(y)
 }
 
-// 今天、昨天、月日、年月日
 export const weekOrDateTime = (timestamp) => {
     if (!timestamp) return ''
     const target = dayjs(timestamp).format('YYYY-MM-DD')
@@ -15,25 +14,56 @@ export const weekOrDateTime = (timestamp) => {
     const yesterday = dayjs().subtract(1, 'days').format('YYYY-MM-DD')
 
     if (target === today) {
-        const period = dayjs(timestamp).hour() < 12 ? '上午' : '下午'
-        return '今天 ' + period + time
+        return '今天 ' + time
     } else if (target === yesterday) {
         return '昨天 ' + time
     } else {
-        const monday = dayjs().subtract(dayjs().day() - 1, 'days').format('YYYY-MM-DD 00:00:00')
+        const monday = dayjs().subtract(dayjs().day() - 1, 'days').format('YYYY/MM/DD 00:00:00')
         if (new Date(timestamp).getTime() >= new Date(monday).getTime()) {
-            return `周${WEEK_DAY[new Date(timestamp).getDay()]} ` + time
+            const week = new Date(timestamp).getDay()
+            return `周${WEEK_DAY[week === 0 ? 7 : week]} ` + time
         }
         const targetYear = new Date(timestamp).getFullYear()
         const curYear = new Date().getFullYear()
-        if(targetYear === curYear) {
+        if (targetYear === curYear) {
             return dayjs(timestamp).format('MM-DD H:mm')
         }
         return target
     }
 }
 
-// 今天、昨天、月日、年月日
+export const agoWeekOrDateTime = (timestamp) => {
+    if (!timestamp) return ''
+    const target = dayjs(timestamp).format('YYYY-MM-DD')
+    const time = dayjs(timestamp).format('H:mm')
+    const today = dayjs().format('YYYY-MM-DD')
+    const yesterday = dayjs().subtract(1, 'days').format('YYYY-MM-DD')
+    const period = dayjs(timestamp).hour() < 12 ? '上午' : '下午'
+
+    if (target === today) {
+        return period + time
+    } else if (target === yesterday) {
+        return '昨天 ' + period + time
+    } else {
+        const week = new Date(timestamp).getDay()
+        const monday = dayjs().subtract(dayjs().day() - 1, 'days').format('YYYY/MM/DD 00:00:00')
+        if (new Date(timestamp).getTime() >= new Date(monday).getTime()) {
+            return `周${WEEK_DAY[week === 0 ? 7 : week]} ` + period + time
+        }
+        const lastMonday = dayjs(monday).subtract(7, 'days').format('YYYY/MM/DD 00:00:00')
+        if (new Date(timestamp).getTime() >= new Date(lastMonday).getTime()) {
+            return `上周${WEEK_DAY[week === 0 ? 7 : week]} ` + period + time
+        }
+        const targetYear = new Date(timestamp).getFullYear()
+        const curYear = new Date().getFullYear()
+        if (targetYear === curYear) {
+            return dayjs(timestamp).format('MM月DD日')
+        }
+        return dayjs(timestamp).format('YYYY年MM月DD日')
+    }
+}
+
+// 上午、下午 H:mm|昨天 H:mm|MM月DD日|YYYY年MM月DD日
 export const todayOrYesterdayOrDateFormat = (timestamp) => {
     if (!timestamp) return ''
     const target = dayjs(timestamp).format('YYYY-MM-DD')
@@ -43,13 +73,13 @@ export const todayOrYesterdayOrDateFormat = (timestamp) => {
 
     if (target === today) {
         const period = dayjs(timestamp).hour() < 12 ? '上午' : '下午'
-        return '今天 ' + period + time
+        return period + ' ' + time
     } else if (target === yesterday) {
         return '昨天 ' + time
     } else {
         const targetYear = new Date(timestamp).getFullYear()
         const curYear = new Date().getFullYear()
-        if(targetYear === curYear) {
+        if (targetYear === curYear) {
             return dayjs(timestamp).format('MM月DD日')
         }
         return dayjs(timestamp).format('YYYY年MM月DD日')
@@ -90,7 +120,6 @@ export const formatThousandsNum = (value, precision = 2) => {
         return undefined
     } else {
         let text = `${num.toFixed(precision).replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, '$&,')}`
-        // if (hasYuan) text += '元'
         return text
     }
 }

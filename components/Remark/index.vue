@@ -11,18 +11,9 @@
             </template>
         </view>
 
-        <uni-popup ref="popup" type="dialog">
-            <uni-popup-dialog
-                ref="input"
-                mode="input"
-                title="备注"
-                :value="value"
-                placeholder="最多15个字"
-                :maxlength="15"
-                :before-close="true"
-                @close="close"
-                @confirm="confirm"
-            ></uni-popup-dialog>
+        <uni-popup v-if="popupVisible" ref="popup" type="dialog">
+            <uni-popup-dialog ref="input" mode="input" title="备注" :value="value" placeholder="最多15个字" :maxlength="15"
+                :before-close="true" @close="close" @confirm="confirm" />
         </uni-popup>
     </view>
 </template>
@@ -36,20 +27,23 @@ export default {
     data() {
         return {
             value: null,
-            loading: false
+            loading: false,
+            popupVisible: false
         }
     },
     methods: {
         open() {
             this.loading = false
-            this.$refs.popup.open()
+            this.popupVisible = true
             this.$nextTick(() => {
+                this.$refs.popup.open()
                 this.value = this.student?.remark ?? null
             })
         },
 
         close() {
             this.$refs.popup.close()
+            this.popupVisible = false
         },
 
         async confirm(value) {
@@ -81,6 +75,7 @@ export default {
     // margin-left: 12rpx;
     height: 34rpx;
     line-height: 34rpx;
+
     &.exist {
         display: inline-block;
         background: #e2f3ff;
@@ -89,10 +84,12 @@ export default {
         padding-left: 6rpx;
         padding-right: 6rpx;
         color: #367aa0;
+
         &-text {
             margin-right: 8rpx;
         }
     }
+
     .icon {
         width: 20rpx;
         height: 20rpx;

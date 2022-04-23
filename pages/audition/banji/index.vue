@@ -1,40 +1,37 @@
 <template>
     <view class="page" :style="pageStyle">
-        <view class="custom-header">
+        <view class="custom-header" :style="customHeaderStyle">
             <view class="title" :style="customTitleStyle">
-                <uni-icons
-                    type="left"
-                    color="#FFF"
-                    size="20"
-                    @click="back"
-                    style="position: absolute; left: 0; padding: 0 30rpx"
-                />班级详情
+                <uni-icons type="left" color="#FFF" size="20" style="position: absolute; left: 0; padding: 0 30rpx"
+                    @click="back" />班级详情
             </view>
         </view>
         <scroll-view scroll-y="true" class="page-content">
-            <view v-if="detail.timetablePeriodId" class="banji">
-                <view class="msg ellipsis">
-                    <text>周{{ WEEK_DAY[detail.dayOfWeek] }}</text>
-                    <text>{{ detail.periodName }}</text>
-                    <text>{{ detail.courseName }}({{ detail.teacherName }})</text>
-                </view>
-                <view class="infos">
-                    <view class="info">
-                        <text class="label">开班日期</text>
-                        <text class="value">{{ startClassDate }}</text>
+            <view v-if="detail.timetablePeriodId" class="panel" :style="panelStyle">
+                <view class="banji">
+                    <view class="msg ellipsis">
+                        <text>周{{ WEEK_DAY[detail.dayOfWeek] }}</text>
+                        <text>{{ detail.periodName }}</text>
+                        <text>{{ detail.courseName }}({{ detail.teacherName }})</text>
                     </view>
-                    <view class="info">
-                        <text class="label">班级人数</text>
-                        <text
-                            class="value"
-                        >{{ detail.students.length === detail.studentNum ? '满班' : `${detail.students.length}人` }}</text>
-                    </view>
-                    <view class="info">
-                        <text class="label">当前进度</text>
-                        <text class="value ellipsis">
-                            <text v-if="chapter.bookName">({{ chapter.bookName }})</text>
-                            <text v-if="chapter.chapterName">{{ chapter.chapterName }}</text>
-                        </text>
+                    <view class="infos">
+                        <view class="info">
+                            <text class="label">开班日期</text>
+                            <text class="value">{{ startClassDate }}</text>
+                        </view>
+                        <view class="info">
+                            <text class="label">班级人数</text>
+                            <text class="value">{{ detail.students.length === detail.studentNum ? '满班' :
+                                    `${detail.students.length}人`
+                            }}</text>
+                        </view>
+                        <view class="info">
+                            <text class="label">当前进度</text>
+                            <text class="value ellipsis">
+                                <text v-if="chapter.bookName">({{ chapter.bookName }})</text>
+                                <text v-if="chapter.chapterName">{{ chapter.chapterName }}</text>
+                            </text>
+                        </view>
                     </view>
                 </view>
             </view>
@@ -44,30 +41,24 @@
                     <view class="info">
                         <view class="msg">
                             <text class="studentName">{{ item.student.studentName }}</text>
-                            <image
-                                class="gender"
-                                :src="`/static/images/student/${item.student.gender || 'male'}-selected.png`"
-                            />
+                            <image class="gender"
+                                :src="`/static/images/student/${item.student.gender || 'male'}-selected.png`" />
                             <text class="age">{{ item.student.age + '岁' }}</text>
                             <text class="packageName">{{ item.coursePackage.packageName }}</text>
                             <text class="trainTicketNum">{{ '课程陪练券' + item.trainTicketNum + '张' }}</text>
                         </view>
                         <view class="main">
-                            <view
-                                v-for="course in item.coursePackage.courses"
-                                :key="course.id"
-                                class="course"
-                                :class="{ 'warning': course.remainCourseNum <= 6 }"
-                            >
+                            <view v-for="course in item.coursePackage.courses" :key="course.id" class="course"
+                                :class="{ 'warning': course.remainCourseNum <= 6 }">
                                 <text>{{ course.courseName }}({{ course.teacherName }})</text>
                                 <text>周{{ WEEK_DAY[course.dayOfWeek] }}</text>
                                 <text>{{ course.timetablePeriodName }}</text>
                                 <text>剩余{{ course.remainCourseNum }}节</text>
                             </view>
-                            <view
-                                class="course expiryDate"
-                                :class="{ 'warning': getExpiryDateWarning(item.student.expiryDate) }"
-                            >账号有效期剩余：{{ getExpiryDate(item.student.expiryDate) }}</view>
+                            <view class="course expiryDate"
+                                :class="{ 'warning': getExpiryDateWarning(item.student.expiryDate) }">账号有效期剩余：{{
+                                        getExpiryDate(item.student.expiryDate)
+                                }}</view>
                         </view>
                         <view class="operation">
                             <view class="left">
@@ -80,7 +71,7 @@
             </view>
         </scroll-view>
 
-        <Student :student-id="studentId" is-banji @close="studentId = 0" @del="init"/>
+        <Student :student-id="studentId" is-banji @close="studentId = 0" @del="init" />
     </view>
 </template>
 
@@ -107,11 +98,20 @@ export default {
         }
     },
     computed: {
+        customHeaderHeight() {
+            return (this.headerHeight + this.headerTop + 20) * 2
+        },
         pageStyle() {
-            return `padding-top: ${(this.headerHeight + this.headerTop + 20) * 2}rpx; padding-bottom: ${this.datacenterFlag ? '100rpx' : 0};`
+            return `padding-top: ${this.customHeaderHeight}rpx; padding-bottom: ${this.datacenterFlag ? '100rpx' : 0};`
+        },
+        customHeaderStyle() {
+            return `height: ${this.customHeaderHeight}rpx;`
         },
         customTitleStyle() {
-            return `top: ${this.headerTop}px; height: ${this.headerHeight}px; line-height: ${this.headerHeight}px`
+            return `top: ${this.headerTop * 2}rpx; height: ${this.headerHeight * 2}rpx; line-height: ${this.headerHeight * 2}rpx`
+        },
+        panelStyle() {
+            return `background-position-y: -${this.customHeaderHeight}rpx;`
         },
 
         startClassDate() {
@@ -199,10 +199,8 @@ export default {
         left: 0;
         right: 0;
         top: 0;
-        height: 500rpx;
-        background-image: url("https://static.gangqintonghua.com/img/beijing/zhongxin.png?imageView2/0/w/375");
-        background-size: 100%;
-        background-repeat: no-repeat;
+        background: linear-gradient(90deg, #61BAEC 0%, #84DAEE 100%);
+
         .title {
             position: absolute;
             width: 100%;
@@ -213,10 +211,16 @@ export default {
             color: #fff;
         }
     }
+
     &-content {
         position: relative;
         z-index: 1;
         height: 100%;
+        .panel {
+            background-image: url("https://static.gangqintonghua.com/img/beijing/zhongxin.png?imageView2/0/w/375");
+            background-size: 100%;
+            background-repeat: no-repeat;
+        }
         .banji {
             margin: 0 24rpx;
             height: 340rpx;
@@ -225,6 +229,7 @@ export default {
             background-size: 100%;
 
             padding: 44rpx 40rpx 0;
+
             .msg {
                 font-size: 32rpx;
                 font-weight: 600;
@@ -233,22 +238,27 @@ export default {
                 margin-bottom: 50rpx;
                 text-align: center;
             }
+
             .infos {
                 .info {
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    + .info {
+
+                    +.info {
                         margin-top: 20rpx;
                     }
+
                     text {
                         font-size: 28rpx;
                         color: #141f33;
                         line-height: 40rpx;
                     }
+
                     .label {
                         color: #99a0ad;
                     }
+
                     .value {
                         flex: 1;
                         text-align: right;
@@ -257,31 +267,38 @@ export default {
                 }
             }
         }
+
         .students {
             padding: 38rpx 22rpx;
         }
+
         .student {
             display: flex;
             justify-content: space-between;
             background-color: #fff;
             border-radius: 16rpx;
             padding: 16rpx 16rpx 24rpx 16rpx;
-            + .student {
+
+            +.student {
                 margin-top: 50rpx;
             }
+
             .cover {
                 width: 90rpx;
                 height: 90rpx;
                 border-radius: 50%;
                 margin-right: 8rpx;
             }
+
             .info {
                 flex: 1;
                 overflow: hidden;
+
                 .msg {
                     display: flex;
                     align-items: center;
                     margin-bottom: 16rpx;
+
                     .studentName {
                         font-size: 28rpx;
                         font-weight: 600;
@@ -289,51 +306,63 @@ export default {
                         line-height: 40rpx;
                         margin-right: 16rpx;
                     }
+
                     .gender {
                         width: 24rpx;
                         height: 24rpx;
                         margin-right: 8rpx;
                     }
+
                     .age,
                     .packageName,
                     .trainTicketNum {
                         font-size: 12px;
                         color: #525666;
                     }
+
                     .age {
                         margin-right: 12rpx;
                     }
+
                     .packageName {
                         margin-right: 40rpx;
                     }
                 }
+
                 .main {
                     border-bottom: 2rpx solid #f5f7fa;
                     padding-bottom: 14rpx;
+
                     .course {
                         font-size: 12px;
                         color: #141f33;
                         line-height: 34rpx;
-                        + .course {
+
+                        +.course {
                             margin-top: 16rpx;
                         }
-                        text + text {
+
+                        text+text {
                             margin-left: 10rpx;
                         }
+
                         &.warning {
                             font-weight: 600;
                             color: #f15e5e;
                         }
                     }
                 }
+
                 .operation {
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
                     padding-top: 14rpx;
+
                     .left {
                         flex: 1;
                     }
+
                     .btn {
                         border-radius: 26rpx;
                         border: 2rpx solid #62bbec;
@@ -344,6 +373,7 @@ export default {
                         color: #62bbec;
                         line-height: 34rpx;
                         margin-left: 20rpx;
+
                         &::after {
                             display: none;
                         }

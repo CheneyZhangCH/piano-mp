@@ -31,40 +31,48 @@
                 <scroll-view scroll-y="true" class="content" :style="contentStyle">
                     <view class="score px-28">
                         <view class="score-item">
-                            <text class="score-item-num">{{
-                                student.handScore || '-'
-                            }}</text>
-                            <text class="score-item-desc">手型平均分</text>
+                            <view class="inline-flex flex-column">
+                                <text class="score-item-num">{{
+                                    student.handScore || '-'
+                                }}</text>
+                                <text class="score-item-desc">手型平均分</text>
+                            </view>
                         </view>
-                        <view class="score-item">
+                        <view class="score-item inline-flex flex-column">
                             <text class="score-item-num">{{
                                 student.musicScore || '-'
                             }}</text>
                             <text class="score-item-desc">识谱平均分</text>
                         </view>
-                        <view class="score-item">
-                            <text class="score-item-num">{{
-                                student.attitudeScore || '-'
-                            }}</text>
-                            <text class="score-item-desc">学习态度分</text>
+                        <view class="score-item text-right">
+                            <view class="inline-flex flex-column">
+                                <text class="score-item-num">{{
+                                    student.attitudeScore || '-'
+                                }}</text>
+                                <text class="score-item-desc">学习态度分</text>
+                            </view>
                         </view>
                     </view>
                     <view class="score px-28">
                         <view class="score-item">
-                            <text class="score-item-num">{{
-                                student.finishChapterScore || '-'
-                            }}</text>
-                            <text class="score-item-desc">回课成绩分</text>
+                            <view class="inline-flex flex-column">
+                                <text class="score-item-num">{{
+                                    student.finishChapterScore || '-'
+                                }}</text>
+                                <text class="score-item-desc">回课成绩分</text>
+                            </view>
                         </view>
-                        <view class="score-item">
+                        <view class="score-item inline-flex flex-column">
                             <text class="score-item-num">{{
                                 student.grade ? student.grade + '级' : '-'
                             }}</text>
                             <text class="score-item-desc">当前级别</text>
                         </view>
-                        <view class="score-item">
-                            <text class="score-item-num">{{ lastExamTime }} </text>
-                            <text class="score-item-desc">上次考级时间</text>
+                        <view class="score-item text-right">
+                            <view class="inline-flex flex-column">
+                                <text class="score-item-num">{{ lastExamTime }} </text>
+                                <text class="score-item-desc">上次考级时间</text>
+                            </view>
                         </view>
                     </view>
                     <view class="section-divider"></view>
@@ -468,10 +476,10 @@ export default {
     border-radius: 32rpx;
     .title {
         position: relative;
-        height: 200rpx;
+        height: 220rpx;
         padding: 30rpx 30rpx 0 30rpx;
 
-        background-image: url("https://static.gangqintonghua.com/img/beijing/xueyuan.png");
+        background-image: url("https://static.gangqintonghua.com/img/beijing/xueyuan-bg.png");
         background-repeat: no-repeat;
         background-size: 100%;
 
@@ -487,7 +495,6 @@ export default {
 
             .center-popup-title-main {
                 .student-name {
-                    font-family: PingFangSC-Medium, PingFang SC;
                     font-weight: 500;
                     color: #ffffff;
                     margin-right: 10rpx;
@@ -536,7 +543,7 @@ export default {
         }
     }
     .content {
-        margin-top: 20rpx;
+        margin-top: 16rpx;
 
         .score {
             display: flex;
@@ -544,8 +551,6 @@ export default {
             .score-item {
                 position: relative;
                 width: 33.33%;
-                display: inline-flex;
-                flex-direction: column;
                 margin-bottom: 36rpx;
 
                 &:after {
@@ -566,8 +571,6 @@ export default {
                 }
 
                 .score-item-num {
-                    height: 40rpx;
-                    font-family: PingFangSC-Medium, PingFang SC;
                     font-weight: 500;
                     color: #141f33;
                     line-height: 40rpx;

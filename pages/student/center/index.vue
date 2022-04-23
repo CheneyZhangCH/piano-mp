@@ -91,7 +91,7 @@
 <script lang="js">
 import MessageNotify from '../Components/MessageNotify'
 import dayjs from "dayjs"
-import { WEEK_DAY, weekOrDateTime, getExpiryDateWarning } from '@/utils/format'
+import { WEEK_DAY, getExpiryDateWarning } from '@/utils/format'
 export default {
     components: {
         MessageNotify
@@ -173,7 +173,6 @@ export default {
         this.showed = true
     },
     methods: {
-        weekOrDateTime,
         getExpiryDateWarning,
         async init() {
             const res = await this.$http.get(`/mini/student/getStudentDetail?studentId=${this.studentId || this.userId}`)

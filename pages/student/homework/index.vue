@@ -1,150 +1,155 @@
 <template>
     <view class="page" :style="pageStyle">
-        <view class="custom-header">
+        <view class="custom-header" :style="customHeaderStyle">
             <view class="title" :style="customTitleStyle">课后作业</view>
         </view>
         <scroll-view scroll-y="true" class="page-content" @scrolltolower="lower">
-            <view v-if="studentScore.accountId" class="student-score">
-                <view class="msg ellipsis">
-                    <text>
-                        在钢琴童话学习的第
-                        <text class="num"> {{ ' ' + studentScore.studyDays + ' ' }} </text>天
-                    </text>
-                    <text>
-                        目前共掌握了
-                        <text class="num"> {{
-                            studentScore.studyChapters ? ' ' + studentScore.studyChapters + ' ' : ' - '
-                        }} </text>首曲目
-                    </text>
-                </view>
-                <view class="infos">
-                    <view class="info">
-                        <view class="title">
-                            课堂数据
-                            <image src="/static/images/student/wenhao.png" @click="openMessage('ketang')" />
-                        </view>
-                        <view class="scores">
-                            <view class="score">
-                                <text class="num">{{ studentScore.handScore || '-' }}</text>
-                                <text class="desc">手型平均分</text>
-                            </view>
-                            <view class="score">
-                                <text class="num">{{ studentScore.musicScore || '-' }}</text>
-                                <text class="desc">识谱平均分</text>
-                            </view>
-                            <view class="score">
-                                <text class="num">{{ studentScore.attitudeScore || '-' }}</text>
-                                <text class="desc">学习态度分</text>
-                            </view>
-                        </view>
+            <view v-if="studentScore.accountId" class="panel" :style="panelStyle">
+                <view class="student-score">
+                    <view class="msg ellipsis">
+                        <text>
+                            在钢琴童话学习的第
+                            <text class="num"> {{ ' ' + studentScore.studyDays + ' ' }} </text>天
+                        </text>
+                        <text>
+                            目前共掌握了
+                            <text class="num"> {{
+                                    studentScore.studyChapters ? ' ' + studentScore.studyChapters + ' ' : ' - '
+                            }} </text>首曲目
+                        </text>
                     </view>
-                    <view class="info">
-                        <view class="title">
-                            学习数据
-                            <image src="/static/images/student/wenhao.png" @click="openMessage('xuexi')" />
+                    <view class="infos">
+                        <view class="info">
+                            <view class="title">
+                                课堂数据
+                                <image src="/static/images/student/wenhao.png" @click="openMessage('ketang')" />
+                            </view>
+                            <view class="scores">
+                                <view class="score">
+                                    <text class="num">{{ studentScore.handScore || '-' }}</text>
+                                    <text class="desc">手型平均分</text>
+                                </view>
+                                <view class="score">
+                                    <text class="num">{{ studentScore.musicScore || '-' }}</text>
+                                    <text class="desc">识谱平均分</text>
+                                </view>
+                                <view class="score">
+                                    <text class="num">{{ studentScore.attitudeScore || '-' }}</text>
+                                    <text class="desc">学习态度分</text>
+                                </view>
+                            </view>
                         </view>
-                        <view class="scores">
-                            <view class="score">
-                                <text class="num">{{ studentScore.finishChapterScore || '-' }}</text>
-                                <text class="desc">回课成绩分</text>
+                        <view class="info">
+                            <view class="title">
+                                学习数据
+                                <image src="/static/images/student/wenhao.png" @click="openMessage('xuexi')" />
                             </view>
-                            <view class="score">
-                                <text class="num">
-                                    {{
-                                        studentScore.grade ? studentScore.grade + '级' : '-'
-                                    }}
-                                </text>
-                                <text class="desc">当前级别</text>
-                            </view>
-                            <view class="score">
-                                <text class="num">{{ lastExamTime }}</text>
-                                <text class="desc">上次考级时间</text>
+                            <view class="scores">
+                                <view class="score">
+                                    <text class="num">{{ studentScore.finishChapterScore || '-' }}</text>
+                                    <text class="desc">回课成绩分</text>
+                                </view>
+                                <view class="score">
+                                    <text class="num">
+                                        {{
+                                                studentScore.grade ? studentScore.grade + '级' : '-'
+                                        }}
+                                    </text>
+                                    <text class="desc">当前级别</text>
+                                </view>
+                                <view class="score">
+                                    <text class="num">{{ lastExamTime }}</text>
+                                    <text class="desc">上次考级时间</text>
+                                </view>
                             </view>
                         </view>
                     </view>
                 </view>
             </view>
-
             <view v-if="list.length" class="list">
-                <view v-for="item in list" :key="item.id" class="item" @click="toDetail(item)">
-                    <view class="teacher">
-                        <view class="info">
-                            <image class="cover" :src="item.teacher.coverUrl" />
-                            <text class="name">{{ item.teacher.teacherName }}</text>
-                            <text class="sub-name">{{ item.courseName }}</text>
+                <view v-for="item in list" :key="item.id" class="item-wrap">
+                    <view v-if="firstAgoWeekId === item.id" class="divider">以下为一周前的作业</view>
+                    <view class="item" @click="toDetail(item)">
+                        <view class="teacher">
+                            <view class="info">
+                                <image class="cover" :src="item.teacher.coverUrl" />
+                                <text class="name">{{ item.teacher.teacherName }}</text>
+                                <text class="sub-name">{{ item.courseName }}</text>
+                            </view>
+                            <text class="sub-name">布置于 {{ agoWeekOrDateTime(item.finishTime) }}</text>
                         </view>
-                        <text class="sub-name">布置于 {{ weekOrDateTime(item.finishTime) }}</text>
-                    </view>
-                    <view class="content">
-                        <template v-if="item.courseType === 'one'">
-                            <view v-if="item.chapterScores.length" class="info ellipsis">
-                                <text class="name">回课情况</text>
-                                <text class="msg">
-                                    <text v-for="score in item.chapterScores" :key="score.id">
-                                        {{ score.chapterName }}
-                                        <text class="num">{{ score.score }}分</text>
+                        <view class="content">
+                            <template v-if="item.courseType === 'one'">
+                                <view v-if="item.chapterScores.length" class="info ellipsis">
+                                    <text class="name">回课情况</text>
+                                    <text class="msg">
+                                        <text v-for="score in item.chapterScores" :key="score.id">
+                                            {{ score.chapterName }}
+                                            <text class="num">{{ score.score }}分</text>
+                                        </text>
                                     </text>
-                                </text>
-                            </view>
-                            <view class="info ellipsis">
-                                <text class="name">本课表现</text>
-                                <text class="msg">
-                                    <text>
-                                        手型得分
-                                        <text class="num">{{ item.handScore }}分</text>
+                                </view>
+                                <view class="info ellipsis">
+                                    <text class="name">本课表现</text>
+                                    <text class="msg">
+                                        <text>
+                                            手型得分
+                                            <text class="num">{{ item.handScore }}分</text>
+                                        </text>
+                                        <text>
+                                            识谱得分
+                                            <text class="num">{{ item.musicScore }}分</text>
+                                        </text>
+                                        <text>
+                                            学习态度
+                                            <text class="num">{{ item.attitudeScore }}分</text>
+                                        </text>
                                     </text>
-                                    <text>
-                                        识谱得分
-                                        <text class="num">{{ item.musicScore }}分</text>
+                                </view>
+                                <view class="info ellipsis">
+                                    <text class="name">作业详情</text>
+                                    <text class="msg">
+                                        <text v-for="chapter in item.chapters" :key="chapter.id">
+                                            ({{ chapter.bookName }}){{ chapter.chapterName }}
+                                        </text>
                                     </text>
-                                    <text>
-                                        学习态度
-                                        <text class="num">{{ item.attitudeScore }}分</text>
-                                    </text>
-                                </text>
-                            </view>
-                            <view class="info ellipsis">
-                                <text class="name">作业详情</text>
-                                <text class="msg">
-                                    <text v-for="chapter in item.chapters" :key="chapter.id">({{ chapter.bookName }}){{
-                                        chapter.chapterName
-                                    }}</text>
-                                </text>
-                            </view>
-                        </template>
-                        <template v-else>
-                            <view class="info ellipsis">
-                                <text class="name">新知识点</text>
-                                <text class="msg">{{ item.chapters[0].knowledge }}</text>
-                            </view>
-                            <view class="info ellipsis">
-                                <text class="name">本课曲目</text>
-                                <text class="msg">{{ item.chapters[0].chapterName }}</text>
-                            </view>
-                            <view class="info homework">
-                                <text class="name">作业详情</text>
-                                <view class="msg">
-                                    <view v-for="(work, workIndex) in item.chapters[0].workStep" :key="workIndex"
-                                        class="work">
-                                        <text>步骤{{ numToChinese[workIndex + 1] }}：</text>
-                                        <text class="work-content">{{ work.content }}</text>
+                                </view>
+                            </template>
+                            <template v-else>
+                                <view class="info ellipsis">
+                                    <text class="name">新知识点</text>
+                                    <text class="msg">{{ item.chapters[0].knowledge }}</text>
+                                </view>
+                                <view class="info ellipsis">
+                                    <text class="name">本课曲目</text>
+                                    <text class="msg">{{ item.chapters[0].chapterName }}</text>
+                                </view>
+                                <view class="info homework">
+                                    <text class="name">作业详情</text>
+                                    <view class="msg">
+                                        <view v-for="(work, workIndex) in item.chapters[0].workStep" :key="workIndex"
+                                            class="work">
+                                            <text>步骤{{ numToChinese[workIndex + 1] }}：</text>
+                                            <text class="work-content">{{ work.content }}</text>
+                                        </view>
                                     </view>
                                 </view>
-                            </view>
-                            <view class="info videos">
-                                <text class="name">配套视频</text>
-                                <view class="video">
-                                    点击观看配套与讲解视频
-                                    <image src="/static/images/student/play-red.png" />
+                                <view class="info videos">
+                                    <text class="name">配套视频</text>
+                                    <view class="video">
+                                        点击观看配套与讲解视频
+                                        <image src="/static/images/student/play-red.png" />
+                                    </view>
                                 </view>
+                            </template>
+                        </view>
+                        <view v-if="item.courseType === 'one'" class="action">
+                            <text class="read" :class="{ haveRead: item.haveRead }">{{ item.haveRead ? '已读' : '未读'
+                            }}</text>
+                            <view class="btn">
+                                查看课堂报告与作业详情
+                                <uni-icons type="right" color="#99A0AD" size="12" />
                             </view>
-                        </template>
-                    </view>
-                    <view v-if="item.courseType === 'one'" class="action">
-                        <text class="read" :class="{ haveRead: item.haveRead }">{{ item.haveRead ? '已读' : '未读' }}</text>
-                        <view class="btn">
-                            查看课堂报告与作业详情
-                            <uni-icons type="right" color="#99A0AD" size="12" />
                         </view>
                     </view>
                 </view>
@@ -190,7 +195,9 @@
 <script lang="js">
 import MessageNotify from '../Components/MessageNotify'
 import { numToChinese } from '@/utils/dicts'
-import { weekOrDateTime } from '@/utils/format'
+import { agoWeekOrDateTime } from '@/utils/format'
+import dayjs from 'dayjs'
+const MONDAY = new Date(dayjs().subtract(dayjs().day() - 1, 'days').format('YYYY-MM-DD 00:00:00')).getTime()
 export default {
     components: {
         MessageNotify
@@ -209,15 +216,25 @@ export default {
             pageNum: 1,
             pageSize: 5,
             totalPage: 0,
-            list: []
+            list: [],
+            firstAgoWeekId: 0
         }
     },
     computed: {
+        customHeaderHeight() {
+            return (this.headerHeight + this.headerTop + 20) * 2
+        },
         pageStyle() {
-            return `padding-top: ${(this.headerHeight + this.headerTop + 20) * 2}rpx; padding-bottom: 100rpx;`
+            return `padding-top: ${this.customHeaderHeight}rpx; padding-bottom: 100rpx;`
+        },
+        customHeaderStyle() {
+            return `height: ${this.customHeaderHeight}rpx;`
         },
         customTitleStyle() {
-            return `top: ${this.headerTop * 2}rpx; height: ${this.headerHeight * 2}rpx; line-height: ${this.headerHeight * 2}rpx`
+            return `top: ${this.headerTop * 2}rpx; height: ${this.headerHeight * 2}rpx; line-height: ${this.headerHeight * 2}rpx;`
+        },
+        panelStyle() {
+            return `background-position-y: -${this.customHeaderHeight}rpx;`
         },
 
         lastExamTime() {
@@ -248,10 +265,13 @@ export default {
         this.init()
     },
     onShow() {
+        this.firstAgoWeekId = 0
+        this.pageNum = 1
+        this.list = []
         this.handleSearch()
     },
     methods: {
-        weekOrDateTime,
+        agoWeekOrDateTime,
         async init() {
             uni.showLoading({ title: '加载中', icon: 'none' })
             try {
@@ -282,6 +302,14 @@ export default {
             try {
                 const res = await this.$http.post('/mini/finishiLesson/pageStudentWork', param)
                 const { data, totalPage } = res.data ?? {}
+                if (data?.length && !this.firstAgoWeekId) {
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].finishTime < MONDAY) {
+                            this.firstAgoWeekId = data[i].id
+                            break
+                        }
+                    }
+                }
                 this.totalPage = totalPage ?? 0
                 this.list = this.list.concat(data ?? [])
             } finally {
@@ -323,10 +351,7 @@ export default {
         left: 0;
         right: 0;
         top: 0;
-        height: 500rpx;
-        background-image: url("https://static.gangqintonghua.com/img/beijing/zhongxin.png?imageView2/0/w/375");
-        background-size: 100%;
-        background-repeat: no-repeat;
+        background: linear-gradient(90deg, #61BAEC 0%, #84DAEE 100%);
 
         .title {
             position: absolute;
@@ -343,7 +368,11 @@ export default {
         position: relative;
         z-index: 1;
         height: 100%;
-
+        .panel {
+            background-image: url("https://static.gangqintonghua.com/img/beijing/zhongxin.png?imageView2/0/w/375");
+            background-size: 100%;
+            background-repeat: no-repeat;
+        }
         .student-score {
             margin: 0 24rpx;
             height: 478rpx;
@@ -426,10 +455,41 @@ export default {
         .list {
             padding: 34rpx 30rpx;
 
+            .item-wrap {
+                &:not(:last-child) {
+                    margin-bottom: 36rpx;
+                }
+
+                .divider {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 24rpx;
+                    color: #C9CED6;
+                    line-height: 34rpx;
+                    margin-bottom: 36rpx;
+
+                    &::before,
+                    &::after {
+                        content: " ";
+                        flex: 1;
+                        height: 2rpx;
+                        background: #E3E5E9;
+                    }
+
+                    &::before {
+                        margin-right: 16rpx;
+                    }
+
+                    &::after {
+                        margin-left: 16rpx;
+                    }
+                }
+            }
+
             .item {
                 background: #ffffff;
                 border-radius: 20rpx;
-                margin-bottom: 36rpx;
 
                 .teacher {
                     padding: 16rpx 32rpx;
