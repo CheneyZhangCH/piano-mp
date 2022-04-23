@@ -133,9 +133,9 @@ export default {
         time({ finishTime }) {
             if (!finishTime) return ''
             const day = dayjs(finishTime).format('YYYY-MM-DD')
-            const week = '周' + WEEK_DAY[new Date(finishTime).getDay()]
+            const week = new Date(finishTime).getDay()
             const time = dayjs(finishTime).format('HH:mm')
-            return [day, week, time].join(' ')
+            return [day, '周' + WEEK_DAY[week === 0 ? 7 : week], time].join(' ')
         },
         day({ useTime }) {
             if (!useTime) return ''
@@ -143,9 +143,9 @@ export default {
         },
         weekAndTime({ useTime }) {
             if (!useTime) return ''
-            const week = '周' + WEEK_DAY[new Date(useTime).getDay()]
+            const week = new Date(useTime).getDay()
             const time = dayjs(useTime).format('HH:mm')
-            return [week, time].join(' ')
+            return ['周' + WEEK_DAY[week === 0 ? 7 : week], time].join(' ')
         },
         // 4个字换行
         ticketName({ ticketName: name }) {

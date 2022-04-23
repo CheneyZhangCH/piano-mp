@@ -197,7 +197,6 @@ import MessageNotify from '../Components/MessageNotify'
 import { numToChinese } from '@/utils/dicts'
 import { agoWeekOrDateTime } from '@/utils/format'
 import dayjs from 'dayjs'
-const MONDAY = new Date(dayjs().subtract(dayjs().day() - 1, 'days').format('YYYY-MM-DD 00:00:00')).getTime()
 export default {
     components: {
         MessageNotify
@@ -304,7 +303,7 @@ export default {
                 const { data, totalPage } = res.data ?? {}
                 if (data?.length && !this.firstAgoWeekId) {
                     for (let i = 0; i < data.length; i++) {
-                        if (data[i].finishTime < MONDAY) {
+                        if (Math.ceil((new Date(dayjs().format('YYYY/MM/DD 00:00:00')).getTime() - data[i].finishTime) / (24 * 60 * 60 * 1000)) >= 7) {
                             this.firstAgoWeekId = data[i].id
                             break
                         }
@@ -368,11 +367,13 @@ export default {
         position: relative;
         z-index: 1;
         height: 100%;
+
         .panel {
             background-image: url("https://static.gangqintonghua.com/img/beijing/zhongxin.png?imageView2/0/w/375");
             background-size: 100%;
             background-repeat: no-repeat;
         }
+
         .student-score {
             margin: 0 24rpx;
             height: 478rpx;

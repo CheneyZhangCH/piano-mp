@@ -89,9 +89,9 @@ export const todayOrYesterdayOrDateFormat = (timestamp) => {
 export const dayWeekTime = date => {
     if (!date) return ''
     const day = dayjs(date).format('YYYY-MM-DD')
-    const week = '周' + WEEK_DAY[new Date(date).getDay()]
+    const week = new Date(date).getDay()
     const time = dayjs(date).format('HH:mm')
-    return [day, week, time]
+    return [day, '周' + WEEK_DAY[week === 0 ? 7 : week], time]
 }
 
 // 账户有效期
