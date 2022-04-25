@@ -69,6 +69,8 @@ export default {
 .page {
     min-height: 100vh;
     padding-bottom: 100rpx;
+    padding-bottom: calc(100rpx + constant(safe-area-inset-bottom));
+    padding-bottom: calc(100rpx + env(safe-area-inset-bottom));
     .group {
         &-title {
             display: flex;

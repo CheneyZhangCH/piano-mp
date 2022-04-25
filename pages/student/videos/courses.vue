@@ -1,12 +1,9 @@
 <template>
     <view class="page">
         <view v-if="book" class="book">
-            <view
-                class="bg"
-                :style="{
-                    backgroundImage: 'url('+book.coverUrl+')'
-                }"
-            />
+            <view class="bg" :style="{
+                backgroundImage: 'url(' + book.coverUrl + ')'
+            }" />
             <image class="cover" :src="book.coverUrl"></image>
         </view>
         <view class="custom-header">
@@ -16,32 +13,37 @@
                 {{ book.bookName }}
             </view>
         </view>
-        <scroll-view scroll-y="true" class="units">
-            <view v-for="item in units" :key="item.unit.id" class="item">
-                <view class="name">{{ item.unit.unitName }}</view>
-                <view class="chapter">
-                    <view
-                        v-for="chapter in item.chapters"
-                        :key="chapter.chapter.id"
-                        class="chapter-item"
-                        @click="goChapter(chapter)"
-                    >
-                        {{ chapter.chapter.chapterName }}
+        <scroll-view scroll-y="true" class="units" @scroll="onUnitsScroll">
+            <tui-sticky v-for="item in units" :key="item.unit.id" class="item" :scrollTop="scrollTop" :offset-top="298">
+                <template v-slot:header>
+                    <view class="name">{{ item.unit.unitName }}</view>
+                </template>
+                <template v-slot:content>
+                    <view class="chapter">
+                        <view v-for="chapter in item.chapters" :key="chapter.chapter.id" class="chapter-item"
+                            @click="goChapter(chapter)">
+                            {{ chapter.chapter.chapterName }}
+                        </view>
                     </view>
-                </view>
-            </view>
+                </template>
+            </tui-sticky>
         </scroll-view>
     </view>
 </template>
 
-<script lang="js">
+<script>
+import tuiSticky from "@/components/ThorUi/tui-sticky"
 export default {
+    components: {
+        tuiSticky
+    },
     data() {
         return {
             book: null,
             units: [],
             headerHeight: 0,
-            headerTop: 0
+            headerTop: 0,
+            scrollTop: 0
         }
     },
     onLoad(option) {
@@ -72,21 +74,25 @@ export default {
         },
     },
     methods: {
-        async init({id}){
-            const res = await this.$http.get('/mini/teachingBook/getBook?bookId='+id)
-            if(res.ok){
-                const {book,units} = res.data
+        async init({ id }) {
+            const res = await this.$http.get('/mini/teachingBook/getBook?bookId=' + id)
+            if (res.ok) {
+                const { book, units } = res.data
                 this.book = book
                 this.units = units ?? []
             }
         },
 
-        goChapter(chapter){
+        goChapter(chapter) {
             uni.navigateTo({ url: `/pages/student/videos/chapter?id=${chapter.chapter.id}` })
         },
 
-        back(){
+        back() {
             uni.navigateBack({ delta: 1 })
+        },
+
+        onUnitsScroll(e) {
+            this.scrollTop = e.detail.scrollTop + 298
         }
     }
 }
@@ -95,8 +101,8 @@ export default {
 <style lang="scss" scoped>
 .page {
     height: 100vh;
-    background-color: #fff;
     padding-top: 596rpx;
+
     .book {
         position: fixed;
         left: 0;
@@ -104,6 +110,7 @@ export default {
         top: 0;
         height: 596rpx;
         overflow: hidden;
+
         .bg {
             position: absolute;
             width: 100%;
@@ -112,6 +119,7 @@ export default {
             background-size: 200% 100%;
             filter: blur(20px);
         }
+
         .cover {
             position: absolute;
             left: 32rpx;
@@ -127,6 +135,7 @@ export default {
         left: 0;
         right: 0;
         top: 0;
+
         .title {
             position: absolute;
             width: 100%;
@@ -137,8 +146,10 @@ export default {
             color: #fff;
         }
     }
+
     .units {
         height: calc(100vh - 596rpx);
+
         .item {
             .name {
                 background-color: #f5f7fa;
@@ -148,11 +159,15 @@ export default {
                 line-height: 92rpx;
                 padding: 0 44rpx;
             }
+
             .chapter {
+                background-color: #FFF;
                 padding: 0 44rpx;
+
                 &-item {
                     color: #525666;
                     line-height: 112rpx;
+
                     &:not(:last-child) {
                         border-bottom: 1px solid #f5f7fa;
                     }

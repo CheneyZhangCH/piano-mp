@@ -1,5 +1,6 @@
 <template>
-    <view class="page" :style="pageStyle">
+    <view class="page" :class="{ 'data-center': datacenterFlag }" :style="pageStyle">
+        <!-- padding-bottom: ${this.datacenterFlag ? '100rpx' : 0}; -->
         <view class="custom-header">
             <view class="title" :style="customTitleStyle">
                 <uni-icons v-if="studentId" type="left" color="#FFF" size="20" @click="back"
@@ -40,7 +41,7 @@
                         <view class="info">
                             <text class="name">剩余课时</text>
                             <text class="num" :class="{ warning: item.remainCourseNum <= 6 }">{{
-                                item.remainCourseNum
+                                    item.remainCourseNum
                             }}</text>
                             <text class="unit">（节）</text>
                         </view>
@@ -116,7 +117,7 @@ export default {
     },
     computed: {
         pageStyle() {
-            return `padding-top: ${(this.headerHeight + this.headerTop + 20) * 2}rpx; padding-bottom: ${this.datacenterFlag ? '100rpx' : 0};`
+            return `padding-top: ${(this.headerHeight + this.headerTop + 20) * 2}rpx; `
         },
         customTitleStyle() {
             return `top: ${this.headerTop}px; height: ${this.headerHeight}px; line-height: ${this.headerHeight}px`
@@ -203,6 +204,11 @@ export default {
     height: 100vh;
     overflow: hidden;
     box-sizing: border-box;
+    &.data-center {
+        padding-bottom: 100rpx;
+        padding-bottom: calc(100rpx + constant(safe-area-inset-bottom));
+        padding-bottom: calc(100rpx + env(safe-area-inset-bottom));
+    }
 
     .custom-header {
         position: fixed;
@@ -213,6 +219,7 @@ export default {
         background-image: url("https://static.gangqintonghua.com/img/beijing/zhongxin.png?imageView2/0/w/375");
         background-size: 100%;
         background-repeat: no-repeat;
+
         .title {
             position: absolute;
             width: 100%;
@@ -223,55 +230,67 @@ export default {
             color: #fff;
         }
     }
+
     &-content {
         position: relative;
         z-index: 1;
         // height: 100%;
         height: calc(100% - 138rpx);
+
         .block {
             margin: 0 30rpx;
             background: #ffffff;
             border-radius: 10px;
             padding: 24rpx 24rpx 0 36rpx;
-            + .block {
+
+            +.block {
                 margin-top: 30rpx;
             }
+
             .block-title {
                 display: flex;
                 justify-content: space-between;
                 margin-bottom: 30rpx;
+
                 .name {
                     font-size: 28rpx;
                     color: #141f33;
                     margin-right: 12rpx;
                 }
+
                 .times {
                     font-size: 20rpx;
                     color: #99a0ad;
                     align-self: flex-end;
                 }
+
                 .btn {
                     font-size: 24rpx;
                     color: #99a0ad;
                 }
             }
         }
+
         .user {
             display: flex;
             position: relative;
             padding-left: 30rpx;
             margin-bottom: 30rpx;
+
             .cover {
                 width: 120rpx;
                 height: 120rpx;
                 border-radius: 50%;
                 margin-right: 24rpx;
             }
+
             .info {
                 flex: 1;
                 overflow: hidden;
+
                 .name {
                     margin: 14rpx 0 20rpx;
+
                     .student {
                         font-size: 32rpx;
                         font-weight: 500;
@@ -279,6 +298,7 @@ export default {
                         line-height: 44rpx;
                         margin-right: 16rpx;
                     }
+
                     .package {
                         background: rgba(0, 0, 0, 0.2);
                         border-radius: 20rpx;
@@ -289,25 +309,30 @@ export default {
                         line-height: 28rpx;
                     }
                 }
+
                 .msg {
                     .gender-age {
                         display: inline-flex;
                         align-items: center;
                     }
+
                     .gender {
                         width: 28rpx;
                         height: 26rpx;
                         margin-right: 12rpx;
                     }
+
                     .age {
                         font-size: 28rpx;
                         color: #ffffff;
                         line-height: 40rpx;
                     }
+
                     .expiry {
                         font-size: 24rpx;
                         color: #fff;
                         padding-right: 32rpx;
+
                         &.warning {
                             color: #f15e5e;
                         }
@@ -315,31 +340,38 @@ export default {
                 }
             }
         }
+
         .course {
             padding-bottom: 28rpx;
+
             .content {
                 display: flex;
                 justify-content: space-around;
+
                 .info {
                     flex: 1;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
+
                     .name {
                         font-size: 24rpx;
                         color: #99a0ad;
                         line-height: 34rpx;
                     }
+
                     .num {
                         font-size: 48rpx;
                         font-weight: 500;
                         color: #141f33;
                         line-height: 66rpx;
                         margin-top: 12rpx;
+
                         &.warning {
                             color: #f15e5e;
                         }
                     }
+
                     .unit,
                     .time,
                     .teacher {
@@ -347,9 +379,11 @@ export default {
                         color: #141f33;
                         line-height: 34rpx;
                     }
+
                     .days {
                         margin: 28rpx 0 14rpx 0;
                     }
+
                     .cover {
                         width: 44rpx;
                         height: 44rpx;
@@ -359,24 +393,30 @@ export default {
                 }
             }
         }
+
         .tools-block {
             margin-bottom: 30rpx;
+
             .tools {
                 padding-bottom: 30rpx;
                 display: flex;
+
                 .tool {
                     width: calc(100% / 3);
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     justify-content: space-between;
+
                     text {
                         font-size: 24rpx;
                         color: #616b80;
                     }
+
                     .box {
                         position: relative;
                     }
+
                     .num {
                         position: absolute;
                         top: -10rpx;
@@ -397,9 +437,11 @@ export default {
             }
         }
     }
+
     .slogan {
         margin: 40rpx 0;
         text-align: center;
+
         image {
             width: 540rpx;
             height: 54rpx;

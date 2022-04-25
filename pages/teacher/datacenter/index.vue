@@ -802,6 +802,7 @@ export default {
                     height: 40rpx;
                     border-radius: 50%;
                     margin-left: -10rpx;
+                    border: 2rpx solid #7DD4EE;
                 }
             }
         }
@@ -1100,6 +1101,7 @@ export default {
                                 height: 40rpx;
                                 border-radius: 50%;
                                 margin-left: -10rpx;
+                                border: 2rpx solid #FFF;
                             }
                         }
 

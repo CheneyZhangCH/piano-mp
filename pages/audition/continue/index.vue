@@ -644,8 +644,7 @@ export default {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        background: #ffffff;
-        box-shadow: 0px -4rpx 8rpx 0px rgba(0, 0, 0, 0.05);
+        box-shadow: 0px 4rpx 8rpx 0px rgba(0, 0, 0, 0.05);
         padding: 26rpx 48rpx 26rpx 32rpx;
         .student {
             display: flex;

@@ -747,7 +747,7 @@ export default {
                 flex: 1;
                 text-align: right;
                 font-size: 32rpx;
-                font-weight: 500;
+                font-weight: 600;
                 line-height: 44rpx;
                 margin-right: 30rpx;
             }

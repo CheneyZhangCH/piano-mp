@@ -849,8 +849,12 @@ export default {
 .page {
     min-height: 100vh;
     padding-bottom: 148rpx;
+    padding-bottom: calc(148rpx + constant(safe-area-inset-bottom));
+    padding-bottom: calc(148rpx + env(safe-area-inset-bottom));
     &.step0 {
         padding-bottom: 270rpx;
+        padding-bottom: calc(270rpx + constant(safe-area-inset-bottom));
+        padding-bottom: calc(270rpx + env(safe-area-inset-bottom));
     }
     &-content {
         padding: 36rpx 32rpx;

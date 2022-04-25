@@ -4,10 +4,7 @@
             <view class="student">
                 <image class="cover" :src="getStudentCoverUrl(student)" />
                 <text class="name">{{ student.studentName }}</text>
-                <image
-                    class="gender-icon"
-                    :src="`/static/images/student/${student.gender || 'male'}-selected.png`"
-                />
+                <image class="gender-icon" :src="`/static/images/student/${student.gender || 'male'}-selected.png`" />
                 <text v-if="student.age" class="age">{{ student.age + '岁' }}</text>
             </view>
             <view class="btn" @click="dialogStudentId = studentId">
@@ -35,29 +32,19 @@
                         <text>剩余{{ course.remainCourseNum }}节</text>
                     </view>
                 </view>
-                <view
-                    class="expiryDate"
-                >账户有效期至： {{ dayjsFormat(student.expiryDate, 'YYYY年 MM月 DD日') }}</view>
+                <view class="expiryDate">账户有效期至： {{ dayjsFormat(student.expiryDate, 'YYYY年 MM月 DD日') }}</view>
             </view>
             <view class="refund">
                 <text class="title">退费金额：</text>
                 <view class="amount">
-                    <input
-                        v-model="refundAmount"
-                        type="number"
-                        @input="e => refundAmount = e.detail.value"
-                    />
+                    <input v-model="refundAmount" type="number" @input="e => refundAmount = e.detail.value" />
                     <text>元</text>
                 </view>
             </view>
         </view>
         <view class="page-footer">
-            <button
-                class="btn"
-                :class="{ confirm: !disabled, disabled }"
-                :disabled="disabled"
-                @click="valid"
-            >确认</button>
+            <button class="btn" :class="{ confirm: !disabled, disabled }" :disabled="disabled"
+                @click="valid">确认</button>
         </view>
 
         <Student :student-id="dialogStudentId" @close="dialogStudentId = 0" @del="studentDel" />
@@ -127,20 +114,15 @@ export default {
             }
         },
 
-        toContract() {
-            const { packageName, courses } = this.coursePackage
-            const { studentName, expiryDate } = this.student
-            const { phone } = this.detail
-            const days = Math.ceil((expiryDate - new Date().getTime()) / (24 * 60 * 60 * 1000))
-            const data = {
-                packageName,
-                courses,
-                expiryMonths: Math.floor(days / 30),
-                studentName,
-                phone
+        async toContract() {
+            try {
+                const { data: { contractType, accountContract, continueContract } } = await this.$http.get('/mini/studentContract/getStudentCurrentContract?studentId=' + this.studentId)
+                const contract = contractType === 'ACCOUNT' ? accountContract : continueContract
+                uni.setStorageSync('contract', JSON.stringify(contract))
+                uni.navigateTo({ url: '/pages/audition/contract/index?from=refund' })
+            } catch (error) {
+                console.log(error)
             }
-            uni.setStorageSync('contract', JSON.stringify(data))
-            uni.navigateTo({ url: '/pages/audition/contract/index?from=refund' })
         },
 
         async valid() {
@@ -197,55 +179,67 @@ export default {
 .mb-16 {
     margin-bottom: 16rpx;
 }
+
 .page {
     min-height: 100vh;
     background-color: #ffffff;
+
     &-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
         background: #ffffff;
-        box-shadow: 0px -4rpx 8rpx 0px rgba(0, 0, 0, 0.05);
+        box-shadow: 0px 4rpx 8rpx 0px rgba(0, 0, 0, 0.05);
         padding: 26rpx 48rpx 26rpx 32rpx;
+
         .student {
             display: flex;
             align-items: center;
+
             .cover {
                 width: 60rpx;
                 height: 60rpx;
                 border-radius: 50%;
                 margin-right: 16rpx;
             }
+
             .name {
                 font-size: 32rpx;
                 color: #141f33;
                 margin-right: 14rpx;
             }
+
             .gender-icon {
                 width: 30rpx;
                 height: 28rpx;
                 margin-right: 8rpx;
             }
+
             .age {
                 font-size: 28rpx;
                 color: #525666;
             }
         }
+
         .btn {
             font-size: 24rpx;
             color: #99a0ad;
         }
     }
+
     &-content {
+
         .package,
         .refund {
             padding: 32rpx 40rpx 16rpx;
+
             .title {
                 font-size: 32rpx;
                 font-weight: 500;
                 color: #141f33;
                 line-height: 44rpx;
             }
+
             .name {
                 background: #f5f7fa;
                 border-radius: 4rpx;
@@ -255,44 +249,55 @@ export default {
                 line-height: 40rpx;
             }
         }
+
         .main {
             margin: 0 32rpx;
             background: #f5f7fa;
             border-radius: 16rpx;
             padding: 16rpx 32rpx;
+
             .course,
             .expiryDate {
                 font-size: 28rpx;
                 color: #99a0ad;
-                text + text {
+
+                text+text {
                     margin-left: 16rpx;
                 }
             }
+
             .course {
                 margin-bottom: 32rpx;
+
                 view {
                     line-height: 40rpx;
-                    + view {
+
+                    +view {
                         margin-top: 8rpx;
                     }
                 }
             }
+
             .expiryDate {
                 line-height: 40rpx;
             }
         }
+
         .package {
             display: flex;
             align-items: center;
             justify-content: space-between;
+
             .btn {
                 font-size: 24rpx;
                 color: #99a0ad;
             }
         }
+
         .refund {
             display: flex;
             align-items: center;
+
             .amount {
                 display: flex;
                 align-items: center;

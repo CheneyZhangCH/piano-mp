@@ -113,14 +113,15 @@ export default {
         .group {
             display: flex;
             align-items: center;
-            background: #ffffff;
-            box-shadow: 0px 0px 12rpx 0px #e3e5e9;
+            background-image: url('https://static.gangqintonghua.com/img/beijing/box-shadow.png');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
             border-radius: 20rpx;
-            padding: 14rpx 36rpx;
+            padding: 20rpx 36rpx; // 设计稿7px 18px
             margin: 0 32rpx;
-            + .group {
-                margin-top: 16rpx;
-            }
+            // + .group {
+            //     margin-top: 10rpx; // 设计稿8px -> 5px
+            // }
             .select-icon {
                 width: 28rpx;
                 height: 28rpx;
@@ -147,6 +148,7 @@ export default {
                     height: 28rpx;
                     border-radius: 50%;
                     margin-left: -10rpx;
+                    border: 2rpx solid #FFF;
                 }
             }
             .leader {
@@ -164,7 +166,7 @@ export default {
             height: 72rpx;
             padding: 0 56rpx;
             font-size: 32rpx;
-            font-weight: 500;
+            font-weight: 600;
             line-height: 72rpx;
             color: #616b80;
             background-color: #fff;
@@ -179,6 +181,7 @@ export default {
                 border: none;
             }
             &.disabled {
+                color: #fff;
                 background: #e1e1e1;
                 border: none;
             }
