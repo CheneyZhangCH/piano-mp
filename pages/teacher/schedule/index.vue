@@ -209,7 +209,7 @@ export default {
                     `/mini/courseTimetable/getTeacherDayTimetable`,
                     {
                         data: {
-                            teacherId: this.teacherId || this.userId,
+                            teacherId: 97,// this.teacherId || this.userId,
                             dayOfWeek: this.dayOfWeek,
                         },
                     }

@@ -156,7 +156,7 @@
                 </view>
                 <view class="content">
                     <view v-for="item in group.packageRatios" :key="item.id" class="item">
-                        <text class="rate"
+                        <text class="ratio"
                             :class="{ 'reach': item.actualRatio >= item.ratio, 'unreach': item.actualRatio < item.ratio, empty: !item.actualRatio }">{{
                                     item.actualRatio ? `${item.actualRatio}%` : '-'
                             }}</text>
@@ -833,7 +833,7 @@ export default {
                     flex-direction: column;
                     overflow: hidden;
 
-                    .rate {
+                    .ratio {
                         font-size: 32rpx;
                         font-weight: 600;
                         line-height: 44rpx;

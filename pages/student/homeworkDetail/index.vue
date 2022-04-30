@@ -11,27 +11,26 @@
         <view class="page-content">
             <view class="divider">课堂报告</view>
             <view v-if="detail.chapterScores.length" class="block">
-                <image class="title-icon" src="https://static.gangqintonghua.com/img/beijing/homework-huikeqingkuang.png" />
+                <image class="title-icon"
+                    src="https://static.gangqintonghua.com/img/beijing/homework-huikeqingkuang.png" />
                 <view class="chapterScores">
                     <view v-for="item in detail.chapterScores" :key="item.id" class="score">
-                        <text>
-                            <text class="name ellipsis">{{ item.chapterName }}</text>回课表现
+                        <text class="ellipsis flex-1">
+                            <text class="name ">{{ item.chapterName }}</text>回课表现
                         </text>
                         <view class="rate">
-                            <van-rate
-                                v-model="item.score"
-                                disabled
-                                disabled-color="#62BBEC"
-                                gutter="4rpx"
-                                size="26rpx"
-                            />
-                            <text class="num">{{ item.score }}分</text>
+                            <van-rate v-model="item.score"
+                                :icon="'https://static.gangqintonghua.com/img/icon/star-selected.png'"
+                                :void-icon="'https://static.gangqintonghua.com/img/icon/star.png'" disabled
+                                disabled-color="#62BBEC" gutter="4rpx" size="13px" />
+                            <text class="num">{{ item.score * 2 }}分</text>
                         </view>
                     </view>
                 </view>
             </view>
             <view class="block">
-                <image class="title-icon" src="https://static.gangqintonghua.com/img/beijing/homework-benkebiaoxian.png" />
+                <image class="title-icon"
+                    src="https://static.gangqintonghua.com/img/beijing/homework-benkebiaoxian.png" />
                 <view class="scores">
                     <view class="score">
                         <text class="num">{{ detail.handScore || '-' }}</text>
@@ -51,35 +50,28 @@
             <view v-for="chapter in detail.chapters" :key="chapter.id" class="chapter">
                 <view class="book">
                     <view class="name">
-                        <image src="https://static.gangqintonghua.com/img/icon/book.png" />
-                        {{chapter.bookName}}
+                        <image src="https://static.gangqintonghua.com/img/icon/book.png" class="image" />
+                        <text class="text">{{ chapter.bookName }}</text>
                     </view>
                     <view v-if="chapter.chapterId" class="btn" @click="toVideo(chapter)">
-                        配套视频
-                        <image src="/static/images/student/play.png" />
+                        <text class="text">配套视频</text>
+                        <image src="/static/images/student/play.png" class="image" />
                     </view>
                 </view>
                 <view class="chapterName">
-                    {{chapter.chapterName}}
+                    {{ chapter.chapterName }}
                 </view>
                 <image class="title-icon" src="https://static.gangqintonghua.com/img/beijing/homework-kehouzuoye.png" />
                 <view class="workStep">
-                    <view
-                        v-for="(work, workIndex) in chapter.workStep"
-                        :key="workIndex"
-                        class="work"
-                    >
+                    <view v-for="(work, workIndex) in chapter.workStep" :key="workIndex" class="work">
                         <text>步骤{{ numToChinese[workIndex + 1] }}：</text>
                         <text class="work-content">{{ work.content }}</text>
                     </view>
                 </view>
-                <image class="title-icon" src="https://static.gangqintonghua.com/img/beijing/homework-jiaoshipingyu.png" />
+                <image class="title-icon"
+                    src="https://static.gangqintonghua.com/img/beijing/homework-jiaoshipingyu.png" />
                 <view class="suggestStep">
-                    <view
-                        v-for="(suggest, suggestIndex) in chapter.suggestStep"
-                        :key="suggestIndex"
-                        class="suggest"
-                    >
+                    <view v-for="(suggest, suggestIndex) in chapter.suggestStep" :key="suggestIndex" class="suggest">
                         <text>· {{ suggest.content }}</text>
                     </view>
                 </view>
@@ -115,7 +107,17 @@ export default {
             uni.showLoading({ title: '加载中' })
             try {
                 const res = await this.$http.get('/mini/finishiLesson/getStudentWork?id=' + this.id)
-                this.detail = res.data ?? {}
+                const {
+                    chapterScores,
+                    ...rest
+                } = res.data
+                this.detail = {
+                    ...rest,
+                    chapterScores: chapterScores?.map(item => {
+                        item.score = item.score / 2
+                        return item
+                    })
+                }
             } finally {
                 uni.hideLoading()
             }
@@ -131,48 +133,58 @@ export default {
 <style lang="scss" scoped>
 .page {
     min-height: 100vh;
+
     .teacher {
         padding: 30rpx 72rpx;
         background: #fff;
         display: flex;
         align-items: center;
         justify-content: space-between;
+
         .info {
             flex: 1;
             display: flex;
             align-items: center;
+
             .cover {
                 width: 60rpx;
                 height: 60rpx;
                 border-radius: 50%;
                 margin-right: 16rpx;
             }
+
             .name {
                 font-size: 28rpx;
                 color: #141f33;
                 margin-right: 16rpx;
             }
         }
+
         .sub-name {
             font-size: 24rpx;
             color: #99a0ad;
         }
     }
+
     &-content {
         padding-bottom: 30rpx;
+
         .title-icon {
             width: 116rpx;
             height: 40rpx;
             margin-bottom: 24rpx;
         }
+
         .block {
             background: #FFFFFF;
             border-radius: 20rpx;
             padding: 20rpx 36rpx;
             margin: 0 30rpx;
+
             +.block {
                 margin-top: 20rpx;
             }
+
             .chapterScores {
                 .score {
                     display: flex;
@@ -182,15 +194,18 @@ export default {
                     font-size: 24rpx;
                     color: #525666;
                     line-height: 34rpx;
+
                     .name {
                         margin-right: 4rpx;
                     }
+
                     +.score {
                         margin-top: 2rpx;
                     }
+
                     .num {
                         font-size: 24rpx;
-                        font-weight: 500;
+                        font-weight: 600;
                         color: #62BBEC;
                         line-height: 34rpx;
                         margin-left: 20rpx;
@@ -200,11 +215,13 @@ export default {
 
             .scores {
                 display: flex;
+
                 .score {
                     display: flex;
                     flex-direction: column;
                     flex: 1;
                     text-align: center;
+
                     .num {
                         font-size: 28rpx;
                         font-weight: 600;
@@ -212,13 +229,16 @@ export default {
                         line-height: 40rpx;
                         margin-bottom: 2rpx;
                     }
+
                     .desc {
                         font-size: 24rpx;
                         color: #99a0ad;
                         line-height: 34rpx;
                     }
+
                     +.score {
                         position: relative;
+
                         &::before {
                             position: absolute;
                             top: 50%;
@@ -233,42 +253,55 @@ export default {
                 }
             }
         }
+
         .chapter {
             background: #FFFFFF;
             border-radius: 20rpx;
             padding: 24rpx 36rpx;
             margin: 0 30rpx;
+
             +.chapter {
                 margin-top: 24rpx;
             }
+
             .book {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
+
                 .name,
                 .btn {
                     display: flex;
                     align-items: center;
-                    font-size: 24rpx;
-                    color: #616B80;
-                    line-height: 34rpx;
+
+                    .text {
+                        font-size: 24rpx;
+                        color: #616B80;
+                        line-height: 34rpx;
+                    }
                 }
+
                 .name {
-                    font-weight: 500;
+                    .text {
+                        font-weight: 600;
+                    }
+
                     image {
                         width: 34rpx;
                         height: 34rpx;
                         margin-right: 8rpx;
                     }
                 }
+
                 .btn {
                     image {
-                        width: 24rpx;
-                        height: 24rpx;
+                        width: 22rpx;
+                        height: 22rpx;
                         margin-left: 8rpx;
                     }
                 }
             }
+
             .chapterName {
                 font-size: 32rpx;
                 font-weight: 600;
@@ -277,15 +310,19 @@ export default {
                 text-align: center;
                 margin: 36rpx 0;
             }
+
             .workStep {
                 margin-bottom: 20rpx;
+
                 .work {
                     font-size: 24rpx;
                     color: #525666;
                     line-height: 34rpx;
-                    + .work {
+
+                    +.work {
                         margin-top: 10rpx;
                     }
+
                     &-content {
                         font-weight: 500;
                         color: #62bbec;
@@ -293,6 +330,7 @@ export default {
                     }
                 }
             }
+
             .suggestStep {
                 .suggest {
                     width: 298px;
@@ -300,12 +338,14 @@ export default {
                     font-weight: 500;
                     color: #F15E5E;
                     line-height: 34rpx;
-                    + .suggest {
+
+                    +.suggest {
                         margin-top: 10rpx;
                     }
                 }
             }
         }
+
         .divider {
             display: flex;
             align-items: center;
@@ -315,6 +355,7 @@ export default {
             color: #62bbec;
             line-height: 34rpx;
             margin: 36rpx 0;
+
             &::before,
             &::after {
                 content: " ";
@@ -323,9 +364,11 @@ export default {
                 height: 2rpx;
                 background: #62bbec;
             }
+
             &::before {
                 margin-right: 36rpx;
             }
+
             &::after {
                 margin-left: 36rpx;
             }

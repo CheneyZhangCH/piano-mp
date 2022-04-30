@@ -137,8 +137,8 @@
                                 <view class="info videos">
                                     <text class="name">配套视频</text>
                                     <view class="video">
-                                        点击观看配套与讲解视频
-                                        <image src="/static/images/student/play-red.png" />
+                                        <text class="text">点击观看配套与讲解视频</text>
+                                        <image src="/static/images/student/play-red.png" class="image" />
                                     </view>
                                 </view>
                             </template>
@@ -576,11 +576,12 @@ export default {
                             .video {
                                 display: flex;
                                 align-items: center;
-                                font-size: 24rpx;
-                                color: #f15e5e;
-                                line-height: 34rpx;
-
-                                image {
+                                .text {
+                                    font-size: 24rpx;
+                                    color: #f15e5e;
+                                    line-height: 34rpx;
+                                }
+                                .image {
                                     width: 22rpx;
                                     height: 22rpx;
                                     margin-left: 10rpx;
