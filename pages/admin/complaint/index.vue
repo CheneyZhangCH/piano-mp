@@ -320,7 +320,9 @@ export default {
                 justify-content: space-between;
                 .radio {
                     display: flex;
-                    &-item {
+                    .radio-item {
+                        display: flex;
+                        align-items: center;
                         + .radio-item {
                             margin-left: 80rpx;
                         }

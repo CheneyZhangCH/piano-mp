@@ -877,7 +877,7 @@ export default {
                 .label {
                     flex-basis: 160rpx;
                     font-size: 32rpx;
-                    font-weight: 500;
+                    font-weight: 600;
                     color: #141f33;
                     line-height: 44rpx;
                     margin-right: 8rpx;
@@ -1172,7 +1172,11 @@ export default {
         position: fixed;
         z-index: 9;
         width: 100%;
+
         bottom: 100rpx;
+        bottom: calc(100rpx + constant(safe-area-inset-bottom));
+        bottom: calc(100rpx + env(safe-area-inset-bottom));
+
         padding: 21rpx 52rpx 16rpx;
         background-color: #f5f7fa;
         .btn {

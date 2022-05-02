@@ -24,7 +24,7 @@
             </view>
         </view>
 
-        <MessageNotify />
+        <MessageNotify ref="notify" />
         <customTabbar v-if="showTabBar" :active="0" />
     </view>
 </template>
@@ -64,6 +64,9 @@ export default {
         // 从数据中心隐藏tabbar
         if (option?.from === 'datacenter') this.showTabBar = false
         this.init()
+    },
+    onShow() {
+        this.$refs.notify.getMsgCount()
     },
     watch: {
         packageId() {

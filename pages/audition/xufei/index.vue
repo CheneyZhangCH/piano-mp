@@ -248,7 +248,7 @@ export default {
                     margin-bottom: 16rpx;
                     .studentName {
                         font-size: 28rpx;
-                        font-weight: 500;
+                        font-weight: 600;
                         color: #141f33;
                         line-height: 40rpx;
                         margin-right: 16rpx;
@@ -285,7 +285,7 @@ export default {
                             margin-left: 10rpx;
                         }
                         &.warning {
-                            font-weight: 500;
+                            font-weight: 600;
                             color: #f15e5e;
                         }
                     }

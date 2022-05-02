@@ -12,9 +12,6 @@ export default {
             msgCount: 0
         }
     },
-    created() {
-        this.getMsgCount()
-    },
     methods: {
         async getMsgCount() {
             try {

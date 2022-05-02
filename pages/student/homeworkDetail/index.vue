@@ -18,11 +18,11 @@
                         <text class="ellipsis flex-1">
                             <text class="name ">{{ item.chapterName }}</text>回课表现
                         </text>
-                        <view class="rate">
+                        <view class="rate flex align-center">
                             <van-rate v-model="item.score"
-                                :icon="'https://static.gangqintonghua.com/img/icon/star-selected.png'"
-                                :void-icon="'https://static.gangqintonghua.com/img/icon/star.png'" disabled
-                                disabled-color="#62BBEC" gutter="4rpx" size="13px" />
+                                :icon="'https://static.gangqintonghua.com/img/icon/star-new.png'"
+                                :void-icon="'https://static.gangqintonghua.com/img/icon/star-void.png'" disabled
+                                disabled-color="#62BBEC" gutter="4rpx" size="26rpx" />
                             <text class="num">{{ item.score * 2 }}分</text>
                         </view>
                     </view>
@@ -324,7 +324,7 @@ export default {
                     }
 
                     &-content {
-                        font-weight: 500;
+                        font-weight: 600;
                         color: #62bbec;
                         margin-left: 12rpx;
                     }
@@ -335,7 +335,7 @@ export default {
                 .suggest {
                     width: 298px;
                     font-size: 24rpx;
-                    font-weight: 500;
+                    font-weight: 600;
                     color: #F15E5E;
                     line-height: 34rpx;
 

@@ -2,7 +2,7 @@
     <view class="page" :style="pageStyle">
         <view class="custom-header" :class="{ group: !!groupId }">
             <view class="title" :style="customTitleStyle">
-                <uni-icons v-if="!datacenterFlag" type="left" color="#FFF" size="20" @click="back"
+                <uni-icons v-if="!datacenterFlag" type="left" color="#FFF" size="22" @click="back"
                     style="position: absolute; left: 0; padding: 0 30rpx;" />
                 数据中心
             </view>
@@ -34,7 +34,7 @@
             </view>
             <view class="basic block">
                 <view class="block-title">
-                    <text class="name">基本收入（元）</text>
+                    <text class="name">基本收入(元)</text>
                     <text class="times">{{ times }}</text>
                 </view>
                 <view v-if="detail" class="salary">{{ formatThousandsNum(detail.salary) }}</view>
@@ -61,7 +61,7 @@
                                     <text class="num">{{ item.num }}{{ item.courseType === 'one' ? '节' : '人' }}</text>
                                     <view class="salary">
                                         <text>+{{ item.salary }}元</text>
-                                        <uni-icons type="right" size="12"></uni-icons>
+                                        <uni-icons type="right" color="#99A0AD" size="12" />
                                     </view>
                                 </view>
                             </view>
@@ -90,7 +90,7 @@
                                     <text class="num">{{ item.num }}张</text>
                                     <view class="salary">
                                         <text>+{{ item.salary }}元</text>
-                                        <uni-icons type="right" size="12"></uni-icons>
+                                        <uni-icons type="right" color="#99A0AD" size="12" />
                                     </view>
                                 </view>
                             </view>
@@ -207,7 +207,9 @@
                         <view v-for="item in group.teacherAmounts" :key="item.id" class="fenhong-item">
                             <view class="info">
                                 <image :src="item.coverUrl || ''" />
-                                <text class="name ellipsis">{{ item.teacherName }}<template
+                                <text class="name ellipsis" :class="{ 'leader': item.groupTeacherType === 'leader' }">{{
+                                        item.teacherName
+                                }}<template
                                         v-if="item.groupTeacherType === 'leader'">(组长)</template></text>
                                 <text v-if="leaderFlag && item.accountId !== userId" class="btn"
                                     @click="toTeacher(item)">查看课表</text>
@@ -217,10 +219,9 @@
                                 <text class="amount" :class="{
                                     empty: !item.amount, positive: item.amount >
                                         0
-                                }">{{
-        item.amount ? `${item.amount >
-            0 ? `+${item.amount}` : item.amount}元` : '-'
-}}</text>
+                                }">
+                                    {{ item.amount ? `${item.amount > 0 ? `+${item.amount}` : item.amount}元` : '-' }}
+                                </text>
                             </view>
                         </view>
                     </view>
@@ -757,6 +758,7 @@ export default {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
+                padding: 0 8rpx;
 
                 image {
                     width: 40rpx;
@@ -972,7 +974,9 @@ export default {
                             }
 
                             .name {
-                                max-width: 144rpx;
+                                &:not(.leader) {
+                                    max-width: 144rpx;
+                                }
                                 font-size: 24rpx;
                                 color: #525666;
                                 line-height: 34rpx;

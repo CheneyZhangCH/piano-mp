@@ -209,7 +209,7 @@ export default {
                     `/mini/courseTimetable/getTeacherDayTimetable`,
                     {
                         data: {
-                            teacherId: 97,// this.teacherId || this.userId,
+                            teacherId: this.teacherId || this.userId,
                             dayOfWeek: this.dayOfWeek,
                         },
                     }
@@ -265,14 +265,15 @@ export default {
     top: 0;
     right: 0;
     left: 0;
-
-    width: 100%;
-    background: #ffffff;
-    padding: 20rpx 30rpx;
+    z-index: 9;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    width: 100%;
+    background: #ffffff;
+    padding: 20rpx 30rpx;
 
     .day-of-week {
         display: inline-flex;

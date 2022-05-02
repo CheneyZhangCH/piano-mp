@@ -188,16 +188,16 @@ export default {
             &::after {
                 display: none;
             }
-        }
-        .disabled {
-            background: #e1e1e1;
-            border: none;
-            color: #ffffff;
-        }
-        .confirm {
-            background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
-            border: none;
-            color: #ffffff;
+            &.confirm {
+                color: #FFF;
+                background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
+                border-color: inherit;
+            }
+            &.disabled {
+                color: #FFF;
+                background: #e1e1e1;
+                border-color: inherit;
+            }
         }
     }
 }

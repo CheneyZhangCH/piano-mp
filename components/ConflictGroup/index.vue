@@ -178,12 +178,12 @@ export default {
             &.confirm {
                 color: #fff;
                 background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
-                border: none;
+                border-color: inherit;
             }
             &.disabled {
                 color: #fff;
                 background: #e1e1e1;
-                border: none;
+                border-color: inherit;
             }
         }
     }

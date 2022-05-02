@@ -6,8 +6,8 @@
                 <template v-slot:header>
                     <view class="page-list-item__title">
                         <view class="sub-title" @click="$refs.datetime.show()">
-                            <text>{{ listItem.date }}</text>
-                            <image src="/static/images/audition/arrow_down_dark.png" class="arrow" />
+                            <text class="date">{{ listItem.date }}</text>
+                            <image src="/static/images/audition/arrow_down_dark_new.png" class="arrow" />
                         </view>
                         <view class="desc">{{ `开通账号${listItem.items.length}个` }}</view>
                     </view>
@@ -34,7 +34,7 @@
                                     <text class="period">{{ item.contract.packageName }}</text>
                                     <view @click="toggleFolded(listIndex, itemIndex)">
                                         <text class="more">更多信息</text>
-                                        <image class="arrow_down"
+                                        <image class="arrow"
                                             :src="`/static/images/audition/arrow_${item.folded ? 'down' : 'up'}.png`">
                                         </image>
                                     </view>
@@ -154,54 +154,8 @@ export default {
     min-height: 100vh;
     background-color: #fff;
 
-    &-search {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 20rpx 30rpx;
-
-        .mode {
-            border-radius: 4px;
-            border: 1px solid;
-            border-image: linear-gradient(90deg,
-                    rgba(97, 186, 236, 1),
-                    rgba(132, 218, 238, 1)) 1 1;
-
-            padding: 2rpx 10rpx;
-            font-size: 28rpx;
-            color: #62bbec;
-            line-height: 20px;
-        }
-
-        .switch {
-            font-size: 24rpx;
-            color: #141f33;
-
-            .refresh {
-                width: 24rpx;
-                height: 22rpx;
-                margin-right: 4rpx;
-            }
-
-            &.selectAble {
-                background: #e2f3ff;
-                border-radius: 6px;
-                border: 1px solid #62bbec;
-                padding: 6rpx 10rpx 4rpx 20rpx;
-
-                font-weight: 500;
-                color: #62bbec;
-                line-height: 34rpx;
-            }
-        }
-    }
-
     &-list {
         &-item {
-            .arrow_down {
-                width: 20rpx;
-                height: 20rpx;
-            }
 
             &__title {
                 display: flex;
@@ -213,12 +167,18 @@ export default {
                 padding-right: 30rpx;
 
                 .sub-title {
-                    font-size: 28rpx;
-                    color: #141f33;
+                    display: flex;
+                    align-items: center;
+
+                    .date {
+                        font-size: 28rpx;
+                        font-weight: 600;
+                        color: #141f33;
+                    }
 
                     .arrow {
-                        width: 20rpx;
-                        height: 20rpx;
+                        width: 20rpx; // 40*25
+                        height: 12rpx;
                         margin-left: 6rpx;
                     }
                 }
@@ -294,6 +254,11 @@ export default {
                             .more {
                                 font-size: 24rpx;
                                 color: #99a0ad;
+                            }
+
+                            .arrow {
+                                width: 20rpx;
+                                height: 20rpx;
                             }
                         }
 

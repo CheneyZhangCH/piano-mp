@@ -161,7 +161,6 @@ export default {
                 padding-left: 52rpx;
                 .row {
                     font-size: 20rpx;
-                    font-family: PingFangSC-Light, PingFang SC;
                     font-weight: 300;
                     color: #141f33;
                     line-height: 28rpx;

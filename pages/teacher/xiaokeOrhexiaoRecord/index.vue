@@ -1,6 +1,6 @@
 <template>
     <view class="page common" :class="{ 'page-selectAble': selectAble }">
-        <view v-if="accountType !== 'TEACHER'" class="page-search" :class="{ 'student': accountType === 'STUDENT' }">
+        <!-- <view v-if="accountType !== 'TEACHER'" class="page-search" :class="{ 'student': accountType === 'STUDENT' }">
             <view v-if="accountType !== 'STUDENT'" class="mode" @click="toggleSearchMode">{{
                     mode === 'month' ? '自定义时间'
                         : '按月份筛选'
@@ -16,6 +16,13 @@
                 </template>
                 <uni-icons v-if="selectAble" type="closeempty" color="#62BBEC" size="12" style="margin-left: 8rpx;" />
             </view>
+        </view> -->
+        <view v-if="['ADMIN', 'SUPER_ADMIN'].includes(accountType) && courseId" class="page-search">
+            <view class="mode" @click="toggleSearchMode">{{ mode === 'month' ? '自定义时间' : '按月份筛选' }}</view>
+            <view class="switch" :class="{ selectAble }" @click="toggleSelectAble">
+                <image class="refresh" :src="`/static/images/teacher/refresh${selectAble ? '-blue' : ''}.png`" />恢复课时
+                <uni-icons v-if="selectAble" type="closeempty" color="#62BBEC" size="12" style="margin-left: 8rpx;" />
+            </view>
         </view>
         <view class="page-records">
             <view class="title">
@@ -23,21 +30,29 @@
                     <template v-if="accountType !== 'TEACHER'">
                         <picker v-if="mode === 'month'" mode="date" fields="month" :value="month"
                             @change="onMonthChange">
-                            {{ month || '请选择月份' }}
-                            <image src="/static/images/audition/arrow_down_dark.png" class="arrow" />
+                            <view class="time-inner">
+                                {{ monthTimes }}
+                                <image src="/static/images/audition/arrow_down_dark_new.png" class="arrow" />
+                            </view>
                         </picker>
 
                         <uni-datetime-picker v-if="mode === 'range'" :value="dateRange" :border="false"
                             :clear-icon="false" type="daterange" @change="onDaterRangeChange">
-                            {{ dateRange.length ? dateRange.join(' 至 ') : '请选择日期范围' }}
-                            <image src="/static/images/audition/arrow_down_dark.png" class="arrow" />
+                            <view class="time-inner">
+                                {{ dateRangeTimes }}
+                                <image src="/static/images/audition/arrow_down_dark_new.png" class="arrow" />
+                            </view>
                         </uni-datetime-picker>
                     </template>
                     <template v-else>
                         <text v-if="times">{{ times }}</text>
                     </template>
                 </view>
-                <text class="len" v-if="records.length">{{ recordsLen }}</text>
+                <view v-if="accountType === 'STUDENT' && courseId" class="switch" :class="{ selectAble }" @click="toggleSelectAble">
+                    <image class="shensu" :src="`/static/images/student/shensu${selectAble ? '-blue' : ''}.png`" />课时申诉
+                    <uni-icons v-if="selectAble" type="closeempty" color="#62BBEC" size="12" style="margin-left: 8rpx;" />
+                </view>
+                <text v-else-if="records.length" class="len">{{ recordsLen }}</text>
             </view>
             <view class="list">
                 <template v-if="records.length">
@@ -190,9 +205,14 @@ export default {
 
             const s = start ? dayjs(start).format('YYYY年M月D日') : '',
                 e = end ? dayjs(end).format('YYYY年M月D日') : ''
-            console.log(s, e)
             return [s, e].filter(Boolean).join(' 至 ')
         },
+        monthTimes() {
+            return this.month ? dayjs(this.month).format('YYYY年MM月') : '请选择月份'
+        },
+        dateRangeTimes() {
+            return this.dateRange.length ? [dayjs(this.dateRange[0]).format('YYYY年MM月DD日'), dayjs(this.dateRange[1]).format('YYYY年MM月DD日')].join(' 至 ') : '请选择日期范围'
+        }
     },
     onLoad(option) {
         const token = uni.getStorageSync('token')
@@ -331,6 +351,34 @@ export default {
         padding-bottom: 148rpx;
     }
 
+    .switch {
+        font-size: 24rpx;
+        color: #141f33;
+
+        .refresh {
+            width: 24rpx;
+            height: 22rpx;
+            margin-right: 8rpx;
+        }
+
+        .shensu {
+            width: 24rpx;
+            height: 26rpx;
+            margin-right: 6rpx;
+        }
+
+        &.selectAble {
+            background: #e2f3ff;
+            border-radius: 6px;
+            border: 1px solid #62bbec;
+            padding: 6rpx 10rpx 4rpx 20rpx;
+
+            font-weight: 600;
+            color: #62bbec;
+            line-height: 34rpx;
+        }
+    }
+
     &-search {
         display: flex;
         align-items: center;
@@ -354,34 +402,6 @@ export default {
             color: #62bbec;
             line-height: 20px;
         }
-
-        .switch {
-            font-size: 24rpx;
-            color: #141f33;
-
-            .refresh {
-                width: 24rpx;
-                height: 22rpx;
-                margin-right: 8rpx;
-            }
-
-            .shensu {
-                width: 24rpx;
-                height: 26rpx;
-                margin-right: 6rpx;
-            }
-
-            &.selectAble {
-                background: #e2f3ff;
-                border-radius: 6px;
-                border: 1px solid #62bbec;
-                padding: 6rpx 10rpx 4rpx 20rpx;
-
-                font-weight: 600;
-                color: #62bbec;
-                line-height: 34rpx;
-            }
-        }
     }
 
     &-records {
@@ -392,12 +412,16 @@ export default {
             height: 88rpx;
             line-height: 88rpx;
             background: #f5f7fa;
-            padding: 0 14rpx 0 22rpx;
+            padding: 0 30rpx 0 22rpx;
 
             .time {
                 // font-size: 28rpx;
                 font-weight: 600;
                 // color: #141f33;
+            }
+            .time-inner {
+                display: flex;
+                align-items: center;
             }
 
             .len {
@@ -406,8 +430,8 @@ export default {
             }
 
             .arrow {
-                width: 20rpx;
-                height: 20rpx;
+                width: 20rpx; // 40*25
+                height: 12rpx;
                 margin-left: 6rpx;
             }
         }

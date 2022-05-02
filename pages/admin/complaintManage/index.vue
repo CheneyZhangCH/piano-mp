@@ -167,7 +167,7 @@ export default {
                     color: #99a0ad;
                 }
                 .time {
-                    font-size: 20rpx;
+                    font-size: 24rpx;
                     color: #99a0ad;
                 }
             }

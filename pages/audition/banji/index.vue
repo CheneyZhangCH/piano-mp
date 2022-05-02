@@ -2,7 +2,7 @@
     <view class="page" :style="pageStyle">
         <view class="custom-header" :style="customHeaderStyle">
             <view class="title" :style="customTitleStyle">
-                <uni-icons type="left" color="#FFF" size="20" style="position: absolute; left: 0; padding: 0 30rpx"
+                <uni-icons type="left" color="#FFF" size="22" style="position: absolute; left: 0; padding: 0 30rpx"
                     @click="back" />班级详情
             </view>
         </view>

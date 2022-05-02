@@ -84,7 +84,7 @@
             <image src="https://static.gangqintonghua.com/img/kong/slogan.png"></image>
         </view>
 
-        <MessageNotify />
+        <MessageNotify ref="notify" />
         <customTabbar v-if="!studentId" :active="2" />
     </view>
 </template>
@@ -172,6 +172,7 @@ export default {
     onShow() {
         if (this.showed) this.init()
         this.showed = true
+        this.$refs.notify.getMsgCount()
     },
     methods: {
         getExpiryDateWarning,
@@ -216,8 +217,8 @@ export default {
         right: 0;
         top: 0;
         height: 500rpx;
-        background-image: url("https://static.gangqintonghua.com/img/beijing/zhongxin.png?imageView2/0/w/375");
-        background-size: 100%;
+        background-image: url("https://static.gangqintonghua.com/img/beijing/zhongxin-group.png");
+        background-size: 100% 100%;
         background-repeat: no-repeat;
 
         .title {
@@ -249,13 +250,16 @@ export default {
 
             .block-title {
                 display: flex;
+                align-items: center;
                 justify-content: space-between;
-                margin-bottom: 30rpx;
+                margin-bottom: 36rpx;
 
                 .name {
                     font-size: 28rpx;
-                    color: #141f33;
+                    font-weight: 600;
+                    color: #525666;
                     margin-right: 12rpx;
+                    line-height: 40rpx;
                 }
 
                 .times {
@@ -289,11 +293,13 @@ export default {
                 overflow: hidden;
 
                 .name {
+                    display: flex;
+                    align-items: center;
                     margin: 14rpx 0 20rpx;
 
                     .student {
                         font-size: 32rpx;
-                        font-weight: 500;
+                        font-weight: 600;
                         color: #fff;
                         line-height: 44rpx;
                         margin-right: 16rpx;

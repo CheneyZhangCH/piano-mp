@@ -2,7 +2,9 @@
     <view class="page">
         <view class="page-content">
             <view v-for="item in list" :key="item.id" class="item">
-                <view class="name">{{ item.ticketName }}</view>
+                <view class="name">
+                    <text class="text">{{ item | ticketName }}</text>
+                </view>
                 <view class="info">
                     <view class="code">
                         <text>课程陪练券码：</text>
@@ -22,6 +24,10 @@ export default {
     filters: {
         effectiveTime({effectiveTime}){
             return dayjs(effectiveTime).format('YYYY年 MM月DD日')
+        },
+        // 4个字换行
+        ticketName({ ticketName: name }) {
+            return name.substr(0, 4) + '\n' + name.substr(4)
         }
     },
     data() {
@@ -82,8 +88,10 @@ export default {
                 color: #ffffff;
                 line-height: 44rpx;
                 padding: 0 20rpx;
-
-                text-align: center;
+                .text {
+                    width: 100%;
+                    text-align: center;
+                }
             }
             .info {
                 flex: 1;
@@ -103,7 +111,7 @@ export default {
                     color: #99a0ad;
                     line-height: 28rpx;
                     padding-left: 36rpx;
-                    margin-bottom: 38rpx;
+                    margin-bottom: 42rpx;
                 }
                 .time {
                     font-size: 24rpx;

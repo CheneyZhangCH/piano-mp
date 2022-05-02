@@ -8,7 +8,7 @@
         </view>
         <view class="custom-header">
             <view class="title" :style="customTitleStyle">
-                <uni-icons type="left" color="#FFF" size="20" @click="back"
+                <uni-icons type="left" color="#FFF" size="22" @click="back"
                     style="position: absolute; left: 0; padding: 0 30rpx" />
                 {{ book.bookName }}
             </view>

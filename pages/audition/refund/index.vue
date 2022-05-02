@@ -205,6 +205,7 @@ export default {
 
             .name {
                 font-size: 32rpx;
+                font-weight: 600;
                 color: #141f33;
                 margin-right: 14rpx;
             }
@@ -235,7 +236,7 @@ export default {
 
             .title {
                 font-size: 32rpx;
-                font-weight: 500;
+                font-weight: 600;
                 color: #141f33;
                 line-height: 44rpx;
             }

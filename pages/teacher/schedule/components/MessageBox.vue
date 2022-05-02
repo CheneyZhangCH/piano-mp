@@ -108,7 +108,7 @@ export default {
             &.confirm {
                 color: #fff;
                 background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
-                border: none;
+                border-color: inherit;
             }
         }
     }

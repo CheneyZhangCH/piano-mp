@@ -298,6 +298,9 @@ export default {
                             transform: translateY(4rpx);
                         }
                     }
+                    /deep/ .van-checkbox__label {
+                        line-height: 64rpx;
+                    }
                 }
             }
         }

@@ -15,25 +15,18 @@
                     <text class="times">{{ times }}</text>
                     <text class="num">
                         总计
-                        <text
-                            class="sal"
-                            :class="{ 'plus': courseSalary > 0, 'minus': courseSalary < 0 }"
-                        >{{ courseSalary > 0 ? '+' : '' }}{{ courseSalary || '-' }}</text>元
+                        <text class="sal" :class="{ 'plus': courseSalary > 0, 'minus': courseSalary < 0 }">{{
+                                courseSalary > 0 ? '+' : ''
+                        }}{{ courseSalary || '-' }}</text>元
                     </text>
                 </view>
                 <view class="wrap">
                     <template v-if="detail.courses.length">
-                        <view
-                            v-for="item in detail.courses"
-                            class="item"
-                            :key="item.courseId"
-                            @click="toFinishLesson(item)"
-                        >
+                        <view v-for="item in detail.courses" class="item" :key="item.courseId"
+                            @click="toFinishLesson(item)">
                             <view class="name ellipsis">{{ item.courseName }}</view>
                             <view class="right">
-                                <text
-                                    class="num"
-                                >{{ item.num }}{{ item.courseType === 'one' ? '节' : '人' }}</text>
+                                <text class="num">{{ item.num }}{{ item.courseType === 'one' ? '节' : '人' }}</text>
                                 <view class="salary">
                                     <text>+{{ item.salary }}元</text>
                                     <uni-icons type="right" color="#99A0AD" size="12" />
@@ -50,20 +43,15 @@
                     <text class="times">{{ times }}</text>
                     <text class="num">
                         总计
-                        <text
-                            class="sal"
-                            :class="{ 'plus': trainTicketSalary > 0, 'minus': trainTicketSalary < 0 }"
-                        >{{ trainTicketSalary > 0 ? '+' : '' }}{{ trainTicketSalary || '-' }}</text>元
+                        <text class="sal" :class="{ 'plus': trainTicketSalary > 0, 'minus': trainTicketSalary < 0 }">{{
+                                trainTicketSalary > 0 ? '+' : ''
+                        }}{{ trainTicketSalary || '-' }}</text>元
                     </text>
                 </view>
                 <view class="wrap">
                     <template v-if="detail.trainTickets.length">
-                        <view
-                            v-for="item in detail.trainTickets"
-                            class="item"
-                            :key="item.ticketId"
-                            @click="toTrainTickets(item)"
-                        >
+                        <view v-for="item in detail.trainTickets" class="item" :key="item.ticketId"
+                            @click="toTrainTickets(item)">
                             <text class="name ellipsis">{{ item.ticketName }}</text>
                             <view class="right">
                                 <text class="num">{{ item.num }}张</text>
@@ -83,15 +71,16 @@
                     <text class="times">{{ times }}</text>
                     <text class="num">
                         总计
-                        <text
-                            class="sal"
-                            :class="{ 'plus': disciplineAmount > 0, 'minus': disciplineAmount < 0 }"
-                        >{{ disciplineAmount > 0 ? '+' : '' }}{{ disciplineAmount || '-' }}</text>元
+                        <text class="sal" :class="{ 'plus': disciplineAmount > 0, 'minus': disciplineAmount < 0 }">{{
+                                disciplineAmount > 0 ? '+' : ''
+                        }}{{ disciplineAmount || '-' }}</text>元
                     </text>
                 </view>
                 <view class="wrap">
                     <template v-if="detail.disciplines.length">
-                        <view v-for="item in detail.disciplines" class="item" :key="item.id">
+                        <view v-for="item in detail.disciplines" class="item discipline" :key="item.id">
+                            <image v-if="['ADMIN', 'SUPER_ADMIN'].includes(accountType)"
+                                src="/static/images/teacher/minus.png" class="del" @click="delDiscipline(item)" />
                             <text class="content ellipsis">· {{ item.content }}</text>
                             <text class="num">{{ item.amount }}元</text>
                         </view>
@@ -127,7 +116,8 @@ export default {
     data() {
         return {
             teacherId: 0,
-            detail: {}
+            detail: {},
+            accountType: ''
         };
     },
     computed: {
@@ -155,15 +145,19 @@ export default {
     },
     onLoad(option) {
         const token = uni.getStorageSync("token");
+        const accountType = uni.getStorageSync("accountType")
         // 权限验证
         if (!token) {
             uni.showToast({ title: "请先登录", icon: "none" });
             return uni.navigateTo({ url: "/pages/login/index" });
         }
+        this.accountType = accountType
         this.teacherId = option.teacherId
         uni.setNavigationBarTitle({
             title: option.teacherName
         })
+    },
+    onShow() {
         this.init()
     },
     methods: {
@@ -201,6 +195,19 @@ export default {
             } catch (error) {
                 console.log(error)
             }
+        },
+
+        async delDiscipline({ id }) {
+            try {
+                await this.$http.post('/mini/teacher/deleteDiscipline', { data: id })
+                uni.showToast({
+                    title: '删除成功！',
+                    icon: 'success',
+                })
+                this.init()
+            } catch (error) {
+
+            }
         }
     }
 }
@@ -210,36 +217,44 @@ export default {
 .page {
     min-height: 100vh;
     padding-top: 30rpx;
+
     .block {
         margin: 0 30rpx;
         background: #ffffff;
         border-radius: 10px;
         padding: 24rpx 24rpx 0 36rpx;
+
         .block-title {
             margin-bottom: 30rpx;
+
             .name {
                 font-size: 28rpx;
                 color: #141f33;
                 margin-right: 12rpx;
             }
+
             .times {
                 font-size: 20rpx;
                 color: #99a0ad;
                 align-self: flex-end;
             }
+
             .num {
                 float: right;
 
                 font-size: 24rpx;
                 color: #141f33;
+
                 .sal {
                     display: inline-block;
                     text-align: right;
                     min-width: 68rpx;
                     margin: 0 6rpx;
+
                     &.plus {
                         color: #f15e5e;
                     }
+
                     &.minus {
                         color: #44be5e;
                     }
@@ -247,9 +262,11 @@ export default {
             }
         }
     }
+
     .basic {
         margin-bottom: 24rpx;
         padding-bottom: 10rpx;
+
         .salary {
             font-size: 48rpx;
             font-family: PingFangSC-Medium, PingFang SC;
@@ -257,41 +274,58 @@ export default {
             color: #141f33;
             line-height: 66rpx;
         }
+
         .desc {
             font-size: 16rpx;
             color: #99a0ad;
             text-align: right;
         }
     }
+
     .list {
         .container {
             padding-bottom: 30rpx;
-            + .container {
+
+            +.container {
                 border-top: 1px solid #f5f7fa;
                 padding-top: 24rpx;
             }
+
             .wrap {
                 .item {
                     display: flex;
-                    + .item {
+                    align-items: center;
+
+                    +.item {
                         margin-top: 16rpx;
                     }
+
                     .name,
                     .num,
                     .salary,
                     .content {
                         font-size: 24rpx;
                         color: #525666;
+                        line-height: 34rpx;
                     }
+
                     .name {
                         width: 284rpx;
                     }
+
                     .right {
                         flex: 1;
                         display: flex;
                         justify-content: space-between;
                     }
+
+                    .del {
+                        width: 26rpx;
+                        height: 26rpx;
+                        margin-right: 20rpx;
+                    }
                 }
+
                 .empty {
                     font-size: 24rpx;
                     color: #99a0ad;
@@ -299,10 +333,12 @@ export default {
                 }
             }
         }
+
         .disciplines {
             .wrap {
                 .item {
                     justify-content: space-between;
+
                     .content {
                         flex: 1;
                         padding-right: 20rpx;
@@ -311,6 +347,7 @@ export default {
             }
         }
     }
+
     .update-to-next-month {
         display: flex;
         align-items: center;
@@ -320,6 +357,7 @@ export default {
         color: #62bbec;
         line-height: 40rpx;
         margin-top: 48rpx;
+
         image {
             width: 24rpx;
             height: 22rpx;
@@ -329,4 +367,5 @@ export default {
 }
 </style>
 
-<style lang="scss" src="@/common/piano-message-box.scss"></style>
+<style lang="scss" src="@/common/piano-message-box.scss">
+</style>

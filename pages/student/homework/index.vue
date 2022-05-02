@@ -187,7 +187,7 @@
             </view>
         </uni-popup>
 
-        <MessageNotify />
+        <MessageNotify ref="notify"/>
         <customTabbar :active="1" />
     </view>
 </template>
@@ -224,7 +224,7 @@ export default {
             return (this.headerHeight + this.headerTop + 20) * 2
         },
         pageStyle() {
-            return `padding-top: ${this.customHeaderHeight}rpx; padding-bottom: 100rpx;`
+            return `padding-top: ${this.customHeaderHeight}rpx;`
         },
         customHeaderStyle() {
             return `height: ${this.customHeaderHeight}rpx;`
@@ -260,14 +260,14 @@ export default {
         let rect = wx.getMenuButtonBoundingClientRect();
         this.headerHeight = rect.height
         this.headerTop = rect.top
-
-        this.init()
     },
     onShow() {
         this.firstAgoWeekId = 0
         this.pageNum = 1
         this.list = []
+        this.init()
         this.handleSearch()
+        this.$refs.notify.getMsgCount()
     },
     methods: {
         agoWeekOrDateTime,
@@ -342,6 +342,9 @@ export default {
 <style lang="scss" scoped>
 .page {
     height: 100vh;
+    padding-bottom: 100rpx;
+    padding-bottom: calc(100rpx + constant(safe-area-inset-bottom));
+    padding-bottom: calc(100rpx + env(safe-area-inset-bottom));
     overflow: hidden;
     box-sizing: border-box;
 
@@ -381,7 +384,7 @@ export default {
             background-repeat: no-repeat;
             background-size: 100%;
 
-            padding: 46rpx 40rpx 0;
+            padding: 52rpx 40rpx 0;// 46rpx->52rpx
 
             .msg {
                 font-size: 24rpx;
@@ -398,7 +401,7 @@ export default {
 
                 >text {
                     +text {
-                        margin-left: 20rpx;
+                        margin-left: 40rpx;
                     }
                 }
             }
@@ -544,7 +547,7 @@ export default {
                             color: #525666;
 
                             .num {
-                                font-weight: 500;
+                                font-weight: 600;
                                 color: #62bbec;
                                 margin: 0 16rpx 0 8rpx;
                             }
@@ -563,7 +566,7 @@ export default {
                                 }
 
                                 &-content {
-                                    font-weight: 500;
+                                    font-weight: 600;
                                     color: #62bbec;
                                     margin-left: 12rpx;
                                 }
@@ -679,26 +682,13 @@ export default {
             height: 72rpx;
             padding: 0 56rpx;
             font-size: 32rpx;
-            font-weight: 500;
+            font-weight: 600;
             line-height: 72rpx;
-            color: #616b80;
-            background-color: #fff;
-            border: 1px solid #d3d7e0;
             border-radius: 44rpx;
-
+            color: #fff;
+            background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
             &::after {
                 display: none;
-            }
-
-            &.confirm {
-                color: #fff;
-                background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
-                border: none;
-            }
-
-            &.disabled {
-                background: #e1e1e1;
-                border: none;
             }
         }
     }

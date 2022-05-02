@@ -54,7 +54,7 @@
             </view>
         </view>
 
-        <uni-popup ref="popup" type="dialog">
+        <uni-popup v-if="popupVisible" ref="popup" type="dialog">
             <uni-popup-dialog mode="input" :value="dialogInputValue" placeholder="请输入" :maxlength="6"
                 :before-close="true" @close="$refs.popup.close()" @confirm="updateTeacherGroupPackageStudentNum" />
         </uni-popup>
@@ -70,7 +70,8 @@ export default {
             list: [],
             updateItem: {},
             updateProp: '',
-            dialogInputValue: null
+            dialogInputValue: null,
+            popupVisible: false
         }
     },
     onLoad(option) {
@@ -101,7 +102,10 @@ export default {
             this.updateProp = type
 
             this.dialogInputValue = item[type] || null
-            this.$refs.popup.open()
+            this.popupVisible = true
+            this.$nextTick(() => {
+                this.$refs.popup.open()
+            })
         },
 
         async updateTeacherGroupPackageStudentNum(value) {
@@ -121,6 +125,7 @@ export default {
                 await this.$http.post('/mini/teacherGroup/updateTeacherGroupPackageStudentNum', param)
                 this.$toast({ title: '修改成功！', icon: 'success' })
                 this.$refs.popup.close()
+                this.popupVisible = false
                 this.init()
             } catch(err) {
                 console.log(err)

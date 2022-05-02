@@ -29,7 +29,8 @@
                             <view class="period-content">
                                 <view @click="openStudent(period)">
                                     <view class="period-content-title">
-                                        <text class="student-name" :class="{ warning: period.oneCourse.warn }">{{
+                                        <!-- :class="{ warning: period.oneCourse.warn }" -->
+                                        <text class="student-name">{{
                                             period.oneCourse.student.studentName
                                         }}</text>
                                         <image class="gender-icon" :src="`/static/images/student/${period.oneCourse.student.gender ||
@@ -43,11 +44,14 @@
                                         </text>
                                     </view>
                                     <view v-if="Array.isArray(period.oneCourse.coursePackage.courses)" class="course">
-                                        <text v-for="course in period.oneCourse.coursePackage.courses"
-                                            :key="course.courseId" class="course-item"
-                                            :class="{ 'warning': course.remainCourseNum <= 6 }">
-                                            {{ course.courseName + '：' + course.remainCourseNum + '节' }}
-                                        </text>
+                                        <template v-for="course in period.oneCourse.coursePackage.courses">
+                                            <text
+                                                v-if="course.remainCourseNum > 0"
+                                                :key="course.courseId" class="course-item"
+                                                :class="{ 'warning': course.remainCourseNum <= 6 }">
+                                                {{ course.courseName + '：' + course.remainCourseNum + '节' }}
+                                            </text>
+                                        </template>
                                     </view>
                                     <view class="expire-date"
                                         :class="{ 'warning': period.oneCourse.student.expiryDateWarning }"
@@ -273,14 +277,15 @@ export default {
     top: 0;
     right: 0;
     left: 0;
-
-    width: 100%;
-    background: #ffffff;
-    padding: 20rpx 30rpx;
+    z-index: 9;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    width: 100%;
+    background: #ffffff;
+    padding: 20rpx 30rpx;
 
     .day-of-week {
         display: inline-flex;

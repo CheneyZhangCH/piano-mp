@@ -11,8 +11,8 @@
                                 <text class="name ellipsis">{{ item.chapterName }}</text>
                                 <view class="rate-wrap">
                                     <van-rate v-model="item.chapterScore"
-                                        :icon="'https://static.gangqintonghua.com/img/icon/star-selected.png'"
-                                        :void-icon="'https://static.gangqintonghua.com/img/icon/star.png'"
+                                        :icon="'https://static.gangqintonghua.com/img/icon/star-new.png'"
+                                        :void-icon="'https://static.gangqintonghua.com/img/icon/star-void.png'"
                                         color="#62BBEC" void-color="#D8D8D8" gutter="4rpx" size="36rpx" @change="
                                             (e) =>
                                                 $set(
@@ -638,6 +638,8 @@ export default {
                                 content: '*';
                                 position: absolute;
                                 left: 12rpx;
+                                top: 50%;
+                                transform: translateY(-50%);
                                 font-size: 24rpx;
                                 color: #F15E5E;
                             }
@@ -657,9 +659,11 @@ export default {
                                     position: relative;
 
                                     &::before {
-                                        content: '*';
+                                        content: ' * ';
                                         position: absolute;
                                         left: 12rpx;
+                                        top: 50%;
+                                        transform: translateY(-50%);
                                         font-size: 24rpx;
                                         color: #F15E5E;
                                     }

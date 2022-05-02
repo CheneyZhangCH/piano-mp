@@ -32,12 +32,12 @@
 			&.confirm {
 				color: #FFF;
 				background: linear-gradient(90deg, #61BAEC 0%, #84DAEE 100%);
-				border: none;
+                border-color: inherit;
 			}
 			&.disabled {
 				color: #FFF;
 				background: #E1E1E1;
-				border: none;
+                border-color: inherit;
 			}
 		}
 	}

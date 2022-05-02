@@ -68,7 +68,7 @@ export default {
             .name {
                 width: 126rpx;
                 font-size: 28rpx;
-                font-weight: 500;
+                font-weight: 600;
                 color: #141F33;
                 line-height: 40rpx;
             }

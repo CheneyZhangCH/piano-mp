@@ -125,7 +125,7 @@
                         </view>
                     </view>
                     <!-- 试听端、管理端 -->
-                    <template v-if="['AUDITION', 'ADMIN'].includes(accountType)">
+                    <template v-if="['AUDITION', 'ADMIN', 'SUPER_ADMIN'].includes(accountType)">
                         <view class="section-divider"></view>
                         <view class="expire-date px-28"
                             :class="{ 'warning': getExpiryDateWarning(student.expiryDate) }">
@@ -495,7 +495,7 @@ export default {
 
             .center-popup-title-main {
                 .student-name {
-                    font-weight: 500;
+                    font-weight: 600;
                     color: #ffffff;
                     margin-right: 10rpx;
                     line-height: 40rpx;
@@ -571,7 +571,7 @@ export default {
                 }
 
                 .score-item-num {
-                    font-weight: 500;
+                    font-weight: 600;
                     color: #141f33;
                     line-height: 40rpx;
                     text-align: center;
@@ -647,10 +647,10 @@ export default {
             padding-bottom: 20rpx;
 
             font-size: 24rpx;
-            font-weight: 500;
             color: #141f33;
             line-height: 34rpx;
             &.warning {
+                font-weight: 600;
                 color: #f15e5e;
             }
         }
@@ -677,16 +677,16 @@ export default {
             &.confirm {
                 color: #fff;
                 background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
-                border: none;
+                border-color: inherit;
             }
             &.disabled {
+				color: #FFF;
                 background: #e1e1e1;
-                border: none;
+                border-color: inherit;
             }
         }
         .drop {
-            padding-top: 14rpx;
-            padding-bottom: 14rpx;
+            padding-top: 24rpx;
             justify-content: center;
             image {
                 width: 20rpx;
