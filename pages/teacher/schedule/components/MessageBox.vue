@@ -95,20 +95,22 @@ export default {
             flex: 1;
             height: 72rpx;
             line-height: 72rpx;
-            border-radius: 44rpx;
-            background: #fff;
-            border: 2rpx solid #d3d7e0;
-
+            padding: 0;
             font-size: 32rpx;
             font-weight: 600;
-            color: #d3d7e0;
+            color: #616b80;
+            background-color: #fff;
+            border: 2rpx solid #d3d7e0;
+            border-radius: 44rpx;
+
             &::after {
                 display: none;
             }
+
             &.confirm {
                 color: #fff;
                 background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
-                border-color: inherit;
+                border: none;
             }
         }
     }

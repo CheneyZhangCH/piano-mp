@@ -4,50 +4,27 @@
             <view class="piano-message-box__header">
                 <view class="piano-message-box__title">本学员续课考核存在冲突，请选择纳入以下哪一分组</view>
             </view>
-            <scroll-view
-                scroll-y="true"
-                style="max-height: 60vh;"
-                class="piano-message-box__content"
-            >
-                <view
-                    v-for="group in newGroups"
-                    :key="group.id"
-                    class="group"
-                    @click="groupId = group.id"
-                >
-                    <image
-                        class="select-icon"
-                        :src="`/static/images/student/icon-radio${group.id === groupId ? '-active' : ''}.png`"
-                    />
+            <scroll-view scroll-y="true" style="max-height: 60vh;" class="piano-message-box__content">
+                <view v-for="group in newGroups" :key="group.id" class="group" @click="groupId = group.id">
+                    <image class="select-icon"
+                        :src="`/static/images/student/icon-radio${group.id === groupId ? '-active' : ''}.png`" />
                     <text class="name ellipsis">{{ group.groupName }}</text>
                     <view class="leader">
                         <text class="er">组长：</text>
-                        <image
-                            class="cover"
-                            :src="teacher.coverUrl"
-                            v-for="teacher in group.leaders.slice(0, 1)"
-                            :key="teacher.accountId"
-                        />
+                        <image class="cover" :src="teacher.coverUrl" v-for="teacher in group.leaders.slice(0, 1)"
+                            :key="teacher.accountId" />
                     </view>
                     <view class="member">
                         <text class="er">组员：</text>
-                        <image
-                            class="cover"
-                            :src="teacher.coverUrl"
-                            v-for="teacher in group.members.slice(0, 5)"
-                            :key="teacher.accountId"
-                        />
+                        <image class="cover" :src="teacher.coverUrl" v-for="teacher in group.members.slice(0, 5)"
+                            :key="teacher.accountId" />
                     </view>
                 </view>
             </scroll-view>
             <view class="piano-message-box__btns">
                 <button class="btn cancel" @click="close">取消</button>
-                <button
-                    class="btn"
-                    :class="{ confirm: !!groupId, disabled: !groupId }"
-                    :disabled="!groupId"
-                    @click="confirm"
-                >确认</button>
+                <button class="btn" :class="{ confirm: !!groupId, disabled: !groupId }" :disabled="!groupId"
+                    @click="confirm">确认</button>
             </view>
         </view>
     </uni-popup>
@@ -102,14 +79,17 @@ export default {
     width: 650rpx;
     background-color: #fff;
     border-radius: 32rpx;
+
     &__header {
         padding: 36rpx 32rpx;
         font-size: 28rpx;
         color: #99a0ad;
         line-height: 42rpx;
     }
+
     &__content {
         margin-bottom: 36rpx;
+
         .group {
             display: flex;
             align-items: center;
@@ -119,6 +99,7 @@ export default {
             border-radius: 20rpx;
             padding: 20rpx 36rpx; // 设计稿7px 18px
             margin: 0 32rpx;
+
             // + .group {
             //     margin-top: 10rpx; // 设计稿8px -> 5px
             // }
@@ -127,6 +108,7 @@ export default {
                 height: 28rpx;
                 margin-right: 40rpx;
             }
+
             .name {
                 width: 140rpx;
                 font-size: 28rpx;
@@ -134,15 +116,18 @@ export default {
                 line-height: 40rpx;
                 margin-right: 32rpx;
             }
+
             .leader,
             .member {
                 display: flex;
                 align-items: center;
+
                 .er {
                     font-size: 24rpx;
                     color: #525666;
                     margin-right: 10rpx;
                 }
+
                 .cover {
                     width: 28rpx;
                     height: 28rpx;
@@ -151,39 +136,49 @@ export default {
                     border: 2rpx solid #FFF;
                 }
             }
+
             .leader {
                 margin-right: 32rpx;
             }
         }
     }
+
     &__btns {
         display: flex;
         column-gap: 48rpx;
         padding: 32rpx 48rpx;
         box-shadow: 0px -4rpx 8rpx 0px rgba(0, 0, 0, 0.05);
+
         .btn {
             flex: 1;
             height: 72rpx;
-            padding: 0 56rpx;
+            line-height: 72rpx;
+            padding: 0;
             font-size: 32rpx;
             font-weight: 600;
-            line-height: 72rpx;
             color: #616b80;
             background-color: #fff;
-            border: 1px solid #d3d7e0;
+            border: 2rpx solid #d3d7e0;
             border-radius: 44rpx;
+
             &::after {
                 display: none;
             }
-            &.confirm {
-                color: #fff;
-                background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
-                border-color: inherit;
-            }
+
+            &.confirm,
             &.disabled {
-                color: #fff;
+                color: #FFF;
+                border: none;
+                padding-left: 2rpx;
+                padding-right: 2rpx;
+            }
+
+            &.confirm {
+                background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
+            }
+
+            &.disabled {
                 background: #e1e1e1;
-                border-color: inherit;
             }
         }
     }

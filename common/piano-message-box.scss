@@ -19,25 +19,32 @@
         .btn {
             flex: 1;
             height: 72rpx;
-            padding: 0 56rpx;
+            line-height: 72rpx;
+            padding: 0;
             font-size: 32rpx;
             font-weight: 600;
-            line-height: 72rpx;
             color: #616b80;
             background-color: #fff;
-            border: 1px solid #d3d7e0;
+            border: 2rpx solid #d3d7e0;
             border-radius: 44rpx;
             &::after {
                 display: none;
             }
-            &.confirm {
-                color: #fff;
-                background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
-                border-color: inherit;
+
+            &.confirm,
+            &.disabled {
+                color: #FFF;
+                border: none;
+                padding-left: 2rpx;
+                padding-right: 2rpx;
             }
+
+            &.confirm {
+                background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
+            }
+
             &.disabled {
                 background: #e1e1e1;
-                border-color: inherit;
             }
         }
     }

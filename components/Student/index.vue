@@ -8,10 +8,10 @@
                         <view class="center-popup-title-main flex align-center justify-between">
                             <view class="flex align-center">
                                 <text class="student-name">{{
-                                    student.studentName
+                                        student.studentName
                                 }}</text>
                                 <text v-if="coursePackage.packageName" class="package-name">{{
-                                    coursePackage.packageName
+                                        coursePackage.packageName
                                 }}</text>
                             </view>
                             <text v-if="!['AUDITION', 'ADMIN', 'SUPER_ADMIN'].includes(accountType)" class="set-grade"
@@ -23,7 +23,7 @@
                                 :src="`/static/images/student/${student.gender || 'male'}.png`" />
                             <text class="text">{{ student.age + '岁' }}</text>
                             <text class="text">{{
-                                '课程陪练券' + trainTicketNum + '张'
+                                    '课程陪练券' + trainTicketNum + '张'
                             }}</text>
                         </view>
                     </view>
@@ -33,21 +33,21 @@
                         <view class="score-item">
                             <view class="inline-flex flex-column">
                                 <text class="score-item-num">{{
-                                    student.handScore || '-'
+                                        student.handScore || '-'
                                 }}</text>
                                 <text class="score-item-desc">手型平均分</text>
                             </view>
                         </view>
                         <view class="score-item inline-flex flex-column">
                             <text class="score-item-num">{{
-                                student.musicScore || '-'
+                                    student.musicScore || '-'
                             }}</text>
                             <text class="score-item-desc">识谱平均分</text>
                         </view>
                         <view class="score-item text-right">
                             <view class="inline-flex flex-column">
                                 <text class="score-item-num">{{
-                                    student.attitudeScore || '-'
+                                        student.attitudeScore || '-'
                                 }}</text>
                                 <text class="score-item-desc">学习态度分</text>
                             </view>
@@ -57,14 +57,14 @@
                         <view class="score-item">
                             <view class="inline-flex flex-column">
                                 <text class="score-item-num">{{
-                                    student.finishChapterScore || '-'
+                                        student.finishChapterScore || '-'
                                 }}</text>
                                 <text class="score-item-desc">回课成绩分</text>
                             </view>
                         </view>
                         <view class="score-item inline-flex flex-column">
                             <text class="score-item-num">{{
-                                student.grade ? student.grade + '级' : '-'
+                                    student.grade ? student.grade + '级' : '-'
                             }}</text>
                             <text class="score-item-desc">当前级别</text>
                         </view>
@@ -81,23 +81,22 @@
                             <view class="course-item-title" :class="{ warning: course.remainCourseNum <= 6 }">
                                 <text class="flex-1 ellipsis">
                                     <text>{{
-                                        course.courseName +
+                                            course.courseName +
                                             '(' +
                                             course.teacherName +
                                             ')'
                                     }}</text>
                                     <text>{{
-                                        '周' + WEEK_DAY[course.dayOfWeek] +
+                                            '周' + WEEK_DAY[course.dayOfWeek] +
                                             ' ' +
                                             course.timetablePeriodName
                                     }}</text>
                                 </text>
                                 <text v-if="['AUDITION', 'ADMIN', 'SUPER_ADMIN'].includes(accountType)">{{
-                                    '剩余' + course.remainCourseNum + '节'
+                                        '剩余' + course.remainCourseNum + '节'
                                 }}</text>
                             </view>
-                            <view v-if="course.chapters.length" class="course-item-chapter"
-                                :class="course.courseType">
+                            <view v-if="course.chapters.length" class="course-item-chapter" :class="course.courseType">
                                 <view v-for="chapter in course.chapters" :key="chapter.id"
                                     class="course-item-chapter-item ellipsis">
                                     <text class="name">
@@ -132,7 +131,7 @@
                             {{ '账户有效期：剩余' + getExpiryDate(student.expiryDate) }}
                         </view>
                         <view class="section-divider" />
-                        <Remark :student="student" @confirm="getStudent" :custom-style="'margin: 30rpx 28rpx;'"/>
+                        <Remark :student="student" @confirm="getStudent" :custom-style="'margin: 30rpx 28rpx;'" />
                     </template>
                 </scroll-view>
                 <view v-if="['AUDITION', 'ADMIN', 'SUPER_ADMIN'].includes(accountType)" class="action">
@@ -327,7 +326,7 @@ export default {
         },
 
         onChange(e) {
-            if(!e.show) this.$emit('close')
+            if (!e.show) this.$emit('close')
         },
 
         close() {
@@ -474,6 +473,7 @@ export default {
     width: 650rpx;
     background-color: #fff;
     border-radius: 32rpx;
+
     .title {
         position: relative;
         height: 220rpx;
@@ -510,6 +510,7 @@ export default {
                     color: #eff5ff;
                     line-height: 22rpx;
                 }
+
                 .set-grade {
                     font-size: 24rpx;
                     color: #fff;
@@ -542,6 +543,7 @@ export default {
             }
         }
     }
+
     .content {
         margin-top: 16rpx;
 
@@ -586,16 +588,20 @@ export default {
                 }
             }
         }
+
         .section-divider {
             width: 600rpx;
             height: 2rpx;
             border-top: 2rpx dashed #e3e5e9;
             margin: 0 auto;
         }
+
         .course {
             padding-top: 36rpx;
+
             &-item {
                 margin-bottom: 36rpx;
+
                 &-title {
                     display: flex;
                     justify-content: space-between;
@@ -604,19 +610,23 @@ export default {
                     color: #141f33;
                     line-height: 34rpx;
                     margin-bottom: 14rpx;
+
                     &.warning {
                         font-weight: 600;
                         color: #f15e5e;
                     }
-                    text + text {
+
+                    text+text {
                         margin-left: 12rpx;
                     }
                 }
+
                 &-chapter {
                     &.more {
                         .course-item-chapter-item {
                             display: flex;
                             justify-content: space-between;
+
                             .name {
                                 flex: 1;
                                 padding-right: 20rpx;
@@ -626,13 +636,16 @@ export default {
                             }
                         }
                     }
+
                     &-item {
                         font-size: 24rpx;
                         color: #99a0ad;
                         line-height: 34rpx;
-                        + .course-item-chapter-item {
+
+                        +.course-item-chapter-item {
                             margin-top: 12rpx;
                         }
+
                         .btn {
                             font-size: 24rpx;
                             color: #99a0ad;
@@ -642,6 +655,7 @@ export default {
                 }
             }
         }
+
         .expire-date {
             padding-top: 20rpx;
             padding-bottom: 20rpx;
@@ -649,6 +663,7 @@ export default {
             font-size: 24rpx;
             color: #141f33;
             line-height: 34rpx;
+
             &.warning {
                 font-weight: 600;
                 color: #f15e5e;
@@ -660,62 +675,80 @@ export default {
     .action {
         padding: 32rpx 48rpx;
         box-shadow: 0px -4rpx 8rpx 0px rgba(0, 0, 0, 0.05);
+
         .btn {
             height: 72rpx;
             line-height: 72rpx;
+            padding: 0;
             font-size: 32rpx;
             font-weight: 600;
             color: #616b80;
             background-color: #fff;
             border: 1px solid #d3d7e0;
             border-radius: 44rpx;
-            padding: 0;
             box-sizing: border-box;
+
             &::after {
                 display: none;
             }
-            &.confirm {
-                color: #fff;
-                background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
-                border-color: inherit;
-            }
+
+            &.confirm,
             &.disabled {
-				color: #FFF;
-                background: #e1e1e1;
-                border-color: inherit;
+                color: #FFF;
+                border: none;
+                padding-left: 2rpx;
+                padding-right: 2rpx;
             }
+
+            &.confirm {
+                background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
+            }
+
+            &.disabled {
+                background: #e1e1e1;
+            }
+
         }
+
         .drop {
             padding-top: 24rpx;
             justify-content: center;
+
             image {
                 width: 20rpx;
                 height: 24rpx;
             }
         }
     }
+
     .footer {
         display: flex;
         column-gap: 48rpx;
+
         .btn {
             flex: 1;
         }
     }
+
     .action {
-        > view {
+        >view {
             display: flex;
             column-gap: 48rpx;
+
             button {
                 flex: 1;
+
                 &::after {
                     display: none;
                 }
             }
+
             .picker {
                 flex: 1;
                 text-align: center;
             }
         }
+
         .text {
             font-size: 28rpx;
             color: #99a0ad;
@@ -723,6 +756,7 @@ export default {
             background: none;
             margin-top: 24rpx;
         }
+
         .danger {
             height: 68rpx;
             line-height: 68rpx;
@@ -734,15 +768,19 @@ export default {
             color: #fff;
             margin-top: 30rpx;
         }
+
         .finish_course {
             display: flex;
             align-items: center;
+
             &.finish_course_discontinue {
                 color: #99a0ad;
             }
+
             &.finish_course_continue {
                 color: #44be5e;
             }
+
             .message {
                 flex: 1;
                 text-align: right;
@@ -751,12 +789,14 @@ export default {
                 line-height: 44rpx;
                 margin-right: 30rpx;
             }
+
             .undo {
                 display: flex;
                 align-items: center;
                 font-size: 28rpx;
                 color: #62bbec;
                 line-height: 40rpx;
+
                 image {
                     width: 24rpx;
                     height: 22rpx;
@@ -771,36 +811,45 @@ export default {
     height: 360rpx;
     background-color: #fff;
     border-radius: 10px 10px 0px 0px;
+
     &-title {
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 24rpx 44rpx;
+
         .btn {
             font-size: 28rpx;
             color: #99a0ad;
         }
+
         .confirm {
             color: #62bbec;
         }
     }
+
     &-form {
         background-color: #fff;
         padding: 0 32rpx;
+
         .form-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            + .form-item {
+
+            +.form-item {
                 margin-top: 32rpx;
             }
+
             .label {
                 font-size: 28rpx;
                 color: #99a0ad;
                 line-height: 40rpx;
             }
+
             .value {
                 position: relative;
+
                 input {
                     border-bottom: 1px solid #f3f3f3;
                     text-align: center;
@@ -809,6 +858,7 @@ export default {
                     color: #141f33;
                     line-height: 20px;
                 }
+
                 .unit {
                     position: absolute;
                     right: 0;

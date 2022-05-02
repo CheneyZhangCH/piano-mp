@@ -3,27 +3,15 @@
         <view class="main">
             <view class="content">
                 <view class="text mb-16">违规违纪内容</view>
-                <van-field
-                    class="input"
-                    :value="form.content"
-                    placeholder="填写内容不可超过18字"
-                    placeholder-style="color: #99A0AD;font-size: 24rpx;"
-                    maxlength="18"
-                    clearable
-                    @input="e => form.content = e.detail"
-                />
+                <van-field class="input" :value="form.content" placeholder="填写内容不可超过18字"
+                    placeholder-style="color: #99A0AD;font-size: 24rpx;" maxlength="18" clearable
+                    @input="e => form.content = e.detail" />
                 <view class="amount-row">
                     <text class="text">违规违纪金额：</text>
                     <view class="amount">
-                        <input
-                            type="number"
-                            :value="form.amount"
-                            placeholder="请录入金额"
-                            placeholder-style="color: #99A0AD;font-size: 24rpx;"
-                            border="false"
-                            maxlength="9"
-                            @input="e => form.amount = e.detail.value"
-                        />
+                        <input type="number" :value="form.amount" placeholder="请录入金额"
+                            placeholder-style="color: #99A0AD;font-size: 24rpx;" border="false" maxlength="9"
+                            @input="e => form.amount = e.detail.value" />
                         元
                     </view>
                 </view>
@@ -33,12 +21,8 @@
             </view>
             <view class="footer">
                 <button class="btn" @click="close">取消</button>
-                <button
-                    class="btn"
-                    :class="{ confirm: !disabled, disabled: disabled }"
-                    :disabled="disabled"
-                    @click="confirm"
-                >确认</button>
+                <button class="btn" :class="{ confirm: !disabled, disabled: disabled }" :disabled="disabled"
+                    @click="confirm">确认</button>
             </view>
         </view>
     </uni-popup>
@@ -90,7 +74,7 @@ export default {
             this.loading = true
             try {
                 const res = await this.$http.post('/mini/teacher/addDiscipline', param)
-                if(res.ok) {
+                if (res.ok) {
                     uni.showToast({
                         title: '录入成功！',
                         icon: 'success',
@@ -113,18 +97,22 @@ export default {
 
     .content {
         padding: 50rpx;
+
         .text {
             font-size: 24rpx;
             color: #525666;
             line-height: 34rpx;
         }
+
         .mb-16 {
             margin-bottom: 16rpx;
         }
+
         .input {
             /deep/.van-cell {
                 padding: 0;
             }
+
             /deep/.van-field__body {
                 width: 100%;
                 height: 80rpx;
@@ -142,17 +130,21 @@ export default {
                 box-sizing: border-box;
             }
         }
+
         .amount-row {
             display: flex;
             align-items: center;
             margin-top: 36rpx;
+
             .text {
                 margin-right: 10rpx;
             }
+
             .amount {
                 display: flex;
                 align-items: center;
                 width: 198rpx;
+
                 input {
                     border-bottom: 2rpx solid #e3e5e9;
                     padding: 0 20rpx;
@@ -160,6 +152,7 @@ export default {
                 }
             }
         }
+
         .amount-rule-error {
             margin-top: 16rpx;
             font-size: 24rpx;
@@ -171,32 +164,38 @@ export default {
         display: flex;
         column-gap: 48rpx;
         padding: 32rpx 48rpx;
+        box-shadow: 0px -4rpx 8rpx 0px rgba(0, 0, 0, 0.05);
 
-        box-shadow: 0px -2px 4px 0px rgba(0, 0, 0, 0.05);
         .btn {
             flex: 1;
             height: 72rpx;
             line-height: 72rpx;
-            border-radius: 44rpx;
-            border: 2rpx solid #d3d7e0;
-            background: #fff;
-
-            text-align: center;
+            padding: 0;
             font-size: 32rpx;
             font-weight: 600;
             color: #616b80;
+            background-color: #fff;
+            border: 2rpx solid #d3d7e0;
+            border-radius: 44rpx;
+
             &::after {
                 display: none;
             }
-            &.confirm {
-                color: #FFF;
-                background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
-                border-color: inherit;
-            }
+
+            &.confirm,
             &.disabled {
-                color: #FFF;
+                color: #fff;
+                border: none;
+                padding-left: 2rpx;
+                padding-right: 2rpx;
+            }
+
+            &.confirm {
+                background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
+            }
+
+            &.disabled {
                 background: #e1e1e1;
-                border-color: inherit;
             }
         }
     }
