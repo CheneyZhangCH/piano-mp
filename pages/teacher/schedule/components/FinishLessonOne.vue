@@ -659,7 +659,7 @@ export default {
                                     position: relative;
 
                                     &::before {
-                                        content: ' * ';
+                                        content: '*';
                                         position: absolute;
                                         left: 12rpx;
                                         top: 50%;

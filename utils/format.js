@@ -41,21 +41,23 @@ export const agoWeekOrDateTime = (timestamp) => {
     const yesterday = dayjs().subtract(1, 'days').format('YYYY-MM-DD')
     const period = dayjs(timestamp).hour() < 12 ? '上午' : '下午'
 
+    console.log(target)
     if (target === today) {
         return period + time
     } else if (target === yesterday) {
         return '昨天 ' + period + time
     } else {
-        const weekDay = new Date(timestamp).getDay()
-        const targetWeekDay = new Date().getDay()
-
-        const monday = dayjs().subtract((targetWeekDay === 0 ? 7 : targetWeekDay) - 1, 'days').format('YYYY/MM/DD 00:00:00')
-        if (new Date(timestamp).getTime() >= new Date(monday).getTime()) {
-            return `周${WEEK_DAY[weekDay === 0 ? 7 : weekDay]} ` + period + time
-        }
-        const lastMonday = dayjs(monday).subtract(7, 'days').format('YYYY/MM/DD 00:00:00')
-        if (new Date(timestamp).getTime() >= new Date(lastMonday).getTime()) {
-            return `上周${WEEK_DAY[weekDay === 0 ? 7 : weekDay]} ` + period + time
+        if (Math.ceil((new Date(dayjs().format('YYYY/MM/DD 00:00:00')).getTime() - timestamp) / (24 * 60 * 60 * 1000)) < 7) {
+            const weekDay = new Date(timestamp).getDay()
+            const targetWeekDay = new Date().getDay()
+            const monday = dayjs().subtract((targetWeekDay === 0 ? 7 : targetWeekDay) - 1, 'days').format('YYYY/MM/DD 00:00:00')
+            if (new Date(timestamp).getTime() >= new Date(monday).getTime()) {
+                return `周${WEEK_DAY[weekDay === 0 ? 7 : weekDay]} ` + period + time
+            }
+            const lastMonday = dayjs(monday).subtract(7, 'days').format('YYYY/MM/DD 00:00:00')
+            if (new Date(timestamp).getTime() >= new Date(lastMonday).getTime()) {
+                return `上周${WEEK_DAY[weekDay === 0 ? 7 : weekDay]} ` + period + time
+            }
         }
         const targetYear = new Date(timestamp).getFullYear()
         const curYear = new Date().getFullYear()
