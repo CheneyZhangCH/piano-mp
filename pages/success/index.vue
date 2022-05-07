@@ -1,10 +1,6 @@
 <template>
     <view class="page" :class="from">
-        <image
-            v-if="icon[from]"
-            class="icon"
-            :src="`https://static.gangqintonghua.com/img/icon/${icon[from]}.png`"
-        />
+        <image v-if="icon[from]" class="icon" :src="`https://static.gangqintonghua.com/img/icon/${icon[from]}.png`" />
         <view class="title">{{ title[from] }}</view>
         <view v-if="subTitle[from]" class="sub-title">{{ subTitle[from] }}</view>
         <button class="btn" @click="back">我知道了</button>
@@ -16,29 +12,34 @@ export default {
     data() {
         return {
             from: '',
-            immediately: false,
             icon: {
                 complaint: 'wait-deal',
                 create: 'success',
                 continue: 'success',
+                continue_immediately: 'success',// 立即生效
                 update: 'success',
                 disContinue: 'repel',
+                disContinue_immediately: 'repel',// 立即生效
                 refund: 'refund'
             },
             title: {
                 complaint: '我们已经收到您的反馈，将尽快进行审核',
                 create: '合同已发送，等待对方确认',
                 continue: '学员续费操作成功',
+                continue_immediately: '学员续费操作成功',// 立即生效
                 update: '学员信息修改成功',
                 disContinue: '操作成功',
+                disContinue_immediately: '操作成功',// 立即生效
                 refund: '请加强教学管理，勿忘初心'
             },
             subTitle: {
                 complaint: '审核结果您可以在 “消息通知”-“申/投诉处理”中进行查看',
                 create: '',
                 continue: '详细信息可在“学员详情”中查看',
+                continue_immediately: '详细信息可在“学员详情”中查看',// 立即生效
                 update: '详细信息可在“学员详情”中查看',
                 disContinue: '该账户已被清退处理',
+                disContinue_immediately: '该账户已被清退处理',// 立即生效
                 refund: '该学员的账户将被清空处理'
             }
         }
@@ -56,18 +57,14 @@ export default {
             })
         }
         this.from = option?.from ?? ''
-        this.immediately = option?.immediately ?? false
     },
     methods: {
         back() {
-            // 退费成功、不续课（立即清退账户）直接返回首页
-            if (this.from === 'refund' || this.immediately) {
-                return uni.reLaunch({ url: '/pages/index/index' })
-            }
             if (this.from === 'create') {
                 return uni.reLaunch({ url: '/pages/audition/account/index' })
             }
             uni.navigateBack({ delta: 1 })
+            uni.setStorageSync('successBack', this.from)
         }
     }
 }
@@ -78,12 +75,14 @@ export default {
     min-height: 100vh;
     background: #fff;
     text-align: center;
+
     .icon {
         width: 118rpx;
         height: 118rpx;
         margin-top: 212rpx;
         margin-bottom: 80rpx;
     }
+
     &.disContinue,
     &.refund {
         .icon {
@@ -92,6 +91,7 @@ export default {
             margin-bottom: 36rpx;
         }
     }
+
     .title {
         font-size: 32rpx;
         font-weight: 600;
@@ -99,11 +99,13 @@ export default {
         line-height: 44rpx;
         margin-bottom: 36rpx;
     }
+
     .sub-title {
         font-size: 24rpx;
         color: #141f33;
         line-height: 34rpx;
     }
+
     .btn {
         position: fixed;
         bottom: 200rpx;
@@ -117,6 +119,7 @@ export default {
         color: #62bbec;
         line-height: 44rpx;
         margin: 0 230rpx;
+
         &::after {
             display: none;
         }

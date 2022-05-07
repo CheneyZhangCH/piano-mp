@@ -2,13 +2,8 @@
     <view class="page">
         <view class="page-search">
             <view class="sorts">
-                <text
-                    v-for="s in sorts"
-                    :key="s.name"
-                    class="sort"
-                    :class="{ active: sortForm.sortBy === s.name }"
-                    @click="sortChange(s.name)"
-                >{{ s.title }}</text>
+                <text v-for="s in sorts" :key="s.name" class="sort" :class="{ active: sortForm.sortBy === s.name }"
+                    @click="sortChange(s.name)">{{ s.title }}</text>
             </view>
             <view class="btn" :class="{ filtrateNotEmpty }" @click="filtrate">
                 <text>筛选</text>
@@ -21,30 +16,24 @@
                 <view class="info">
                     <view class="msg">
                         <text class="studentName">{{ item.student.studentName }}</text>
-                        <image
-                            class="gender"
-                            :src="`/static/images/student/${item.student.gender || 'male'}-selected.png`"
-                        />
+                        <image class="gender"
+                            :src="`/static/images/student/${item.student.gender || 'male'}-selected.png`" />
                         <text v-if="item.student.age" class="age">{{ item.student.age + '岁' }}</text>
                         <text class="packageName">{{ item.coursePackage.packageName }}</text>
                         <text class="trainTicketNum">{{ '课程陪练券' + item.trainTicketNum + '张' }}</text>
                     </view>
                     <view class="main">
-                        <view
-                            v-for="course in item.coursePackage.courses"
-                            :key="course.id"
-                            class="course"
-                            :class="{ 'warning': course.remainCourseNum <= 6 }"
-                        >
+                        <view v-for="course in item.coursePackage.courses" :key="course.id" class="course"
+                            :class="{ 'warning': course.remainCourseNum <= 6 }">
                             <text>{{ course.courseName }}({{ course.teacherName }})</text>
                             <text>周{{ WEEK_DAY[course.dayOfWeek] }}</text>
                             <text>{{ course.timetablePeriodName }}</text>
                             <text>剩余{{ course.remainCourseNum }}节</text>
                         </view>
-                        <view
-                            class="course expiryDate"
-                            :class="{ 'warning': getExpiryDateWarning(item.student.expiryDate) }"
-                        >账号有效期剩余：{{ getExpiryDate(item.student.expiryDate) }}</view>
+                        <view class="course expiryDate"
+                            :class="{ 'warning': getExpiryDateWarning(item.student.expiryDate) }">账号有效期剩余：{{
+                                    getExpiryDate(item.student.expiryDate)
+                            }}</view>
                     </view>
                     <view class="operation">
                         <view class="left">
@@ -58,7 +47,7 @@
 
         <customTabbar :active="2" />
 
-        <Student ref="student" :student-id="studentId" @close="studentId = 0" @del="handleSearch" />
+        <Student ref="student" :student-id="studentId" @close="studentId = 0" @refresh="getData" />
         <Filtrate ref="filtrate" :dicts="dicts" @confirm="filtrateConfirm" />
     </view>
 </template>
@@ -114,12 +103,18 @@ export default {
         }
 
         this.init()
-        this.handleSearch()
     },
     onShow() {
-        if (this.studentId) {
-            this.handleSearch()
-            this.$refs.student.getStudent()
+        this.getData()
+
+        const successBack = uni.getStorageSync('successBack')
+        if (successBack) {
+            if (['disContinue_immediately', 'continue_immediately', 'refund'].includes(successBack)) {
+                this.$refs.student.close()
+            } else if (['disContinue', 'continue', 'update'].includes(successBack)) {
+                if (this.studentId) this.$refs.student.getStudent()
+            }
+            uni.removeStorageSync('successBack')
         }
     },
     methods: {
@@ -136,8 +131,25 @@ export default {
                     packages: packageRes.data ?? []
                 })
             } catch (error) {
-
+                console.log(error)
             }
+        },
+
+        async _countNeedContinueStudent() {
+            try {
+                const countNeedContinueStudentRes = await this.$http.post('/mini/student/countNeedContinueStudent')
+                this.$store.dispatch('accountBusinessCount/setTabbarInfo', {
+                    key: 'xufei',
+                    count: countNeedContinueStudentRes.data ?? 0
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        },
+
+        getData() {
+            this.handleSearch()
+            this._countNeedContinueStudent()
         },
 
         sortChange(name) {
@@ -186,6 +198,7 @@ export default {
     min-height: 100vh;
     padding-top: 80rpx;
     padding-bottom: 100rpx;
+
     &-search {
         position: fixed;
         top: 0;
@@ -196,56 +209,69 @@ export default {
         justify-content: space-between;
         background-color: #fff;
         padding: 0 64rpx 0 40rpx;
+
         .sorts {
             flex: 1;
             display: flex;
             justify-content: space-between;
             margin-right: 64rpx;
+
             .sort {
                 font-size: 24rpx;
                 color: #525666;
+
                 &.active {
                     color: #62bbec;
                 }
             }
         }
+
         .btn {
             font-size: 24rpx;
             color: #525666;
+
             image {
                 width: 20rpx;
                 height: 22rpx;
                 margin-left: 6rpx;
             }
+
             &.filtrateNotEmpty {
                 color: #62bbec;
             }
         }
     }
+
     &-content {
         padding: 32rpx 24rpx;
+
         .student {
             display: flex;
             justify-content: space-between;
             background-color: #fff;
             border-radius: 16rpx;
             padding: 16rpx 16rpx 24rpx 16rpx;
-            + .student {
+
+            +.student {
                 margin-top: 50rpx;
             }
+
             .cover {
                 width: 90rpx;
                 height: 90rpx;
                 border-radius: 50%;
                 margin-right: 8rpx;
             }
+
             .info {
                 flex: 1;
                 overflow: hidden;
+
                 .msg {
                     display: flex;
                     align-items: center;
                     margin-bottom: 16rpx;
+
                     .studentName {
                         font-size: 28rpx;
                         font-weight: 600;
@@ -253,51 +279,63 @@ export default {
                         line-height: 40rpx;
                         margin-right: 16rpx;
                     }
+
                     .gender {
                         width: 24rpx;
                         height: 24rpx;
                         margin-right: 8rpx;
                     }
+
                     .age,
                     .packageName,
                     .trainTicketNum {
                         font-size: 12px;
                         color: #525666;
                     }
+
                     .age {
                         margin-right: 12rpx;
                     }
+
                     .packageName {
                         margin-right: 40rpx;
                     }
                 }
+
                 .main {
                     border-bottom: 2rpx solid #f5f7fa;
                     padding-bottom: 14rpx;
+
                     .course {
                         font-size: 12px;
                         color: #141f33;
                         line-height: 34rpx;
-                        + .course {
+
+                        +.course {
                             margin-top: 16rpx;
                         }
-                        text + text {
+
+                        text+text {
                             margin-left: 10rpx;
                         }
+
                         &.warning {
                             font-weight: 600;
                             color: #f15e5e;
                         }
                     }
                 }
+
                 .operation {
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
                     padding-top: 14rpx;
+
                     .left {
                         flex: 1;
                     }
+
                     .btn {
                         border-radius: 26rpx;
                         border: 2rpx solid #62bbec;
@@ -308,6 +346,7 @@ export default {
                         color: #62bbec;
                         line-height: 34rpx;
                         margin-left: 20rpx;
+
                         &::after {
                             display: none;
                         }

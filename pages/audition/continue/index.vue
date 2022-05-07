@@ -217,7 +217,7 @@
             </view>
         </uni-popup>
 
-        <Student :student-id="dialogStudentId" @close="dialogStudentId = 0" @del="studentDel" />
+        <Student ref="student" :student-id="dialogStudentId" is-dialog @close="dialogStudentId = 0" />
         <ConflictGroup ref="group" :groups="groups" @confirm="groupConfirm" />
     </view>
 </template>
@@ -316,13 +316,9 @@ export default {
             return uni.navigateTo({ url: '/pages/login/index' })
         }
         this.studentId = option.studentId
-        this.init()
     },
     onShow() {
-        if (this.dialogStudentId) {
-            this.init()
-            this.$refs.student.getStudent()
-        }
+        this.init()
     },
     methods: {
         dayjsFormat,
@@ -626,10 +622,6 @@ export default {
             }
             uni.setStorageSync('contract', JSON.stringify(data))
             uni.redirectTo({ url: '/pages/audition/contract/index?from=continue' })
-        },
-
-        studentDel() {
-            uni.reLaunch({ url: '/pages/index/index' })
         }
     }
 }

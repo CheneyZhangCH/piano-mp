@@ -134,7 +134,8 @@
                         <Remark :student="student" @confirm="getStudent" :custom-style="'margin: 30rpx 28rpx;'" />
                     </template>
                 </scroll-view>
-                <view v-if="['AUDITION', 'ADMIN', 'SUPER_ADMIN'].includes(accountType)" class="action">
+                <!-- 退费、续课页面学员详情弹窗不要操作 -->
+                <view v-if="!isDialog && ['AUDITION', 'ADMIN', 'SUPER_ADMIN'].includes(accountType)" class="action">
                     <view v-if="['finish_course_discontinue', 'finish_course_continue'].includes(student.status)"
                         class="finish_course" :class="student.status">
                         <text class="message">
@@ -249,7 +250,11 @@ export default {
         isBanji: {
             type: Boolean,
             default: false
-        }
+        },
+        isDialog: {
+            type: Boolean,
+            default: false
+        },
     },
     data() {
         return {
@@ -409,7 +414,7 @@ export default {
             try {
                 await this.$http.post('/mini/student/discontinueStudent', data)
                 this.$toast({ title: '不续课成功！', icon: 'success' })
-                uni.navigateTo({ url: '/pages/success/index?from=disContinue&immediately=' + immediately })
+                uni.navigateTo({ url: `/pages/success/index?from=disContinue${immediately ? '_immediately' : ''}` })
             } catch (err) {
                 console.log(err)
             }
@@ -438,7 +443,7 @@ export default {
                         })
                         uni.showToast({ title: '删除成功！', icon: 'success' })
                         this.close()
-                        this.$emit('del')
+                        this.$emit('refresh') // del
                     }
                 }
             })
@@ -456,6 +461,7 @@ export default {
                 await this.$http.post(`/mini/student/${apiName}`, data)
                 this.$toast({ title: '撤销成功！', icon: 'success' })
                 this.getStudent()
+                this.$emit('refresh') // undo
             } finally {
                 this.loading = false
             }

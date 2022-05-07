@@ -54,7 +54,7 @@
                         {{ chapter.bookName }}
                     </view>
                     <view v-if="chapter.chapterId" class="video" @click="toVideo(chapter)">
-                        <image src="https://static.gangqintonghua.com/img/beijing/peitaoshipin.png" class="image" />
+                        <image src="https://static.gangqintonghua.com/img/icon/peitaoshipin.png" class="image" />
                     </view>
                 </view>
                 <view class="chapterName">

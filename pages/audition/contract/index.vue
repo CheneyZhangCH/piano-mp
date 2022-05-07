@@ -218,7 +218,7 @@ export default {
                     count: countNeedContinueStudentRes.data ?? 0
                 })
                 uni.hideLoading()
-                uni.redirectTo({ url: '/pages/success/index?from=continue' })
+                uni.redirectTo({ url: `/pages/success/index?from=continue${immediately ? '_immediately' : ''}` })
             } finally {
                 this.loading = false
             }

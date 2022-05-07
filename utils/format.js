@@ -41,7 +41,6 @@ export const agoWeekOrDateTime = (timestamp) => {
     const yesterday = dayjs().subtract(1, 'days').format('YYYY-MM-DD')
     const period = dayjs(timestamp).hour() < 12 ? '上午' : '下午'
 
-    console.log(target)
     if (target === today) {
         return period + time
     } else if (target === yesterday) {
@@ -64,7 +63,7 @@ export const agoWeekOrDateTime = (timestamp) => {
         if (targetYear === curYear) {
             return dayjs(timestamp).format('MM月DD日')
         }
-        return dayjs(timestamp).format('YYYY年MM月DD日')
+        return dayjs(timestamp).format('YYYY年MM月')
     }
 }
 

@@ -97,7 +97,7 @@
             >确认</button>
         </view>
 
-        <Student :student-id="studentId" @close="studentId = 0" @del="back"/>
+        <Student :student-id="studentId" @close="studentId = 0" @refresh="back"/>
     </view>
 </template>
 

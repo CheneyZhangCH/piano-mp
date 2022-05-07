@@ -71,7 +71,7 @@
             </view>
         </scroll-view>
 
-        <Student :student-id="studentId" is-banji @close="studentId = 0" @del="init" />
+        <Student ref="student" :student-id="studentId" is-banji @close="studentId = 0" @refresh="init" />
     </view>
 </template>
 
@@ -141,12 +141,18 @@ export default {
         this.headerTop = rect.top
 
         this.query = option
-        this.init()
     },
     onShow() {
-        if (this.studentId) {
-            this.init()
-            this.$refs.student.getStudent()
+        this.init()
+
+        const successBack = uni.getStorageSync('successBack')
+        if (successBack) {
+            if (['disContinue_immediately', 'continue_immediately', 'refund'].includes(successBack)) {
+                this.$refs.student.close()
+            } else if (['disContinue', 'continue', 'update'].includes(successBack)) {
+                if (this.studentId) this.$refs.student.getStudent()
+            }
+            uni.removeStorageSync('successBack')
         }
     },
     methods: {
