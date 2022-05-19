@@ -20,9 +20,7 @@
                                 @click="openStudent(period)" />
                             <view v-if="period.oneCourse.newStudent" class="period-status new">新学员
                             </view>
-                            <view class="period-name">{{
-                                    period.periodName
-                            }}</view>
+                            <view class="period-name">{{ period.periodName }}</view>
                             <view class="period-content">
                                 <view class="period-content-title">
                                     <text class="student-name" :class="{
@@ -32,9 +30,7 @@
                                     <image class="gender-icon" :src="`/static/images/student/${period.oneCourse.student.gender ||
                                     'male'
                                     }-selected.png`"></image>
-                                    <text class="student-age">{{
-                                            period.oneCourse.student.age + "岁"
-                                    }}</text>
+                                    <text class="student-age">{{ period.oneCourse.student.age }}岁</text>
                                 </view>
                                 <view v-if="period.oneCourse.chapters.length" class="chapter">
                                     <view v-for="chapter in period.oneCourse
@@ -50,9 +46,7 @@
                         " class="period-main">
                             <image class="avatar" src="/static/images/teacher/course_type_more.png"
                                 @click="openCourse(period)" />
-                            <view class="period-name">{{
-                                    period.periodName
-                            }}</view>
+                            <view class="period-name">{{ period.periodName }}</view>
                             <view class="period-content">
                                 <view class="period-content-title">
                                     <text class="course-name"
@@ -73,9 +67,7 @@
                                 </view>
                                 <view v-if="period.moreCourse.chapter" class="chapter">
                                     <view class="chapter-item ellipsis">
-                                        ({{
-                                                period.moreCourse.chapter.bookName
-                                        }}){{ period.moreCourse.chapter.chapterName }}
+                                        ({{ period.moreCourse.chapter.bookName }}) {{ period.moreCourse.chapter.chapterName }}
                                     </view>
                                 </view>
                             </view>
@@ -306,7 +298,7 @@ export default {
         width: 76rpx;
         height: 76rpx;
         border-radius: 50%;
-        left: 196rpx;
+        left: 198rpx;
         top: -16rpx;
         z-index: 1;
     }
@@ -326,7 +318,7 @@ export default {
                 display: flex;
                 align-items: center;
 
-                padding-left: 20rpx;
+                padding-left: 16rpx;
                 font-size: 28rpx;
                 color: #99a0ad;
             }
@@ -413,7 +405,7 @@ export default {
             }
 
             .student {
-                padding: 0 10rpx 20rpx 20rpx;
+                padding: 0 10rpx 10rpx 16rpx;
 
                 .student-item {
                     font-size: 24rpx;
@@ -432,7 +424,7 @@ export default {
             }
 
             .chapter {
-                padding: 0 10rpx 20rpx 20rpx;
+                padding: 0 10rpx 20rpx 16rpx;
 
                 .chapter-item {
                     +.chapter-item {

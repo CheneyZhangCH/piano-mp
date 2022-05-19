@@ -1,8 +1,9 @@
 <template>
     <uni-popup ref="popup" :is-mask-click="false" type="center">
         <view class="piano-message-box">
-            <view class="piano-message-box__header">
-                <view class="piano-message-box__title">本学员续课考核存在冲突，请选择纳入以下哪一分组</view>
+            <view class="piano-message-box__header ">
+                <view class="text">该学员续课考核存在冲突</view>
+                <view class="text">请选择将本次续课数据纳入以下哪一分组</view>
             </view>
             <scroll-view scroll-y="true" style="max-height: 60vh;" class="piano-message-box__content">
                 <view v-for="group in newGroups" :key="group.id" class="group" @click="groupId = group.id">
@@ -82,9 +83,12 @@ export default {
 
     &__header {
         padding: 36rpx 32rpx;
-        font-size: 28rpx;
-        color: #99a0ad;
-        line-height: 42rpx;
+        .text {
+            font-size: 28rpx;
+            color: #99a0ad;
+            line-height: 42rpx;
+            text-align: center;
+        }
     }
 
     &__content {

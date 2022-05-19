@@ -33,7 +33,7 @@
                     <view class="block-title">
                         <view>
                             <text class="name">{{ item.courseName }}</text>
-                            <text class="times">共{{ item.courseNum }}节</text>
+                            <text class="times">共{{ item.originCourseNum }}节</text>
                         </view>
                         <view class="btn" @click="toFinishLesson(item)"> 消课记录 </view>
                     </view>
@@ -217,8 +217,8 @@ export default {
         right: 0;
         top: 0;
         height: 500rpx;
-        background-image: url("https://static.gangqintonghua.com/img/beijing/zhongxin-group.png");
-        background-size: 100% 100%;
+        background-image: url("https://static.gangqintonghua.com/img/beijing/xueyuanzhongxin.png");
+        background-size: 100% 130%;
         background-repeat: no-repeat;
 
         .title {

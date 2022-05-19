@@ -3,26 +3,15 @@
         <view v-if="chapter && video" class="chapter">
             <video id="video" class="video" :src="video.videoUrl" controls />
         </view>
-        <view
-            v-if="chapter && video"
-            class="video"
-        >{{ chapter.chapterName }}-{{ getFileNameNoExtend(video.videoName) }}</view>
+        <view v-if="chapter && video" class="video">{{ chapter.chapterName }}-{{ getFileNameNoExtend(video.videoName) }}
+        </view>
         <view v-if="videos.length" class="videos">
             <view class="title">视频合集</view>
             <view class="content">
-                <view
-                    v-for="item in videos"
-                    :key="item.id"
-                    class="item"
-                    :class="{ active: item.id === video.id }"
-                    @click="videosChange(item)"
-                >
+                <view v-for="item in videos" :key="item.id" class="item" :class="{ active: item.id === video.id }"
+                    @click="videosChange(item)">
                     {{ getFileNameNoExtend(item.videoName) }}
-                    <image
-                        v-if="item.id === video.id"
-                        class="on"
-                        :src="'/static/images/student/video-on.png'"
-                    />
+                    <image v-if="item.id === video.id" class="on" :src="'/static/images/student/video-on.png'" />
                 </view>
             </view>
         </view>
@@ -61,11 +50,13 @@ export default {
             if (res.ok) {
                 const { chapter, videos } = res.data
                 this.chapter = chapter
+                const chapterName = chapter.chapterName
+                if (!videos?.length) return uni.redirectTo({ url: `/pages/student/videos/chapterEmpty?chapterName=${chapterName}` })
                 this.videos = videos ?? []
                 this.video = this.videos[0]
 
                 uni.setNavigationBarTitle({
-                    title: chapter.chapterName
+                    title: chapterName
                 })
             }
         },
@@ -86,13 +77,16 @@ export default {
 .page {
     height: 100vh;
     background-color: #fff;
+
     .chapter {
         max-height: 596rpx;
+
         .video {
             width: 100%;
         }
     }
-    > .video {
+
+    >.video {
         padding: 40rpx 30rpx;
 
         font-size: 32rpx;
@@ -100,6 +94,7 @@ export default {
         color: #141f33;
         line-height: 44rpx;
     }
+
     .videos {
         .title {
             padding: 30rpx;
@@ -108,28 +103,34 @@ export default {
             color: #141f33;
             line-height: 40rpx;
         }
+
         .content {
             width: 100%;
-            padding: 0 30rpx 30rpx;
+            padding: 0 30rpx 22rpx;
             white-space: nowrap;
             overflow-x: auto;
+
             .item {
                 display: inline-block;
                 height: 76rpx;
+                line-height: 76rpx;
                 background-color: #fff;
                 box-shadow: 0px 0px 8rpx 0px #e3e5e9;
                 border-radius: 8rpx;
-                line-height: 34rpx;
-                padding: 22rpx 24rpx 20rpx;
-                + .item {
+                padding: 0 24rpx;
+                margin-top: 8rpx;
+
+                +.item {
                     margin-left: 20rpx;
                 }
+
                 &.active {
                     position: relative;
                     font-weight: 600;
                     color: #62bbec;
                     border-radius: 12rpx;
                 }
+
                 .on {
                     position: absolute;
                     left: 10rpx;

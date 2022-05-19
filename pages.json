@@ -119,6 +119,12 @@
                     }
                 },
                 {
+                    "path": "videos/chapterEmpty",
+                    "style": {
+                        "navigationBarTitleText": "" // 曲目名称
+                    }
+                },
+                {
                     "path": "homework/index",
                     "style": {
                         "navigationBarTitleText": "课后作业",

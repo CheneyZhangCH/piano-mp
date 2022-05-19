@@ -2,7 +2,7 @@
     <view class="page">
         <view class="basic block">
             <view class="block-title">
-                <text class="name">基本收入（元）</text>
+                <text class="name">基本收入(元)</text>
                 <text class="times">{{ times }}</text>
             </view>
             <view v-if="detail" class="salary">{{ formatThousandsNum(detail.salary) }}</view>

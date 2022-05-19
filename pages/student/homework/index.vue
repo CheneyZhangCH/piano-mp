@@ -51,9 +51,7 @@
                                 </view>
                                 <view class="score">
                                     <text class="num">
-                                        {{
-                                                studentScore.grade ? studentScore.grade + '级' : '-'
-                                        }}
+                                        {{ studentScore.grade ? studentScore.grade + '级' : '-' }}
                                     </text>
                                     <text class="desc">当前级别</text>
                                 </view>
@@ -80,12 +78,16 @@
                         </view>
                         <view class="content">
                             <template v-if="item.courseType === 'one'">
-                                <view v-if="item.chapterScores.length" class="info ellipsis">
-                                    <text class="name">回课情况</text>
+                                <view v-if="item.chapterScores && item.chapterScores.length" class="info ellipsis">
+                                    <text class="name"
+                                        :class="{ 'chinese-of-brackets': isChineseBeginningOfBrackets(item.chapterScores[0].chapterName) }">回课情况</text>
                                     <text class="msg">
                                         <text v-for="score in item.chapterScores" :key="score.id">
                                             {{ score.chapterName }}
-                                            <text class="num">{{ score.score }}分</text>
+                                            <text class="num x"
+                                                :class="{ 'chinese-of-brackets': isChineseEndingOfBrackets(score.chapterName) }">{{
+                                                        score.score
+                                                }}分</text>
                                         </text>
                                     </text>
                                 </view>
@@ -117,11 +119,13 @@
                             </template>
                             <template v-else>
                                 <view class="info ellipsis">
-                                    <text class="name">新知识点</text>
+                                    <text class="name"
+                                        :class="{ 'chinese-of-brackets': isChineseBeginningOfBrackets(item.chapters[0].knowledge) }">新知识点</text>
                                     <text class="msg">{{ item.chapters[0].knowledge }}</text>
                                 </view>
                                 <view class="info ellipsis">
-                                    <text class="name">本课曲目</text>
+                                    <text class="name"
+                                        :class="{ 'chinese-of-brackets': isChineseBeginningOfBrackets(item.chapters[0].chapterName) }">本课曲目</text>
                                     <text class="msg">{{ item.chapters[0].chapterName }}</text>
                                 </view>
                                 <view class="info homework">
@@ -137,7 +141,8 @@
                                 <view class="info videos">
                                     <text class="name">配套视频</text>
                                     <view class="video">
-                                        <image src="https://static.gangqintonghua.com/img/beijing/jiangjieshipin.png" class="image" />
+                                        <image src="https://static.gangqintonghua.com/img/beijing/jiangjieshipin.png"
+                                            class="image" />
                                     </view>
                                 </view>
                             </template>
@@ -186,7 +191,7 @@
             </view>
         </uni-popup>
 
-        <MessageNotify ref="notify"/>
+        <MessageNotify ref="notify" />
         <customTabbar :active="1" />
     </view>
 </template>
@@ -270,6 +275,9 @@ export default {
     },
     methods: {
         agoWeekOrDateTime,
+        // 是否以中文（《【（）开头或结尾
+        isChineseBeginningOfBrackets: text => text && /^[《【（]/.test(text),
+        isChineseEndingOfBrackets: text => text && /[》】）]$/.test(text),
         async init() {
             uni.showLoading({ title: '加载中', icon: 'none' })
             try {
@@ -383,7 +391,7 @@ export default {
             background-repeat: no-repeat;
             background-size: 100%;
 
-            padding: 52rpx 40rpx 0;// 46rpx->52rpx
+            padding: 52rpx 40rpx 0; // 46rpx->52rpx
 
             .msg {
                 font-size: 24rpx;
@@ -540,6 +548,10 @@ export default {
                         .name {
                             color: #99a0ad;
                             margin-right: 56rpx;
+
+                            &.chinese-of-brackets {
+                                margin-right: 48rpx;
+                            }
                         }
 
                         .msg {
@@ -549,6 +561,9 @@ export default {
                                 font-weight: 600;
                                 color: #62bbec;
                                 margin: 0 16rpx 0 8rpx;
+                                &.chinese-of-brackets {
+                                    margin-left: 4rpx;
+                                }
                             }
                         }
 
@@ -579,6 +594,7 @@ export default {
                             .video {
                                 display: flex;
                                 align-items: center;
+
                                 .image {
                                     width: 296rpx;
                                     height: 24rpx;
@@ -681,6 +697,7 @@ export default {
             border-radius: 44rpx;
             color: #fff;
             background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
+
             &::after {
                 display: none;
             }

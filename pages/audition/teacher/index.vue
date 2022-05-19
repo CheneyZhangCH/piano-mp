@@ -29,19 +29,14 @@
                             <view class="period-content">
                                 <view @click="openStudent(period)">
                                     <view class="period-content-title">
-                                        <!-- :class="{ warning: period.oneCourse.warn }" -->
                                         <text class="student-name">{{
                                                 period.oneCourse.student.studentName
                                         }}</text>
                                         <image class="gender-icon" :src="`/static/images/student/${period.oneCourse.student.gender ||
                                         'male'
                                         }-selected.png`"></image>
-                                        <text class="student-age">{{
-                                                period.oneCourse.student.age + "岁"
-                                        }}</text>
-                                        <text class="packageName">
-                                            {{ period.oneCourse.coursePackage.packageName }}
-                                        </text>
+                                        <text class="student-age">{{ period.oneCourse.student.age }}岁</text>
+                                        <text class="packageName"> {{ period.oneCourse.coursePackage.packageName }} </text>
                                     </view>
                                     <view v-if="Array.isArray(period.oneCourse.coursePackage.courses)" class="course">
                                         <template v-for="course in period.oneCourse.coursePackage.courses">
@@ -59,7 +54,7 @@
                                         }}</view>
                                 </view>
                                 <Remark :student="period.oneCourse.student" @confirm="handleSearch"
-                                    :custom-style="'margin-left: 12rpx;'" />
+                                    :custom-style="'margin-left: 16rpx;'" />
                             </view>
                         </view>
                         <view v-else-if="
@@ -67,9 +62,7 @@
                         " class="period-main">
                             <image class="avatar" src="/static/images/teacher/course_type_more.png"
                                 @click="toClass(period)" />
-                            <view class="period-name">{{
-                                    period.periodName
-                            }}</view>
+                            <view class="period-name">{{ period.periodName }}</view>
                             <view class="period-content">
                                 <view class="period-content-title">
                                     <text class="course-name">
@@ -326,7 +319,7 @@ export default {
         width: 76rpx;
         height: 76rpx;
         border-radius: 50%;
-        left: 196rpx;
+        left: 198rpx; // 182+16
         top: -16rpx;
         z-index: 1;
     }
@@ -468,7 +461,7 @@ export default {
             }
 
             .student {
-                padding: 0 10rpx 0 20rpx;
+                padding: 0 10rpx 0 16rpx;
                 margin-bottom: 10rpx;
 
                 .student-item {
@@ -488,7 +481,7 @@ export default {
             }
 
             .chapter {
-                padding: 0 10rpx 0 20rpx;
+                padding: 0 10rpx 0 16rpx;
                 margin-bottom: 10rpx;
 
                 .chapter-item {
@@ -503,7 +496,7 @@ export default {
             }
 
             .course {
-                padding-left: 12rpx;
+                padding-left: 16rpx;
                 margin-bottom: 10rpx;
 
                 .course-item {
@@ -523,7 +516,7 @@ export default {
             }
 
             .expire-date {
-                padding-left: 12rpx;
+                padding-left: 16rpx;
                 font-size: 24rpx;
                 color: #525666;
                 line-height: 34rpx;

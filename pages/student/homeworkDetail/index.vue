@@ -51,7 +51,7 @@
                 <view class="book">
                     <view class="name">
                         <image src="https://static.gangqintonghua.com/img/icon/book.png" class="image" />
-                        {{ chapter.bookName }}
+                        <text class="text">{{ chapter.bookName }}</text>
                     </view>
                     <view v-if="chapter.chapterId" class="video" @click="toVideo(chapter)">
                         <image src="https://static.gangqintonghua.com/img/beijing/peitaoshipin.png" class="image" />
@@ -271,12 +271,14 @@ export default {
                 .name {
                     display: flex;
                     align-items: center;
-                    font-size: 24rpx;
-                    font-weight: 600;
-                    color: #616B80;
-                    line-height: 34rpx;
+                    .text {
+                        font-size: 24rpx;
+                        font-weight: 600;
+                        color: #616B80;
+                        // line-height: 34rpx;
+                    }
 
-                    image {
+                    .image {
                         width: 34rpx;
                         height: 34rpx;
                         margin-right: 8rpx;
@@ -285,7 +287,7 @@ export default {
 
                 .video {
                     .image {
-                        width: 128rpx;
+                        width: 124rpx;
                         height: 24rpx;
                     }
                 }

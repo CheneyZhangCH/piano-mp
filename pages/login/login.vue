@@ -48,7 +48,7 @@
                     :class="{ confirm: sendCodeEnabled }"
                     :disabled="!sendCodeEnabled"
                     @click="getSmsCode"
-                >{{ !sendCodeFlag ? `已发送（${duration}s）` : '获取验证码' }}</button>
+                >{{ !sendCodeFlag ? `已发送(${duration}s)` : '获取验证码' }}</button>
             </view>
         </view>
         <view class="footer">
