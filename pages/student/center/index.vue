@@ -177,7 +177,7 @@ export default {
     methods: {
         getExpiryDateWarning,
         async init() {
-            const res = await this.$http.get(`/mini/student/getStudentDetail?studentId=${this.studentId || this.userId}`)
+            const res = await this.$http.get(`/mini/student/getStudentDetail?studentId=${this.studentId || this.userId}`)//171
             this.detail = res.data ?? {}
         },
 

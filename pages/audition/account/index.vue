@@ -35,7 +35,7 @@
                                     <text>
                                         <text class="day" :class="{ placeholder: !form.birthday }">
                                             {{
-                                                form.birthday ? dayjsFormat(form.birthday, 'YYYY年M月D日') : '例：1994年 6月25日'
+                                                    form.birthday ? dayjsFormat(form.birthday, 'YYYY年M月D日') : '例：1994年 6月25日'
                                             }}
                                         </text>
                                         <text v-if="form.birthday" class="age">
@@ -68,8 +68,7 @@
                     </view>
                     <view v-if="form.packageId" class="package-container">
                         <template v-if="form.courses.length">
-                            <view v-for="(course, courseIndex) in form.courses" :key="courseIndex"
-                                class="course">
+                            <view v-for="(course, courseIndex) in form.courses" :key="courseIndex" class="course">
                                 <view class="label">
                                     <text>
                                         {{ course.courseName }}
@@ -93,8 +92,8 @@
                                         @click="timetableChange(courseIndex)">
                                         <text>
                                             {{
-                                                course.timetablePeriodId ? '周' + WEEK_DAY[course.dayOfWeek] + ' ' +
-                                                    course.timetablePeriodName : '请选择该课程上课时间'
+                                                    course.timetablePeriodId ? '周' + WEEK_DAY[course.dayOfWeek] + ' ' +
+                                                        course.timetablePeriodName : '请选择该课程上课时间'
                                             }}
                                         </text>
                                         <image src="/static/images/audition/arrow_down.png" />
@@ -144,24 +143,13 @@
                         </view>
                         <view class="form-item">
                             <view class="label">请选择考季</view>
-                            <view class="value">
-                                <van-radio-group v-model="form.examSeason" @change="(e) => (form.examSeason = e.detail)"
-                                    direction="horizontal">
-                                    <van-radio use-icon-slot name="夏季">
-                                        <image slot="icon" :src="`/static/images/student/icon-radio${form.examSeason === '夏季'
-                                        ? '-active'
-                                        : ''
-                                        }.png`" style="width: 28rpx; height: 28rpx" />
-                                        夏季
-                                    </van-radio>
-                                    <van-radio use-icon-slot name="冬季">
-                                        <image slot="icon" :src="`/static/images/student/icon-radio${form.examSeason === '冬季'
-                                        ? '-active'
-                                        : ''
-                                        }.png`" style="width: 28rpx; height: 28rpx" />
-                                        冬季
-                                    </van-radio>
-                                </van-radio-group>
+                            <view class="value radio">
+                                <view v-for="item in ['夏季', '冬季']" :key="item" class="radio-item"
+                                    @click="onExamSeasonChange(item)">
+                                    <image
+                                        :src="`/static/images/student/icon-radio${form.examSeason === item ? '-active' : ''}.png`" />
+                                    <text class="text">{{ item }}</text>
+                                </view>
                             </view>
                         </view>
                     </view>
@@ -261,7 +249,7 @@
                             <text
                                 v-if="period.courseType === 'one' ? period.remainStudentNum > 1 : period.remainStudentNum > 0"
                                 class="num">{{
-                                    period.studentNum - period.remainStudentNum
+                                        period.studentNum - period.remainStudentNum
                                 }}人</text>
                         </view>
                     </view>
@@ -840,6 +828,10 @@ export default {
             } finally {
                 uni.hideLoading()
             }
+        },
+
+        onExamSeasonChange(value) {
+            this.form.examSeason = this.form.examSeason === value ? '' : value
         }
     }
 }
@@ -851,29 +843,36 @@ export default {
     padding-bottom: 148rpx;
     padding-bottom: calc(148rpx + constant(safe-area-inset-bottom));
     padding-bottom: calc(148rpx + env(safe-area-inset-bottom));
+
     &.step0 {
         padding-bottom: 270rpx;
         padding-bottom: calc(270rpx + constant(safe-area-inset-bottom));
         padding-bottom: calc(270rpx + env(safe-area-inset-bottom));
     }
+
     &-content {
         padding: 36rpx 32rpx;
+
         .block {
             background: #ffffff;
             box-shadow: 0px 0px 12rpx 0px #e3e5e9;
             border-radius: 16rpx;
             padding: 32rpx 16rpx;
-            + .block {
+
+            +.block {
                 margin-top: 36rpx;
             }
+
             .item {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
+
                 // height: 76rpx;
-                + .item {
+                +.item {
                     margin-top: 40rpx;
                 }
+
                 .label {
                     flex-basis: 160rpx;
                     font-size: 32rpx;
@@ -882,19 +881,23 @@ export default {
                     line-height: 44rpx;
                     margin-right: 8rpx;
                 }
+
                 .value {
                     flex: 1;
                     overflow: hidden;
                     padding: 16rpx 28rpx;
+
                     &.border-b {
                         border-bottom: 2rpx solid #f5f7fa;
                     }
+
                     input {
                         font-size: 32rpx;
                         color: #141f33;
                         line-height: 44rpx;
                     }
                 }
+
                 .gender {
                     padding: 0;
 
@@ -903,6 +906,7 @@ export default {
                         align-items: center;
                         border-radius: 12rpx;
                         background: #f5f7fa;
+
                         &-item {
                             display: flex;
                             align-items: center;
@@ -912,22 +916,24 @@ export default {
                             background: #f5f7fa;
                             line-height: 20px;
                             padding: 8rpx 28rpx;
+
                             &:first-child {
                                 border-radius: 12rpx 0 0 12rpx;
                             }
+
                             &:last-child {
                                 border-radius: 0 12rpx 12rpx 0;
                             }
+
                             &.gender-selector-item-selected {
                                 color: #fff;
-                                background: linear-gradient(
-                                    90deg,
-                                    #61baec 0%,
-                                    #84daee 100%
-                                );
+                                background: linear-gradient(90deg,
+                                        #61baec 0%,
+                                        #84daee 100%);
                             }
                         }
                     }
+
                     .gender-selector-divider {
                         width: 2rpx;
                         height: 28rpx;
@@ -940,23 +946,28 @@ export default {
                         margin-right: 12rpx;
                     }
                 }
+
                 .birth {
                     padding-right: 64rpx;
                     font-size: 32rpx;
                     color: #141f33;
+
                     .birth-box {
                         display: flex;
                         align-items: center;
                         justify-content: space-between;
                     }
+
                     .day {
                         font-size: 32rpx;
                         color: #141f33;
                         line-height: 44rpx;
+
                         &.placeholder {
                             color: #99a0ad;
                         }
                     }
+
                     .age {
                         border-radius: 10rpx;
                         border: 2rpx solid #62bbec;
@@ -967,13 +978,16 @@ export default {
                         line-height: 40rpx;
                         margin-left: 32rpx;
                     }
+
                     .arrow_down {
                         width: 20rpx;
                         height: 20rpx;
                     }
                 }
+
                 .package {
                     padding: 0;
+
                     .picker {
                         display: inline-flex;
                         border-radius: 8rpx;
@@ -983,9 +997,11 @@ export default {
                         font-size: 28rpx;
                         color: #141f33;
                         line-height: 40rpx;
+
                         &.placeholder {
                             color: #99a0ad;
                         }
+
                         image {
                             width: 20rpx;
                             height: 20rpx;
@@ -993,25 +1009,31 @@ export default {
                         }
                     }
                 }
+
                 &.days {
                     .label {
                         flex-basis: 230rpx;
                     }
+
                     .value {
                         display: flex;
+
                         .text {
                             flex: 1;
                             overflow: hidden;
                             text-align: center;
                         }
+
                         .unit {
                             margin-left: 60rpx;
                         }
                     }
+
                     .action {
                         color: #62bbec;
                         font-size: 24rpx;
                         margin-left: 32rpx;
+
                         image {
                             width: 28rpx;
                             height: 20rpx;
@@ -1019,13 +1041,16 @@ export default {
                     }
                 }
             }
+
             .package-container {
                 margin-top: 50rpx;
             }
+
             .course {
-                + .course {
+                +.course {
                     margin-top: 34rpx;
                 }
+
                 .label {
                     display: flex;
                     align-items: center;
@@ -1034,19 +1059,23 @@ export default {
                     color: #141f33;
                     line-height: 40rpx;
                     margin-bottom: 20rpx;
-                    text + text {
+
+                    text+text {
                         margin-left: 16rpx;
                     }
+
                     .action {
                         font-size: 24rpx;
                         color: #62bbec;
                         margin-left: 16rpx;
+
                         image {
                             width: 28rpx;
                             height: 20rpx;
                         }
                     }
                 }
+
                 .value {
                     display: flex;
                     align-items: center;
@@ -1055,24 +1084,29 @@ export default {
                     font-size: 28rpx;
                     color: #99a0ad;
                     line-height: 40rpx;
+
                     .teacher,
                     .timetable {
                         border-bottom: 2rpx solid #f5f7fa;
                         padding: 0 0 14rpx 6rpx;
                         color: #141f33;
                         line-height: 40rpx;
+
                         &.placeholder {
                             color: #99a0ad;
                         }
+
                         image {
                             width: 20rpx;
                             height: 20rpx;
                             margin-left: 12rpx;
                         }
                     }
+
                     .teacher {
                         width: 154rpx;
                     }
+
                     .timetable {
                         width: 420rpx;
                         text-align: center;
@@ -1080,21 +1114,26 @@ export default {
                 }
             }
         }
+
         .form {
             &-item {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                + .form-item {
+
+                +.form-item {
                     margin-top: 32rpx;
                 }
+
                 .label {
                     font-size: 28rpx;
                     color: #99a0ad;
                     line-height: 40rpx;
                 }
+
                 .value {
                     position: relative;
+
                     input {
                         border-bottom: 1px solid #f3f3f3;
                         text-align: center;
@@ -1103,6 +1142,7 @@ export default {
                         color: #141f33;
                         line-height: 20px;
                     }
+
                     .unit {
                         position: absolute;
                         right: 0;
@@ -1111,14 +1151,41 @@ export default {
                         color: #525666;
                         line-height: 20px;
                     }
+
+                    &.radio {
+                        display: flex;
+
+                        .radio-item {
+                            display: flex;
+                            align-items: center;
+
+                            +.radio-item {
+                                margin-left: 46rpx;
+                            }
+                        }
+
+                        image {
+                            width: 28rpx;
+                            height: 28rpx;
+                            margin-right: 16rpx;
+                        }
+
+                        .text {
+                            font-size: 28rpx;
+                            color: #99A0AD;
+                            line-height: 40rpx;
+                        }
+                    }
                 }
             }
         }
+
         .ticket {
             display: flex;
             align-items: center;
             justify-content: space-between;
             position: relative;
+
             .del {
                 position: absolute;
                 width: 28rpx;
@@ -1126,6 +1193,7 @@ export default {
                 top: -14rpx;
                 right: -14rpx;
             }
+
             .name,
             .action {
                 border-bottom: 2rpx solid #f5f7fa;
@@ -1133,24 +1201,29 @@ export default {
                 color: #141f33;
                 line-height: 40rpx;
             }
+
             .name {
                 width: 264rpx;
                 font-size: 28rpx;
+
                 image {
                     width: 20rpx;
                     height: 20rpx;
                     margin-left: 12rpx;
                 }
             }
+
             .action {
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 width: 300rpx;
+
                 input {
                     width: 100rpx;
                     text-align: center;
                 }
+
                 image {
                     width: 28rpx;
                     height: 28rpx;
@@ -1158,6 +1231,7 @@ export default {
                 }
             }
         }
+
         .empty {
             margin-top: 36rpx;
             border: 1px dashed #c9ced6;
@@ -1168,6 +1242,7 @@ export default {
             text-align: center;
         }
     }
+
     &-actions {
         position: fixed;
         z-index: 9;
@@ -1179,24 +1254,29 @@ export default {
 
         padding: 21rpx 52rpx 16rpx;
         background-color: #f5f7fa;
+
         .btn {
             height: 84rpx;
             line-height: 84rpx;
             border-radius: 84rpx;
             font-size: 28rpx;
             margin-bottom: 16rpx;
+
             &::after {
                 display: none;
             }
+
             &.disabled {
                 background: #e1e1e1;
                 color: #99a0ad;
             }
+
             &.confirm {
                 background: linear-gradient(90deg, #61baec 0%, #84daee 100%);
                 color: #ffffff;
             }
         }
+
         .link {
             font-size: 24rpx;
             color: #99a0ad;
@@ -1267,8 +1347,7 @@ export default {
                 display: inline-flex;
                 width: 10rpx;
                 height: 100rpx;
-                background: #d8d8d8
-                    linear-gradient(90deg, #61baec 0%, #84daee 100%);
+                background: #d8d8d8 linear-gradient(90deg, #61baec 0%, #84daee 100%);
             }
         }
     }
