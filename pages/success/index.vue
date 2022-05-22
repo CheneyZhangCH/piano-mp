@@ -63,6 +63,9 @@ export default {
             if (this.from === 'create') {
                 return uni.reLaunch({ url: '/pages/audition/account/index' })
             }
+            if (this.from === 'complaint') {
+                return uni.redirectTo({ url: '/pages/student/center/index' })
+            }
             uni.navigateBack({ delta: 1 })
             uni.setStorageSync('successBack', this.from)
         }

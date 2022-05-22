@@ -1,12 +1,7 @@
 <template>
     <view class="page" :class="{ 'data-center': datacenterFlag }" :style="pageStyle">
-        <!-- padding-bottom: ${this.datacenterFlag ? '100rpx' : 0}; -->
         <view class="custom-header">
-            <view class="title" :style="customTitleStyle">
-                <uni-icons v-if="studentId" type="left" color="#FFF" size="20" @click="back"
-                    style="position: absolute; left: 0; padding: 0 30rpx" />
-                学员中心
-            </view>
+            <view class="title" :style="customTitleStyle"> 学员中心 </view>
         </view>
         <scroll-view scroll-y="true" class="page-content">
             <view class="user">
@@ -85,7 +80,7 @@
         </view>
 
         <MessageNotify ref="notify" />
-        <customTabbar v-if="!studentId" :active="2" />
+        <customTabbar :active="2" />
     </view>
 </template>
 
@@ -109,10 +104,8 @@ export default {
 
             accountType: '',
             userId: 0,
-            studentId: 0,
 
-            WEEK_DAY,
-            showed: false
+            WEEK_DAY
         }
     },
     computed: {
@@ -152,37 +145,29 @@ export default {
                 title: '请先登录',
                 icon: 'none'
             })
-            return uni.navigateTo({
-                url: '/pages/login/index'
-            })
+            return uni.navigateTo({ url: '/pages/login/index' })
         }
         this.accountType = accountType
         this.userId = userId
+        if (option?.studentId && +option.studentId !== userId) return uni.navigateTo({ url: '/pages/login/index' })
 
         let rect = wx.getMenuButtonBoundingClientRect();
-
         this.headerHeight = rect.height
         this.headerTop = rect.top
-
-        if (option?.studentId) {
-            this.studentId = option.studentId
-        }
-        this.init()
     },
     onShow() {
-        if (this.showed) this.init()
-        this.showed = true
+        this.init()
         this.$refs.notify.getMsgCount()
     },
     methods: {
         getExpiryDateWarning,
         async init() {
-            const res = await this.$http.get(`/mini/student/getStudentDetail?studentId=${this.studentId || this.userId}`)//171
+            const res = await this.$http.get(`/mini/student/getStudentDetail?studentId=${this.userId}`)
             this.detail = res.data ?? {}
         },
 
         toFinishLesson({ courseType, courseId }) {
-            uni.navigateTo({ url: '/pages/teacher/xiaokeOrhexiaoRecord/index?courseType=' + courseType + '&courseId=' + courseId + '&studentId=' + (this.studentId || this.userId) })
+            uni.navigateTo({ url: '/pages/teacher/xiaokeOrhexiaoRecord/index?courseType=' + courseType + '&courseId=' + courseId + '&studentId=' + this.userId })
         },
 
         toComplaint() {

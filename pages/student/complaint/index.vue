@@ -140,9 +140,11 @@ export default {
                 title: '请先登录',
                 icon: 'none'
             })
-            return uni.navigateTo({
-                url: '/pages/login/index'
-            })
+            return uni.navigateTo({ url: '/pages/login/index' })
+        }
+        if (option?.studentId) {
+            const userId = uni.getStorageSync('userId')
+            if (+option.studentId !== userId) return uni.navigateTo({ url: '/pages/login/index' })
         }
         if (option?.finishLessonId) {
             this.finishLessonId = option.finishLessonId

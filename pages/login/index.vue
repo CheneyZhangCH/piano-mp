@@ -10,7 +10,7 @@
             </button>
         </view>
 
-        <MessageBox ref="error" @confirm="errorConfirm" />
+        <MessageBox ref="error" @confirm="navToLogin" />
     </view>
 </template>
 
@@ -27,6 +27,9 @@ export default {
     },
     onReady() { },
     onLoad() { },
+    onShow() {
+        uni.clearStorageSync()
+    },
     methods: {
         async getUserPhoneNumber(e) {
             if (this.loading) return
@@ -57,7 +60,6 @@ export default {
                                 uni.setStorageSync('phone', phone)
                                 uni.setStorageSync('userId', id)
                                 uni.setStorageSync('coverUrl', coverUrl)
-                                console.log(token)
 
                                 vm.$store.dispatch('tabBar/setTabbar', accountType) // 手动更新store
 
@@ -106,10 +108,6 @@ export default {
         },
 
         navToLogin() {
-            uni.navigateTo({ url: '/pages/login/login' })
-        },
-
-        errorConfirm() {
             uni.navigateTo({ url: '/pages/login/login' })
         }
     },

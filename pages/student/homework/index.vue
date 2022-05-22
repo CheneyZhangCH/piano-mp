@@ -244,7 +244,7 @@ export default {
             return [this.studentScore?.lastExamTime, this.studentScore?.examSeason].filter(Boolean).join(' | ') || '-'
         },
     },
-    onLoad() {
+    onLoad(option) {
         const token = uni.getStorageSync('token')
         const userId = uni.getStorageSync('userId')
 
@@ -254,14 +254,12 @@ export default {
                 title: '请先登录',
                 icon: 'none'
             })
-            return uni.navigateTo({
-                url: '/pages/login/index'
-            })
+            return uni.navigateTo({ url: '/pages/login/index' })
         }
-
         this.userId = userId
+        if (option?.studentId && +option.studentId !== userId) return uni.navigateTo({ url: '/pages/login/index' })
 
-        let rect = wx.getMenuButtonBoundingClientRect();
+        let rect = wx.getMenuButtonBoundingClientRect()
         this.headerHeight = rect.height
         this.headerTop = rect.top
     },
