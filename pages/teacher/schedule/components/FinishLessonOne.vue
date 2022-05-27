@@ -275,13 +275,12 @@ export default {
                         timetablePeriodId: this.detail.timetablePeriodId
                     }
                 })
-                const chapterScores = lastChaptersRes.data?.map((item) => ({
-                    chapterId: item.chapterId,
+                this.form.chapterScores = lastChaptersRes.data?.map((item,index) => ({
+                    chapterId: item.chapterId ?? index,
                     chapterName: item.chapterName,
                     chapterScore: 0,
                     finishChapterId: item.id
                 })) ?? []
-                this.$set(this.form, 'chapterScores', chapterScores)
 
                 const packageId = this.detail?.oneCourse?.coursePackage?.packageId
                 const teachingBookRes = await this.$http.get(

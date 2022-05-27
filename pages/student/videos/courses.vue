@@ -48,7 +48,6 @@ export default {
     },
     onLoad(option) {
         const token = uni.getStorageSync('token')
-        const accountType = uni.getStorageSync('accountType')
 
         // 权限验证
         if (!token) {

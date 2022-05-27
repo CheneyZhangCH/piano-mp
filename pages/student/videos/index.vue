@@ -1,5 +1,5 @@
 <template>
-    <view class="page" @touchstart="touchstart" @touchend="touchend">
+    <view class="page">
         <scroll-view scroll-x="true" :scroll-left="scrollLeft" scroll-with-animation class="page-package">
             <view v-for="item in packageList" :key="item.id" :data-package-id="item.id" class="page-package-item"
                 :class="{
@@ -44,8 +44,6 @@ export default {
             clientWidth: uni.getSystemInfoSync().windowWidth / 2,
 
             courses: [],
-
-            startX: 0
         }
     },
     onLoad(option) {
@@ -86,23 +84,6 @@ export default {
         }
     },
     methods: {
-        touchstart(e) {
-            this.startX = e.changedTouches[0].pageX
-        },
-
-        touchend(e) {
-            const moveX = e.changedTouches[0].pageX - this.startX
-            if (Math.abs(moveX) < 50) return
-            const availablePackageList = this.packageList.filter(_ => _.available)
-            const index = availablePackageList.findIndex(_ => _.id === this.packageId)
-            if (moveX > 0) {
-                if(index === 0) return
-                this.packageChange(availablePackageList[index - 1])
-            } else {
-                if(index === availablePackageList.length - 1) return
-                this.packageChange(availablePackageList[index + 1])
-            }
-        },
 
         async init() {
             uni.showLoading({ title: '加载中', mask: true })
@@ -196,6 +177,11 @@ export default {
 
     &-courses {
         padding: 32rpx 30rpx;
+
+        overflow-y: auto;
+        max-height: calc(100vh - 184rpx);
+        max-height: calc(100vh - 184rpx - constant(safe-area-inset-bottom));
+        max-height: calc(100vh - 184rpx - env(safe-area-inset-bottom));
 
         .item {
             width: 100%;

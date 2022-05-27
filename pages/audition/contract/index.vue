@@ -1,5 +1,5 @@
 <template>
-    <view class="page" :class="{ hasBtn }">
+    <view class="page" :class="{ 'common': hasBtn }">
         <view class="page-content">
             <view class="block">
                 <view class="title">一、合同双方信息</view>
@@ -26,7 +26,8 @@
                     <view class="row">{{ form.packageName }}</view>
                     <view v-for="course in form.courses" :key="course.id" class="row">
                         {{
-                            course.courseName + course.courseNum + '节 ' + course.teacherName + ' 周' + WEEK_DAY[course.dayOfWeek] + ' ' + course.timetablePeriodName
+                                course.courseName + course.courseNum + '节 ' + course.teacherName + ' 周' +
+                                WEEK_DAY[course.dayOfWeek] + ' ' + course.timetablePeriodName
                         }}
                     </view>
                     <view class="row">{{ '账户有效期：' + form.expiryMonths + '个月' }}</view>
@@ -34,7 +35,7 @@
                     <template v-if="['messageCONTINUE', 'continue'].includes(from)">
                         <view v-if="form.trainTicket" class="row">
                             {{
-                                form.trainTicket.ticketName + ' ' + form.trainTicket.num + '张'
+                                    form.trainTicket.ticketName + ' ' + form.trainTicket.num + '张'
                             }}
                         </view>
                         <view class="row">* {{ form.immediately ? '立即生效' : '剩余课时结束后生效课程' }}</view>
@@ -54,34 +55,28 @@
                 <view class="content">
                     <view class="row flex">1. 若乙方因个人原因请假或缺席，需至少提前2小时告知甲方，若无故缺席、迟到等行为，甲方有权利扣除相应课时。</view>
                     <view class="row flex">2. 若因乙方之原因(如迟到，缺勤，未按时完成作业，不配合教学计划等)致使学习目的无法完成，则甲方不承担任何责任。</view>
-                    <view
-                        class="row flex"
-                    >3. 乙方购买的课时，需在相应有效期内使用完毕，若因个人原因导致课时沉余，甲方有权利针对过期课时进行等价折课或抵扣券等操作。</view>
+                    <view class="row flex">3. 乙方购买的课时，需在相应有效期内使用完毕，若因个人原因导致课时沉余，甲方有权利针对过期课时进行等价折课或抵扣券等操作。</view>
                     <view class="row flex">4. 为保证乙方安全，上下学及上课过程须由家长或其监护人接送，甲方不负责由此产生的一切意外事故。</view>
-                    <view
-                        class="row bold flex"
-                    >5. 甲方提供的内部教材，学习资料及配套物料等，仅限乙方本人使用，乙方不得擅自将内部资料告知或借阅他人使用，如乙方违反本条约定，甲方有权当即终止本协议。</view>
+                    <view class="row bold flex">5.
+                        甲方提供的内部教材，学习资料及配套物料等，仅限乙方本人使用，乙方不得擅自将内部资料告知或借阅他人使用，如乙方违反本条约定，甲方有权当即终止本协议。</view>
                 </view>
             </view>
             <view class="block">
                 <view class="title">五、合同解除</view>
                 <view class="content">
-                    <view
-                        class="row flex"
-                    >开课后，乙方因个人原因退学，可向甲方提出申请解除本合同，经甲方同意后，甲方有权扣除剩余课程费用的30%作为违约金，甲方扣除乙方违约金和已完成的课程费用后，在15个工作日内将剩余费用退还给乙方，如乙方已领取的教材和资料等其他用品可归还甲方或按照原价等价扣除。</view>
+                    <view class="row flex">
+                        开课后，乙方因个人原因退学，可向甲方提出申请解除本合同，经甲方同意后，甲方有权扣除剩余课程费用的30%作为违约金，甲方扣除乙方违约金和已完成的课程费用后，在15个工作日内将剩余费用退还给乙方，如乙方已领取的教材和资料等其他用品可归还甲方或按照原价等价扣除。
+                    </view>
                 </view>
             </view>
-            <view
-                v-if="['messageACCOUNT', 'messageCONTINUE', 'refund'].includes(from)"
-                class="message"
-            >
+            <view v-if="['messageACCOUNT', 'messageCONTINUE', 'refund'].includes(from)" class="message">
                 <view class="explain">* 最终解释权归甲方所有</view>
                 <view class="divider"></view>
                 <view class="hasRead">监护人已阅读并同意此协议</view>
             </view>
         </view>
         <view v-if="hasBtn" class="page-footer">
-            <button class="btn-primary" type="primary" @click="handleSubmit">确认无误，发送合同</button>
+            <button class="btn confirm" @click="handleSubmit">确认无误，发送合同</button>
         </view>
     </view>
 </template>
@@ -232,13 +227,17 @@ export default {
 
 <style lang="scss" scoped>
 .page {
-    &.hasBtn {
-        padding-bottom: 184rpx;
+    &.common {
+        padding-bottom: 148rpx;
+        padding-bottom: calc(148rpx + constant(safe-area-inset-bottom));
+        padding-bottom: calc(148rpx + env(safe-area-inset-bottom));
     }
+
     &-content {
         padding: 28rpx 52rpx;
+
         .block {
-            + .block {
+            +.block {
                 margin-top: 36rpx;
             }
 
@@ -249,28 +248,35 @@ export default {
                 line-height: 34rpx;
                 margin-bottom: 14rpx;
             }
+
             .content {
                 padding-left: 52rpx;
+
                 .row {
                     font-size: 20rpx;
                     font-weight: 300;
                     color: #141f33;
                     line-height: 28rpx;
-                    + .row {
+
+                    +.row {
                         margin-top: 12rpx;
                     }
+
                     &.t0 {
                         margin-top: 0;
                     }
+
                     &.bold {
                         font-weight: 600;
                     }
+
                     .row-label {
                         min-width: 68rpx;
                     }
                 }
             }
         }
+
         .message {
             .explain {
                 font-size: 16rpx;
@@ -280,10 +286,12 @@ export default {
                 margin-bottom: 4rpx;
                 text-align: right;
             }
+
             .divider {
                 border-top: 2rpx dashed #99a0ad;
                 margin: 10rpx 0;
             }
+
             .hasRead {
                 font-size: 20rpx;
                 font-weight: 600;
@@ -293,13 +301,6 @@ export default {
                 text-align: right;
             }
         }
-    }
-    &-footer {
-        position: fixed;
-        width: 100%;
-        bottom: 0;
-        padding: 40rpx 52rpx;
-        background-color: #fff;
     }
 }
 </style>

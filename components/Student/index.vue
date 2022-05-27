@@ -44,7 +44,7 @@
                             }}</text>
                             <text class="score-item-desc">识谱平均分</text>
                         </view>
-                        <view class="score-item text-right">
+                        <view class="score-item text-right" style="padding-right: 12rpx;">
                             <view class="inline-flex flex-column">
                                 <text class="score-item-num">{{
                                         student.attitudeScore || '-'

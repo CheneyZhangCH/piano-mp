@@ -1,5 +1,5 @@
 <template>
-    <view class="page" @touchstart="touchstart" @touchend="touchend">
+    <view class="page">
         <view class="page-title">
             <view v-for="day in dayOfWeekArr" :key="day.value" class="day-of-week" @click="handleToggleDayOfWeek(day)">
                 <image v-if="dayOfWeek === day.value"
@@ -145,9 +145,7 @@ export default {
 
             studentId: 0,
             finishLessonDetail: {}, // 消课详情
-            courseDetail: {},
-
-            startX: 0
+            courseDetail: {}
         };
     },
     onLoad(option) {
@@ -172,23 +170,6 @@ export default {
         this.handleSearch();
     },
     methods: {
-        touchstart(e) {
-            this.startX = e.changedTouches[0].pageX
-        },
-
-        touchend(e) {
-            const moveX = e.changedTouches[0].pageX - this.startX
-            if (Math.abs(moveX) < 50) return
-            if (moveX > 0) {
-                if (this.dayOfWeek === 2) return
-                this.dayOfWeek--
-            } else {
-                if (this.dayOfWeek === 7) return
-                this.dayOfWeek++
-            }
-            this.handleSearch();
-        },
-
         handleToggleDayOfWeek(day) {
             this.dayOfWeek = day.value;
             this.handleSearch();

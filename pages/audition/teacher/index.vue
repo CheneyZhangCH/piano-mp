@@ -1,5 +1,5 @@
 <template>
-    <view class="page" @touchstart="touchstart" @touchend="touchend">
+    <view class="page">
         <view class="page-title">
             <view v-for="day in dayOfWeekArr" :key="day.value" class="day-of-week" @click="handleToggleDayOfWeek(day)">
                 <image v-if="dayOfWeek === day.value"
@@ -36,7 +36,8 @@
                                         'male'
                                         }-selected.png`"></image>
                                         <text class="student-age">{{ period.oneCourse.student.age }}岁</text>
-                                        <text class="packageName"> {{ period.oneCourse.coursePackage.packageName }} </text>
+                                        <text class="packageName"> {{ period.oneCourse.coursePackage.packageName }}
+                                        </text>
                                     </view>
                                     <view v-if="Array.isArray(period.oneCourse.coursePackage.courses)" class="course">
                                         <template v-for="course in period.oneCourse.coursePackage.courses">
@@ -156,9 +157,7 @@ export default {
             periods: [],
 
             studentId: 0,
-            courseDetail: {},
-
-            startX: 0
+            courseDetail: {}
         };
     },
     onLoad(option) {
@@ -195,23 +194,6 @@ export default {
         }
     },
     methods: {
-        touchstart(e) {
-            this.startX = e.changedTouches[0].pageX
-        },
-
-        touchend(e) {
-            const moveX = e.changedTouches[0].pageX - this.startX
-            if (Math.abs(moveX) < 50) return
-            if (moveX > 0) {
-                if (this.dayOfWeek === 2) return
-                this.dayOfWeek--
-            } else {
-                if (this.dayOfWeek === 7) return
-                this.dayOfWeek++
-            }
-            this.handleSearch();
-        },
-
         handleToggleDayOfWeek(day) {
             this.dayOfWeek = day.value;
             this.handleSearch();

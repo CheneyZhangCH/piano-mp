@@ -152,7 +152,7 @@
                             }}</text>
                             <view class="btn">
                                 查看课堂报告与作业详情
-                                <uni-icons type="right" color="#99A0AD" size="12" />
+                                <uni-icons type="right" color="#62bbec" size="12" />
                             </view>
                         </view>
                     </view>
