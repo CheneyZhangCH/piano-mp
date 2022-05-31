@@ -1,5 +1,5 @@
 <template>
-    <view class="page" :style="pageStyle">
+    <view class="page" :class="{ 'datacenter': datacenterFlag }" :style="pageStyle">
         <view class="custom-header" :class="{ group: !!groupId }">
             <view class="title" :style="customTitleStyle">
                 <uni-icons v-if="!datacenterFlag" type="left" color="#FFF" size="22" @click="back"
@@ -154,7 +154,8 @@
                         <uni-icons type="right" color="#99A0AD" size="12" />
                     </view>
                 </view>
-                <view class="content">
+                <view v-if="group.packageRatios.length" class="content"
+                    :class="{ 'singlePackage': group.packageRatios.length === 1 }">
                     <view v-for="item in group.packageRatios" :key="item.id" class="item">
                         <text class="ratio"
                             :class="{ 'reach': item.actualRatio >= item.ratio, 'unreach': item.actualRatio < item.ratio, empty: !item.actualRatio }">{{
@@ -209,8 +210,7 @@
                                 <image :src="item.coverUrl || ''" />
                                 <text class="name ellipsis" :class="{ 'leader': item.groupTeacherType === 'leader' }">{{
                                         item.teacherName
-                                }}<template
-                                        v-if="item.groupTeacherType === 'leader'">(组长)</template></text>
+                                }}<template v-if="item.groupTeacherType === 'leader'">(组长)</template></text>
                                 <text v-if="leaderFlag && item.accountId !== userId" class="btn"
                                     @click="toTeacher(item)">查看课表</text>
                             </view>
@@ -318,7 +318,7 @@ export default {
     },
     computed: {
         pageStyle() {
-            return `padding-top: ${(this.headerHeight + this.headerTop + 20) * 2}rpx; padding-bottom: ${this.datacenterFlag ? '100rpx' : 0};`
+            return `padding-top: ${(this.headerHeight + this.headerTop + 20) * 2}rpx;`
         },
         customTitleStyle() {
             return `top: ${this.headerTop}px; height: ${this.headerHeight}px; line-height: ${this.headerHeight}px`
@@ -507,6 +507,12 @@ export default {
     height: 100vh;
     overflow: hidden;
     box-sizing: border-box;
+
+    &.datacenter {
+        padding-bottom: 100rpx;
+        padding-bottom: calc(100rpx + constant(safe-area-inset-bottom));
+        padding-bottom: calc(100rpx + env(safe-area-inset-bottom));
+    }
 
     .custom-header {
         position: fixed;
@@ -827,6 +833,9 @@ export default {
                 justify-content: flex-start;
                 flex-wrap: wrap;
                 row-gap: 24rpx;
+                &.singlePackage {
+                    justify-content: center;
+                }
 
                 .item {
                     width: 50%;
@@ -878,6 +887,7 @@ export default {
                 justify-content: space-between;
 
                 .btn {
+                    display: flex;
                     font-size: 24rpx;
                     color: #62bbec;
 
@@ -977,6 +987,7 @@ export default {
                                 &:not(.leader) {
                                     max-width: 144rpx;
                                 }
+
                                 font-size: 24rpx;
                                 color: #525666;
                                 line-height: 34rpx;

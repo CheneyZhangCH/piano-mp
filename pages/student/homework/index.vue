@@ -619,6 +619,9 @@ export default {
                     }
 
                     .btn {
+                        display: flex;
+                        align-items: center;
+
                         font-size: 24rpx;
                         color: #62bbec;
                         line-height: 34rpx;

@@ -171,6 +171,7 @@ export default {
                 font-weight: 600;
                 color: #141f33;
                 line-height: 40rpx;
+                margin-top: 6rpx;
                 margin-bottom: 6rpx;
             }
             &-content {

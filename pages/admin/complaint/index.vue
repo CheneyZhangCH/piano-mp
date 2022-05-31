@@ -20,7 +20,11 @@
                     <view class="infos">
                         <view class="info">
                             <template v-if="detail.complaintType === 'finishLesson' && detail.finishLesson">
-                                <view class="content-2 mb-16">{{ detail.finishLesson | chapterNames }}</view>
+                                <template v-if="detail.finishLesson.chapters">
+                                    <view v-for="chapter in detail.finishLesson.chapters" :key="chapter.id" class="content-2 mb-16">
+                                        {{ chapter.chapterName }}
+                                    </view>
+                                </template>
                                 <view class="content mb-16">{{ detail.finishLesson | finishTime }}</view>
                                 <view v-if="detail.finishLesson.courseType === 'one'" class="scores content mb-16">
                                     <text>手型评分:{{ detail.finishLesson.handScore || 0 }}分</text>
@@ -236,7 +240,7 @@ export default {
 
                 .type {
                     font-size: 28rpx;
-                    font-weight: 500;
+                    font-weight: 600;
                     color: #141f33;
                 }
 
@@ -353,6 +357,7 @@ export default {
                 background: #F5F7FA;
                 border-radius: 16rpx;
                 padding: 20rpx;
+                padding-right: 30rpx;
 
                 font-size: 24rpx;
                 line-height: 34rpx;

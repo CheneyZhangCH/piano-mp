@@ -56,6 +56,10 @@ export default {
     },
     methods: {
         open() {
+            this.form = {
+                amount: '',
+                content: ''
+            }
             this.$refs.popup.open()
         },
 

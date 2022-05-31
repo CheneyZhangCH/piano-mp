@@ -15,10 +15,10 @@
                     src="https://static.gangqintonghua.com/img/beijing/homework-huikeqingkuang.png" />
                 <view class="chapterScores">
                     <view v-for="item in detail.chapterScores" :key="item.id" class="score">
-                        <text class="ellipsis flex-1">
-                            <text class="name ">{{ item.chapterName }}</text>回课表现
+                        <text class="name ellipsis ">
+                            {{ item.chapterName }}
                         </text>
-                        <view class="rate flex align-center">
+                        <view class="rate">
                             <van-rate v-model="item.score"
                                 :icon="'https://static.gangqintonghua.com/img/icon/star-new.png'"
                                 :void-icon="'https://static.gangqintonghua.com/img/icon/star-void.png'" disabled
@@ -34,15 +34,15 @@
                 <view class="scores">
                     <view class="score">
                         <text class="num">{{ detail.handScore || '-' }}</text>
-                        <text class="desc">手型平均分</text>
+                        <text class="desc">手型得分</text>
                     </view>
                     <view class="score">
                         <text class="num">{{ detail.musicScore || '-' }}</text>
-                        <text class="desc">识谱平均分</text>
+                        <text class="desc">识谱得分</text>
                     </view>
                     <view class="score">
                         <text class="num">{{ detail.attitudeScore || '-' }}</text>
-                        <text class="desc">学习态度分</text>
+                        <text class="desc">学习态度</text>
                     </view>
                 </view>
             </view>
@@ -63,7 +63,7 @@
                 <image class="title-icon" src="https://static.gangqintonghua.com/img/beijing/homework-kehouzuoye.png" />
                 <view class="workStep">
                     <view v-for="(work, workIndex) in chapter.workStep" :key="workIndex" class="work">
-                        <text>步骤{{ numToChinese[workIndex + 1] }}：</text>
+                        <text class="work-step">步骤{{ numToChinese[workIndex + 1] }}：</text>
                         <text class="work-content">{{ work.content }}</text>
                     </view>
                 </view>
@@ -71,7 +71,8 @@
                     src="https://static.gangqintonghua.com/img/beijing/homework-jiaoshipingyu.png" />
                 <view class="suggestStep">
                     <view v-for="(suggest, suggestIndex) in chapter.suggestStep" :key="suggestIndex" class="suggest">
-                        <text>· {{ suggest.content }}</text>
+                        <text>·</text>
+                        <text>{{ suggest.content }}</text>
                     </view>
                 </view>
             </view>
@@ -190,24 +191,30 @@ export default {
                     align-items: center;
                     justify-content: space-between;
 
-                    font-size: 24rpx;
-                    color: #525666;
-                    line-height: 34rpx;
-
-                    .name {
-                        margin-right: 4rpx;
-                    }
-
                     +.score {
                         margin-top: 2rpx;
                     }
 
-                    .num {
+                    .name {
+                        width: 320rpx;
                         font-size: 24rpx;
-                        font-weight: 600;
-                        color: #62BBEC;
+                        color: #525666;
                         line-height: 34rpx;
-                        margin-left: 20rpx;
+                    }
+
+                    .rate {
+                        display: flex;
+                        align-items: center;
+
+                        .num {
+                            width: 56rpx;
+                            font-size: 24rpx;
+                            font-weight: 600;
+                            color: #62BBEC;
+                            line-height: 34rpx;
+                            margin-left: 16rpx;
+                            text-align: right;
+                        }
                     }
                 }
             }
@@ -271,6 +278,7 @@ export default {
                 .name {
                     display: flex;
                     align-items: center;
+
                     .text {
                         font-size: 24rpx;
                         font-weight: 600;
@@ -306,6 +314,8 @@ export default {
                 margin-bottom: 20rpx;
 
                 .work {
+                    display: flex;
+
                     font-size: 24rpx;
                     color: #525666;
                     line-height: 34rpx;
@@ -314,7 +324,12 @@ export default {
                         margin-top: 10rpx;
                     }
 
+                    &-step {
+                        flex-basis: 96rpx;
+                    }
+
                     &-content {
+                        flex: 1;
                         font-weight: 600;
                         color: #62bbec;
                         margin-left: 12rpx;
@@ -324,7 +339,8 @@ export default {
 
             .suggestStep {
                 .suggest {
-                    width: 298px;
+                    display: flex;
+
                     font-size: 24rpx;
                     font-weight: 600;
                     color: #F15E5E;
@@ -332,6 +348,10 @@ export default {
 
                     +.suggest {
                         margin-top: 10rpx;
+                    }
+
+                    text+text {
+                        margin-left: 12rpx;
                     }
                 }
             }
