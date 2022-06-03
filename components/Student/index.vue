@@ -78,7 +78,8 @@
                     <view class="section-divider"></view>
                     <view v-if="Array.isArray(coursePackage.courses)" class="course px-28">
                         <view v-for="course in coursePackage.courses" :key="course.courseId" class="course-item">
-                            <view class="course-item-title" :class="{ warning: course.remainCourseNum <= 6 }">
+                            <view class="course-item-title"
+                                :class="{ warning: accountType !== 'TEACHER' && course.remainCourseNum <= 6 }">
                                 <text class="flex-1 ellipsis">
                                     <text>{{
                                             course.courseName +
