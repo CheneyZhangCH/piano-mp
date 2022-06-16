@@ -11,11 +11,11 @@
                     <view class="row flex justify-between">
                         <view class="row inline-flex">
                             <text class="row-label">乙方：</text>
-                            <text class="text-underline px-8">{{ form.studentName }}</text>
+                            <text class="text-underline">{{ form.studentName }}</text>
                         </view>
                         <view class="row t0 inline-flex">
                             <text class="row-label">监护人联系方式：</text>
-                            <text class="text-underline px-8">{{ form.phone }}</text>
+                            <text class="text-underline">{{ form.phone }}</text>
                         </view>
                     </view>
                 </view>
