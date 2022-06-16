@@ -24,7 +24,7 @@
             </view>
         </view>
 
-        <MessageNotify ref="notify" />
+        <MessageNotify v-if="accountType !== 'TEACHER'" ref="notify" />
         <customTabbar v-if="showTabBar" :active="0" />
     </view>
 </template>
@@ -44,10 +44,12 @@ export default {
             clientWidth: uni.getSystemInfoSync().windowWidth / 2,
 
             courses: [],
+            accountType: ''
         }
     },
     onLoad(option) {
         const token = uni.getStorageSync('token')
+        const accountType = uni.getStorageSync('accountType')
 
         // 权限验证
         if (!token) {
@@ -59,6 +61,7 @@ export default {
                 url: '/pages/login/index'
             })
         }
+        this.accountType = accountType
         // 从数据中心隐藏tabbar
         if (option?.from === 'datacenter') this.showTabBar = false
         this.init()
