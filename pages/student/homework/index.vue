@@ -118,23 +118,23 @@
                                 </view>
                             </template>
                             <template v-else>
-                                <view class="info ellipsis">
+                                <view class="info flex">
                                     <text class="name"
                                         :class="{ 'chinese-of-brackets': isChineseBeginningOfBrackets(item.chapters[0].knowledge) }">新知识点</text>
-                                    <text class="msg">{{ item.chapters[0].knowledge }}</text>
+                                    <text class="msg flex-1">{{ item.chapters[0].knowledge }}</text>
                                 </view>
                                 <view class="info ellipsis">
                                     <text class="name"
                                         :class="{ 'chinese-of-brackets': isChineseBeginningOfBrackets(item.chapters[0].chapterName) }">本课曲目</text>
                                     <text class="msg">{{ item.chapters[0].chapterName }}</text>
                                 </view>
-                                <view class="info homework">
+                                <view class="info flex homework">
                                     <text class="name">作业详情</text>
-                                    <view class="msg">
+                                    <view class="msg flex-1">
                                         <view v-for="(work, workIndex) in item.chapters[0].workStep" :key="workIndex"
-                                            class="work">
+                                            class="work flex">
                                             <text>步骤{{ numToChinese[workIndex + 1] }}：</text>
-                                            <text class="work-content">{{ work.content }}</text>
+                                            <text class="work-content flex-1">{{ work.content }}</text>
                                         </view>
                                     </view>
                                 </view>
@@ -566,7 +566,6 @@ export default {
                         }
 
                         &.homework {
-                            display: flex;
 
                             .work {
                                 font-size: 24rpx;

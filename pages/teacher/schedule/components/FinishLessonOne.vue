@@ -7,7 +7,7 @@
                     <view class="content">
                         <view v-if="form.chapterScores.length" class="form-item rate">
                             <view class="label">回课情况</view>
-                            <view v-for="(item, index) in form.chapterScores" :key="item.chapterId" class="rate-item">
+                            <view v-for="(item, index) in form.chapterScores" :key="item.finishChapterId" class="rate-item">
                                 <text class="name ellipsis">{{ item.chapterName }}</text>
                                 <view class="rate-wrap">
                                     <van-rate v-model="item.chapterScore"
@@ -276,7 +276,7 @@ export default {
                     }
                 })
                 this.form.chapterScores = lastChaptersRes.data?.map((item,index) => ({
-                    chapterId: item.chapterId ?? index,
+                    chapterId: item.chapterId,
                     chapterName: item.chapterName,
                     chapterScore: 0,
                     finishChapterId: item.id
