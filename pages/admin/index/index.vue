@@ -5,7 +5,7 @@
                 <view v-for="group in teacherGroup" :key="group.id" class="group">
                     <view class="group-title">
                         <view class="name ellipsis">
-                            <image class="icon" src="/static/images/audition/group.png"></image>
+                            <image class="icon" src="/static/images/audition/group.png"/>
                             <text>{{ group.groupName }}</text>
                         </view>
                         <view v-if="group.id > 0" class="btn" @click="toGroup(group)">
@@ -14,7 +14,7 @@
                     </view>
                     <view class="group-content">
                         <view v-for="teacher in group.teachers" :key="teacher.accountId" class="teacher-item" @click="toTeacherManage(teacher)">
-                            <image class="avatar" :src="teacher.coverUrl" mode="fit"></image>
+                            <image class="avatar" :src="teacher.coverUrl" mode="fit"/>
                             <text class="name">{{ teacher.teacherName }}</text>
                         </view>
                     </view>
@@ -23,7 +23,7 @@
         </view>
 
         <customTabbar :active="0" />
-  </view>
+    </view>
 </template>
 
 <script>
